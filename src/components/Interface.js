@@ -1,5 +1,5 @@
 import React , { Component } from 'react';
-import Option from './Option';
+import Product from './Product';
 
 class Interface extends Component {
 
@@ -9,14 +9,29 @@ class Interface extends Component {
     }
 
     render(){
-        let playerData = this.props.playerData;
-        
+        let productList =[];
+
+        if(this.props.storeData.isShop) {
+            this.props.storeData.inventory.map((product, i)=>{
+                productList.push(<Product playerData = {this.props.playerData} product={product} key={"product-" + i}/>);
+            })
+        } 
         return(
             <div className="store">
                 <h1>{this.props.storeData.name}</h1>
                 <ul>
+                    {
+                    this.props.storeData.isShop ?
+                    productList
+                     :
+                    <li>Mo Salah is overrated bc he plays for loserpool.</li>
+                    }
+                </ul>
+                <ul>
                     {this.props.storeData.options.map((option,i)=>{
-                        return <li key={"option" + i} onClick={()=>{option.effect()}}>
+                        return <li 
+                        key={"option" + i} 
+                        onClick={()=>{option.effect()}}>
                         {option.name}
                         </li>
                     })}

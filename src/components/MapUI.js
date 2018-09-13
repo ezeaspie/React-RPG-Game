@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
 import mapData from '../gameAssets/mapData';
-import storeData from '../gameAssets/storeData';
-
 
 //ADD A METHOD THAT UPDATES PARENT POSITION STATE WHEN ENTERING A SHOP OR SAVING
 
@@ -44,9 +42,8 @@ class MapUI extends Component {
         if (mapData[this.props.mapId].layout[positionY][positionX] > 400 ) {
             //Find which 'shop' to show. Use the tile value.
             let storeId = mapData[this.props.mapId].layout[positionY][positionX];
-            let storeObject = storeData.filter(object => object.id === storeId);
             //Render that shop.
-            this.props.renderStoreInterface(storeObject[0]);
+            this.props.renderStoreInterface(storeId);
             return;
         }
         else if(mapData[this.props.mapId].layout[positionY][positionX] > 200 ){
@@ -64,7 +61,6 @@ class MapUI extends Component {
     }
    
      componentWillUnmount() {
-         console.log('UNMOUNT');
         window.removeEventListener('keydown', this.handleMovement);
      }
 

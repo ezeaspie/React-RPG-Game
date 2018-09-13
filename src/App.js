@@ -4,7 +4,6 @@ import StartMenu from './components/StartMenu';
 import CharacterCreation from './components/CharacterCreation';
 import MapUI from './components/MapUI';
 import Interface from './components/Interface';
-import PlayerData from './gameAssets/playerData';
 
 class App extends Component {
   constructor(props){
@@ -27,9 +26,9 @@ class App extends Component {
   }
 
   createPlayer = (name, stats) => {
-    let playerData = {
-      name : name,
-      stats : stats,
+    let playerObject = {
+      name,
+      stats,
       inventory : [
         {
           name: "ID Card",
@@ -39,33 +38,82 @@ class App extends Component {
       money: 20,
       health: 90,
       maxHealth: 100,
-      updateHealth: (upOrDown,amount) => {
+      updateHealth (upOrDown,amount) {
         if(upOrDown){
           if(this.maxHealth < this.health + amount){
             this.health = this.maxHealth;
-            console.log(this.health);
             return this.health;
           }
           this.health += amount;
           return this.health;
         }
         if(!upOrDown){
-          this.health - amount;
-          console.log(this.health);
+          this.health -= amount;
+          return this.health;
         }
-      } 
+      },
+      purchase (product) {
+        if(this.money - product.price >= 0){
+          this.money -= product.price;
+          this.inventory.push(product);
+          console.log(`Purchased ${product.name} for ${product.price}`);
+          return true;
+        }
+        console.log('WARNING _ BROKE ALERT!')
+        return false;
+      }
     }
-
-    this.setState({playerObject : playerData,playerPosition : [15,3]},()=>{this.updateGameState(2); playerData = this.state.playerObject; console.log(playerData)});
+    this.setState({playerObject : playerObject,playerPosition : [15,3]},()=>{this.updateGameState(2); console.log(this.state.playerObject.updateHealth(false,8))});
   }
 
   updatePlayerPosition = (newPosition) => {
     this.setState({playerPosition:newPosition});
   }
 
-  renderStoreInterface = (storeData) => {
-    console.log(storeData);
-    this.setState({activeStore:storeData}, ()=>{this.updateGameState(3)});
+  renderStoreInterface = (storeId) => {
+    let player = this.state.playerObject;
+    const storeCollection = [
+      {
+          id:401,
+          isShop: false,
+          name:"Home",
+          options: [
+              {
+                  name: "Sleep",
+                  effect: () => {
+                      player.updateHealth(true,99999);
+                  }
+              }
+          ]
+      },
+      {
+          id:402,
+          isShop: true,
+          name:"Shell Gas Station",
+          inventory: [
+            {
+              name:"Bagel",
+              description: "Warm and toasted, covered with cream cheese.",
+              price: 5,
+              effect: () => {player.updateHealth(true,5)},
+            },
+            {
+              name:"Fiji Water",
+              description: "Water that shows you're living the high life.",
+              price: 10,
+              effect: () => {player.updateHealth(true,10)},
+            },
+          ],
+          options: [
+            {
+              name: "Rob the Place",
+              effect: ()=>{player.updateHealth(false,30)},
+            }
+          ]
+      }
+    ]
+    let storeObject = storeCollection.filter(object => object.id === storeId);
+    this.setState({activeStore:storeObject[0]}, ()=>{this.updateGameState(3)});
   }
 
   updateGameState = (newStateId) => {
@@ -94,6 +142,8 @@ class App extends Component {
     });
   }
   render() {
+
+    
 
     let map = <MapUI 
     character = {this.state.playerObject} 
