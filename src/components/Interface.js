@@ -1,11 +1,11 @@
 import React , { Component } from 'react';
 import Product from './Product';
+import Option from './Option';
 
 class Interface extends Component {
 
-    updatePlayer = (stats = this.props.playerData.stats,inv = this.props.playerData.inventory,money =this.props.playerData.money ,health = this.props.playerData.health ,maxHealth = this.props.playerData.maxHealth) => {
-        let newObject = {name: this.props.playerData.name, stats, inventory:inv,money,health,maxHealth}    
-        console.log(newObject);
+    runOptionAndUpdateState = () => {
+        
     }
 
     render(){
@@ -13,7 +13,12 @@ class Interface extends Component {
 
         if(this.props.storeData.isShop) {
             this.props.storeData.inventory.map((product, i)=>{
-                productList.push(<Product playerData = {this.props.playerData} product={product} key={"product-" + i}/>);
+                productList.push(
+                <Product 
+                updatePlayerState = {this.props.updatePlayerState}
+                playerData = {this.props.playerData} 
+                product={product} 
+                key={"product-" + i}/>);
             })
         } 
         return(
@@ -29,11 +34,11 @@ class Interface extends Component {
                 </ul>
                 <ul>
                     {this.props.storeData.options.map((option,i)=>{
-                        return <li 
+                        return <Option
+                        updatePlayerState = {this.props.updatePlayerState}
+                        option={option}
                         key={"option" + i} 
-                        onClick={()=>{option.effect()}}>
-                        {option.name}
-                        </li>
+                        />
                     })}
                 </ul>
                 <button onClick={()=>{this.props.updateGameState(2)}}>Back</button>

@@ -5,6 +5,7 @@ class CharacterCreation extends Component {
     constructor(props){
         super(props);
         this.state = {
+            nameError: false,
             nameValue : '',
             avaliblePoints: 0,
             totalPoints: 25,
@@ -35,7 +36,12 @@ class CharacterCreation extends Component {
 
     sendStatObject = (e) => {
         e.preventDefault();
-        this.props.createPlayer(this.state.nameValue,this.state.stats);
+        if(this.state.nameValue.length === 0){
+            this.setState({nameError:true});
+        }
+        else{
+            this.props.createPlayer(this.state.nameValue,this.state.stats);
+        }
     }
 
     calculateAvaliablePoints = () => {
@@ -49,7 +55,7 @@ class CharacterCreation extends Component {
     }
 
     handleName = (e) => {
-        this.setState({nameValue : e.target.value});
+        this.setState({nameValue : e.target.value},()=>{if(this.state.nameValue.length > 0){this.setState({nameError:false})}});
     }
 
     updateStat = (newStatObject, id) => {
@@ -59,6 +65,10 @@ class CharacterCreation extends Component {
         this.setState({stats : newArray},this.calculateAvaliablePoints());
     }
     render(){
+        let styleObject = null;
+        if(this.state.nameError){
+            styleObject={border:"solid 2px red"}
+        }
         return(
             <div className="create-character">
             <form className = "character-form">
@@ -67,6 +77,7 @@ class CharacterCreation extends Component {
 
                 <input type="text" 
                 value={this.state.nameValue} 
+                style={styleObject}
                 onChange={(e) => {this.handleName(e)} } />
 
                 {
