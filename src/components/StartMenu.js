@@ -6,10 +6,10 @@ class StartMenu extends Component {
         super(props);
         this.state = {
             html : <div className="start-menu">
-            <h1>Cube RPG - Incomplete</h1>
-            <ul>
-                <li onClick = {() => this.props.updateGameState(1)}>Start</li>
-                <li onClick = {() => this.updateStartMenu(1)}>Instructions</li>
+            <h1 className="start-header">Cube RPG - Incomplete</h1>
+            <ul className="start-options">
+                <li className="main-button" onClick = {() => this.props.updateGameState(1)}>Start ></li>
+                <li className="main-button" onClick = {() => this.updateStartMenu(1)}>Instructions ></li>
             </ul>
         </div>
         }

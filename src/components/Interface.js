@@ -4,8 +4,8 @@ import Option from './Option';
 
 class Interface extends Component {
 
-    runOptionAndUpdateState = () => {
-        
+    forceRender = () => {
+        this.forceUpdate();
     }
 
     render(){
@@ -15,6 +15,7 @@ class Interface extends Component {
             this.props.storeData.inventory.map((product, i)=>{
                 productList.push(
                 <Product 
+                forceRender = {this.forceRender}
                 updatePlayerState = {this.props.updatePlayerState}
                 playerData = {this.props.playerData} 
                 product={product} 
@@ -24,6 +25,7 @@ class Interface extends Component {
         return(
             <div className="store">
                 <h1>{this.props.storeData.name}</h1>
+                <h2>Cash:{this.props.playerData.money}</h2>
                 <ul>
                     {
                     this.props.storeData.isShop ?

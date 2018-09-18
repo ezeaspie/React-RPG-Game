@@ -21,9 +21,11 @@ class StatModifier extends Component {
         return(
             <div className = "stat-modify">
                 <h3>{this.props.statData.name}</h3>
-                <h3>{this.props.statData.value}</h3>
-                <button onClick = {(e) => {this.createNewStatObject(false,e)}}>-</button>
-                <button onClick = {(e) => {this.createNewStatObject(true,e)}}>+</button>
+                <div className="modifier">
+                    <button className="sub-button" onClick = {(e) => {this.createNewStatObject(false,e)}}>-</button>
+                    <h3>{this.props.statData.value}</h3>
+                    <button className="sub-button" onClick = {(e) => {this.createNewStatObject(true,e)}}>+</button>
+                </div>
             </div>
         )
     }

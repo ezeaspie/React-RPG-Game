@@ -25,6 +25,10 @@ class CharacterCreation extends Component {
                 {
                     name: "Agility",
                     value:2,
+                },
+                {
+                    name: "Luck",
+                    value:4,
                 }
             ]
         }
@@ -61,7 +65,6 @@ class CharacterCreation extends Component {
     updateStat = (newStatObject, id) => {
         let newArray = this.state.stats;
         newArray[id] = newStatObject;
-        console.log(newArray[id]);
         this.setState({stats : newArray},this.calculateAvaliablePoints());
     }
     render(){
@@ -72,7 +75,7 @@ class CharacterCreation extends Component {
         return(
             <div className="create-character">
             <form className = "character-form">
-                <h2>Create Character</h2>
+                <h1>Create Character</h1>
                 <label>Name: </label>
 
                 <input type="text" 
@@ -85,8 +88,8 @@ class CharacterCreation extends Component {
                         return <StatModifier statData = {stat} avaliable = {this.state.avaliblePoints} total={this.state.totalPoints} statId ={i} updateStat = {this.updateStat} key={i} />
                     })
                 }
-                <h3>{this.state.avaliblePoints} Points Avaliable</h3>
-                <button onClick={(e)=>{this.sendStatObject(e)}}>Go</button>
+                <p className="points">{this.state.avaliblePoints} Points Avaliable</p>
+                <button className="main-button" onClick={(e)=>{this.sendStatObject(e)}}>Create Character ></button>
             </form>
             </div>
         )

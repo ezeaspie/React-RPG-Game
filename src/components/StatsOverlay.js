@@ -3,7 +3,7 @@ import React, {Component} from 'react';
 class StatsOverlay extends Component {
     render(){
         return(
-            <ul style={this.props.style} onClick={() => {this.props.handleClick(true)}}>
+            <ul className="overlay stats-overlay" style={this.props.style} onClick={() => {this.props.handleClick(true)}}>
                 {this.props.stats.map((stat,i)=>{
                     return <li key={"stat" + i}>
                     <p>{stat.name}</p>

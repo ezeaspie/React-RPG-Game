@@ -37,7 +37,6 @@ class MapUI extends Component {
                 positionX++;
             }
         }
-        console.log(mapData[this.props.mapId].layout[positionY][positionX])
         //Check for invalid or action tiles
         if (mapData[this.props.mapId].layout[positionY][positionX] > 400 ) {
             //Find which 'shop' to show. Use the tile value.
@@ -84,9 +83,6 @@ class MapUI extends Component {
     render() {
         return(
             <div className="map">
-                <h1>{this.props.character.name}</h1>
-                <h2>{mapData[this.props.mapId].name}</h2>
-                <h2>{this.props.playerPosition}</h2>
                 {
                     mapData[this.props.mapId].layout.map((row,i) => {
                         return (

@@ -1,14 +1,21 @@
 import React, { Component } from 'react';
 
 class Product extends Component {
+    componentWillReceiveProps({someProp}) {
+        this.setState({...this.state,someProp})
+      }
 //We can use the return value of the playerData.purchase function to create a callback that does 
 //something in the console or allows the player get a corresponding message
 checkPurchaseAndUpdate = () => {
-    let returnValue = this.props.playerData.purchase(this.props.product);
-
-    if(returnValue[1]){
-        this.props.updatePlayerState(returnValue[0]);
-    }
+    let newPlayerObject = this.props.playerData;
+    let product = this.props.product;
+        if(newPlayerObject.money - product.price >= 0){
+          newPlayerObject.money -= product.price;
+          newPlayerObject.inventory.push(product);
+          console.log(`Purchased ${product.name} for ${product.price}`);
+          this.props.updatePlayerState(newPlayerObject);
+          this.props.forceRender();
+        }
 }
 //IE: Thank you, come again - if true => BROKE ALERT - if false
     render(){

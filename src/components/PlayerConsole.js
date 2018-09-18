@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import StatsOverlay from './StatsOverlay';
 import InventoryOverlay from './InventoryOverlay';
-
+import mapData from '../gameAssets/mapData';
 
 //Maybe turn the playerData into state in here, pass inv and stats as a prop and
 //when clicked, run the update the state and then update the global object.
@@ -12,12 +12,14 @@ class PlayerConsole extends Component {
         this.state = {
             isStatOverlay:false,
             isInventoryOverlay:false,
-            playerData: this.props.playerData,
         }
+    } 
+
+    forceRender = () => {
+        this.forceUpdate();
     }
 
     handlePlayerInventoryChanges = (newObj) => {
-        this.setState({playerData : newObj});
         this.props.updatePlayerState(newObj);
     }
 
@@ -32,7 +34,8 @@ class PlayerConsole extends Component {
 
 
     render(){
-        let playerData = this.state.playerData;
+        let playerData = this.props.playerData;
+        console.log(playerData);
         let hiddenStyle = {
             position:"fixed",
             opacity:"0",
@@ -44,20 +47,52 @@ class PlayerConsole extends Component {
             position:"fixed",
             top:"0",
             bottom:"0",
+            left:"0",
+            right:"0",
             width:"100%",
             opacity:"1",
             zIndex:"1",
             transition: "ease-in-out .2s opacity",
             background:"rgba(0,0,0,0.7)",
         }
+
+        let CalculateMeterParams = (highOrLow) => {
+            let low = playerData.maxHealth/3;
+            let high = low * 2;
+            let optimum = playerData.maxHealth-5;
+
+            if(highOrLow === 0) {
+                return Math.ceil(high);
+            }
+            if(highOrLow === 1){
+                return Math.ceil(low);
+            }
+            return Math.ceil(optimum);
+        }
         return(
             <div>
-                <h1>{playerData.name}</h1>
-                <h2>{playerData.health} / {playerData.maxHealth}</h2>
-                <meter value={playerData.health} min="0" max={playerData.maxHealth}></meter>
-                <h4>{'$' + playerData.money}</h4>
-                <button onClick={()=>{this.setState({isStatOverlay:true})}}>Show Stats</button>
-                <button onClick={()=>{this.setState({isInventoryOverlay:true})}}>Show Inventory</button>
+                <div className="console-row cr1">
+                    <p className="console-name">{playerData.name}</p>
+                    <div className="console-health">
+                        <p>{playerData.health} / {playerData.maxHealth}</p>
+                        <meter className="health-bar"
+                        min="0"  
+                        low={CalculateMeterParams(0)}
+                        high={CalculateMeterParams(1)}
+                        optimum={CalculateMeterParams(2)}
+                        value={playerData.health} 
+                        max={playerData.maxHealth}></meter>
+                    </div>
+                </div>
+                <div className="console-row cr2">
+                    <p>{mapData[this.props.mapId].name}</p>
+                    <p>{'$' + playerData.money}</p>
+                </div>
+                <div className="console-row cr1">
+                    <button className="main-button" onClick={()=>{this.setState({isStatOverlay:true})}}>Show Stats</button>
+                    <button className="main-button" onClick={()=>{this.setState({isInventoryOverlay:true})}}>Show Inventory</button>
+                </div>
+                
                 
                 <StatsOverlay 
                 handleClick = {this.updateOverlayState}
@@ -67,6 +102,7 @@ class PlayerConsole extends Component {
                 />
 
                 <InventoryOverlay 
+                forceRender = {this.forceRender}
                 handleClick = {this.updateOverlayState}
                 updatePlayerState={this.props.updatePlayerState}
                 style={this.state.isInventoryOverlay ? overlayStyle : hiddenStyle}
