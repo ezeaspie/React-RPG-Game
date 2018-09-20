@@ -4,7 +4,7 @@ class Option extends Component {
 
 runEffectAndUpdate = () => {
     let returnValue = this.props.option.effect();
-    if(returnValue != undefined){
+    if(returnValue !== undefined){
         this.props.updatePlayerState(returnValue[0]);
     }
 }

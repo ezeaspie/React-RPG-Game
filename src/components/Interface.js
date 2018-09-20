@@ -20,6 +20,7 @@ class Interface extends Component {
                 playerData = {this.props.playerData} 
                 product={product} 
                 key={"product-" + i}/>);
+                return true;
             })
         } 
         return(

@@ -52,7 +52,7 @@ class CharacterCreation extends Component {
         let pointsInUse = 0;
         let avaliblePoints = 0;
 
-        this.state.stats.map((stat)=>{pointsInUse += stat.value});
+        this.state.stats.map((stat)=>{pointsInUse += stat.value; return true});
         avaliblePoints = this.state.totalPoints - pointsInUse;
 
         this.setState({avaliblePoints : avaliblePoints});

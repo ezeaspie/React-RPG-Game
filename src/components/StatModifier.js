@@ -7,12 +7,10 @@ class StatModifier extends Component {
         let updatedObj = this.props.statData;
         if(this.props.avaliable -1 >= 0 && upOrDown){
             updatedObj.value++;
-            console.log(updatedObj.value, this.props.total);
             this.props.updateStat(updatedObj,this.props.statData.id);
         }
         else if(updatedObj.value -1 > 0 && !upOrDown){
             updatedObj.value--;
-            console.log(updatedObj.value);
             this.props.updateStat(updatedObj,this.props.statData.id);
         }
     }

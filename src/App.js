@@ -135,6 +135,15 @@ class App extends Component {
             },
           },
           {
+            name:"Wooden Baseball Bat",
+            description: "Strong and heavy, this is sure to bust some heads.",
+            price: 10,
+            isWeapon: true,
+            effect: () => {
+            return {damage: 15, apCost: 5}
+            },
+          },
+          {
             name:"Whiskey",
             description: "Water that shows you're living the high life.",
             price: 20,
@@ -176,6 +185,18 @@ class App extends Component {
                       value:4,
                   }
               ],
+                inventory: [
+                  {
+                    name:"Plastic Baseball Bat",
+                    description: "The plastic is pretty tough but it's still a toy.",
+                    price: 10,
+                    isWeapon: true,
+                    effect: () => {
+                    return {damage: 5, apCost: 5}
+                  },
+                  },
+                ],
+                money: 10,
                 health: 100,
                 maxHealth: 100,
                 strength: 3,
@@ -222,6 +243,8 @@ class App extends Component {
       <Combat 
       player={this.state.playerObject}
       opponent={this.state.opponentObject}
+      updatePlayerState={this.updatePlayerState}
+      updateGameState={this.updateGameState}
       />,
     ]
 

@@ -70,11 +70,21 @@ class MapUI extends Component {
 
         let cells = [];
         cellArray.map((cell,cellId) => {
-            let newCell = <div key={rowId + cellId} className="cell"></div>
+            let tempRow = rowId;
+            let tempCell = cellId;
+
+            if(rowId < 10){
+                tempRow = "0" + rowId;
+            }
+            if(cellId < 10){
+                tempCell = "0" + cellId;
+            }
+            let newCell = <div key={tempRow.toString() + tempCell.toString()} className="cell"></div>
             if(rowId === this.state.currentPosition[0] && cellId === this.state.currentPosition[1]){
-                newCell = <div key={rowId + cellId} className="cell" style={playerPositionStyle}></div>
+                newCell = <div key={rowId.toString() + cellId.toString()} className="cell" style={playerPositionStyle}></div>
             }
             cells.push(newCell)
+            return true;
         })
 
         return cells;
@@ -85,6 +95,7 @@ class MapUI extends Component {
             <div className="map">
                 {
                     mapData[this.props.mapId].layout.map((row,i) => {
+
                         return (
                             <div className="row" key={'row' + i}>
                             {this.createCellRow(row,i)}
