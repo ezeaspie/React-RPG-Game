@@ -5,13 +5,39 @@ class StartMenu extends Component {
     constructor(props){
         super(props);
         this.state = {
-            html : <div className="start-menu">
-            <h1 className="start-header">Cube RPG - Incomplete</h1>
-            <ul className="start-options">
-                <li className="main-button" onClick = {() => this.props.updateGameState(1)}>Start ></li>
-                <li className="main-button" onClick = {() => this.updateStartMenu(1)}>Instructions ></li>
-            </ul>
-        </div>
+            dialogBox: false,
+            dialogContent: undefined,
+            html : undefined,
+        }
+        this.handleNewGame = this.handleNewGame.bind(this);
+    }
+
+    componentWillMount () {
+        this.updateStartMenu(0);
+    }
+
+    handleNewGame () {
+        if(this.props.hasSavedGame){
+            let content =
+            <div className="message-box">
+                <div className="dialog-content">
+                    <p>Starting a new game will overwrite your previously saved game.</p>
+                    <p>Are you sure you want to continue?</p>
+                </div>
+                <div className="dialog-buttons">
+                    <button 
+                    onClick={()=>this.props.updateGameState(1)}
+                    className="main-button urgent">Delete Save and Start New Game</button>
+                    <button 
+                    onClick={()=>{this.setState({dialogBox:false})}}
+                    className="main-button">Cancel</button>
+                </div>
+            </div>
+            this.setState({dialogContent:content, dialogBox:true});
+            console.log("true");
+        }
+        else{
+            this.props.updateGameState(1);
         }
     }
 
@@ -29,19 +55,28 @@ class StartMenu extends Component {
             else {
                 this.setState({html :
                     <div className="start-menu">
-                    <h1>Cube RPG - Incomplete</h1>
-                    <ul>
-                        <li onClick = {() => this.props.updateGameState(1)}>Start</li>
-                        <li onClick = {() => this.updateStartMenu(1)}>Instructions</li>
-                    </ul>
-                    </div>
+            <h1 className="start-header">Cube RPG - Incomplete</h1>
+            <ul className="start-options">
+                <button className="main-button" 
+                onClick = {this.handleNewGame}>Start ></button>
+                <button className="main-button" disabled={!this.props.hasSavedGame} onClick = {() => this.props.updateGameState(2)}>Continue ></button>
+                <button className="main-button" onClick = {() => this.updateStartMenu(1)}>Instructions ></button>
+            </ul>
+        </div>
                 })                
             }
     }
 
     render(){
         return(
-            this.state.html
+            <div className="start-content">
+            {
+                this.state.dialogBox?
+                this.state.dialogContent
+                :null
+            }
+            {this.state.html}
+            </div>   
         )
     }
 }

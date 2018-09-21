@@ -45,6 +45,11 @@ body {
       align-items: center;
 }
 
+.start-options{
+  display: flex;
+  flex-direction: column;
+}
+
 h1 {
   font-family:'Mukta Malar';
 }
@@ -295,11 +300,11 @@ button:disabled,
 }
 
 .message-box {
+  z-index:100;
   background: rgba(0,0,0,.7);
   padding:1em 0;
   border-radius: 5px;
   position: absolute;
-  border:solid 1px;
   width:60%;
   left:20%;
   top:20%;
@@ -319,8 +324,14 @@ button:disabled,
   margin: 1em;
 }
 
+.start-content .message-box {
+  color:#E7DFDD;
+}
 .message-box .sub-button {
   width:auto;
-  padding: auto;
-  
+  padding: auto;  
+}
+
+.urgent {
+  background: rgb(207, 36, 36);
 }

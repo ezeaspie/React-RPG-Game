@@ -11,21 +11,48 @@ class App extends Component {
   constructor(props){
     super(props);
     this.state = {
-      gameState : 0,
-      gameScreen : <StartMenu updateGameState = {this.updateGameState} />,
+      gameState : undefined,
+      gameScreen : undefined,
       playerObject : undefined,
       playerPosition: undefined,
       playerCurrentMap: 0,
       activeStore: undefined,
       opponentObject: undefined,
+      hasSavedGame:false,
     }
   }
 
   componentWillMount = () => {
-    //Check Local State for a saved player. If there is, load it into the state
-    //and add an option for 'CONTINUE' and a warning if a player clicks NEW GAME.
-    //If not, continue as normal - character will be created via new game
+    const playerSave = JSON.parse(localStorage.getItem( "playerSave" ));
+    const playerPosition = JSON.parse(localStorage.getItem("playerPos"));
+    const playerMap = JSON.parse(localStorage.getItem("playerMap"));
+
+    if(playerSave !== null){
+      this.setState( { 
+        playerObject: playerSave, 
+        hasSavedGame : true,
+        playerPosition,
+        playerCurrentMap : playerMap, 
+      },
+      ()=>{
+        this.updateGameState(0);
+      } 
+      );
+      console.log('save found');
+      return;
+    }
+    this.updateGameState(0);
+    return;
   }
+
+  saveToLocal = () => {
+    const playerData = this.state.playerObject;
+    const playerPosition = this.state.playerPosition;
+    const playerMap = this.state.playerCurrentMap;
+    localStorage.setItem("playerSave", JSON.stringify(playerData));
+    localStorage.setItem("playerPos", JSON.stringify(playerPosition));
+    localStorage.setItem('playerMap', JSON.stringify(playerMap))
+   }
 
   updatePlayerState = (playerObject) => {
     this.setState({playerObject});
@@ -58,7 +85,10 @@ class App extends Component {
         }
       },
     }
-    this.setState({playerObject : playerObject,playerPosition : [15,3]},()=>{this.updateGameState(2); console.log(this.state.playerObject.updateHealth(false,8))});
+    this.setState({playerObject : playerObject,playerPosition : [15,3], playerCurrentMap:0},()=>{
+      this.updateGameState(2);
+      this.saveToLocal();
+      });
   }
 
   updatePlayerPosition = (newPosition) => {
@@ -222,7 +252,10 @@ class App extends Component {
   updateGameState = (newStateId) => {
 
     const screenStateCollection = [
-      <StartMenu updateGameState = {this.updateGameState} />,
+      <StartMenu 
+      updateGameState = {this.updateGameState}
+      hasSavedGame = {this.state.hasSavedGame}
+      />,
       <CharacterCreation 
       updateGameState = {this.updateGameState} 
       createPlayer = {this.createPlayer} />,
