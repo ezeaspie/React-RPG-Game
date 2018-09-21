@@ -1,6 +1,8 @@
 html {
+  display: -ms-flexbox;
   display: flex;
-  justify-content: center;
+  -ms-flex-pack: center;
+      justify-content: center;
 }
 
 body {
@@ -20,6 +22,14 @@ body {
           box-sizing:border-box;
   background: #E7DFDD;
   font-family: 'Roboto';
+}
+
+.App{
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-pack: distribute;
+      justify-content: space-around;
+  min-width: 1000px;
 }
 
 .start-menu {
@@ -52,7 +62,8 @@ ul {
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
   border:solid 1px;
-  padding: .8em;
+  padding: 1em;
+  background-size:contain;
 }
 
 .main-button {
@@ -153,7 +164,8 @@ ul {
 .overlay {
   display: -ms-flexbox;
   display: flex;
-  flex-direction: column;
+  -ms-flex-direction: column;
+      flex-direction: column;
   -ms-flex-wrap:wrap;
       flex-wrap:wrap;
   padding: 0;
@@ -161,30 +173,154 @@ ul {
 }
 
 .inv-overlay-list {
+  display: -ms-flexbox;
   display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
+  -ms-flex-direction: row;
+      flex-direction: row;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
   padding:1em;
-  justify-content: space-around;
+  -ms-flex-pack: distribute;
+      justify-content: space-around;
 }
 
-.inv-item {
+.inv-item, .combat-weapon {
   border:solid 2px #E7DFDD;
   background: rgba(255,255,255,.2);
   border-radius:5px;
-  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
   padding: .5em;
   width:140px;
   height: 140px;
   margin: 10px;
   list-style-type: none;
+  -webkit-transition:ease .5s all;
+  -o-transition:ease .5s all;
   transition:ease .5s all;
 }
 
-.inv-item:hover {
+.inv-item:hover, 
+.combat-player .combat-weapon:hover {
   border: solid 2px #A239CA;
   background: rgba(162,57,222,.1);
+  -webkit-transition:ease .5s all;
+  -o-transition:ease .5s all;
   transition:ease .5s all;
   cursor: pointer;
   color: rgba(255,255,255,0.5);
+}
+
+.combat {
+  min-width:1000px;
+}
+.combat .main {
+  display:-ms-flexbox;
+  display:flex;
+  background: rgba(71, 23, 246,0.2);
+  border: solid 2px rgba(0,0,0,0.5);
+  border-radius: 5px;
+}
+
+.combat-info {
+  width:30%;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-direction: column;
+      flex-direction: column;
+  -ms-flex-line-pack: center;
+      align-content: center;
+  -ms-flex-align: center;
+      align-items: center;
+}
+
+.combat-info p {
+  margin:0;
+}
+
+.combat-info h1 {
+  margin:.2em;
+}
+
+.combat-buttons {
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-pack: space-evenly;
+      justify-content: space-evenly;
+}
+
+.combat-options {
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  -ms-flex-line-pack: center;
+      align-content: center;
+  -ms-flex-align: center;
+      align-items: center;
+}
+
+.combat-weapon {
+  width:110px;
+  height:110px;
+  padding: 0;
+  background: rgba(0,0,0,.2);
+  border-color: #000;
+  text-align: center;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-direction: column;
+      flex-direction: column;
+  -ms-flex-pack: space-evenly;
+      justify-content: space-evenly;
+}
+
+.combat-weapon p {
+  margin: 0;
+}
+
+.combat-player .combat-weapon:hover{
+  color:#000;
+  border-color: rgba(71, 23, 246,.8);
+}
+
+.combat-player .combat-weapon:active{
+  background: rgb(71, 23, 246);
+}
+
+.main-button:disabled,
+button:disabled,
+.sub-button:disabled{
+  opacity: .5;
+}
+
+.message-box {
+  background: rgba(0,0,0,.7);
+  padding:1em 0;
+  border-radius: 5px;
+  position: absolute;
+  border:solid 1px;
+  width:60%;
+  left:20%;
+  top:20%;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-direction: column;
+      flex-direction: column;
+  -ms-flex-line-pack: center;
+      align-content: center;
+  -ms-flex-align: center;
+      align-items: center;
+  -ms-flex-pack: center;
+      justify-content: center;
+}
+
+.chump-options {
+  margin: 1em;
+}
+
+.message-box .sub-button {
+  width:auto;
+  padding: auto;
+  
 }

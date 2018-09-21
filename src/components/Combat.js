@@ -283,7 +283,7 @@ class Combat extends Component {
             <div className="message-box">
                 <p>You find {opponent.main.money} dollars in {opponent.main.name}'s' wallet.</p>
                 <p>The people heard how you beat down ${opponent.main.name} and you earned 5 street cred!</p>
-                <button onClick={()=>{
+                <button className="main-button" onClick={()=>{
                     this.props.updatePlayerState(player.main);
                     this.props.updateGameState(3);
                 }}>Ok</button>
@@ -302,22 +302,32 @@ class Combat extends Component {
         let highMoneyLost = Math.ceil(player.main.money*.4);
         let lowCredLost = Math.ceil(player.main.streetCred * .2);
 
+        let isButtonDisabled = false;
+
+        if(highCredLost === 0){
+            isButtonDisabled = true;
+        }
         
         let message = 
         <div className="message-box">
-            <button onClick={()=>{
+            <div className="chump-options">
+            <button className="main-button" 
+            disabled={isButtonDisabled}
+            onClick={()=>{
                 player.main.money -= lowMoneyLost;
                 player.main.streetCred -= highCredLost;
                 this.props.updatePlayerState(player.main);
                 this.props.updateGameState(3);
             }}>Give {opponent.main.name} ${lowMoneyLost} and lose {highCredLost} street cred.</button>
-            <button onClick={()=>{
+            <button className="main-button" onClick={()=>{
                 player.main.money -= highMoneyLost;
                 player.main.streetCred -= lowCredLost;
                 this.props.updatePlayerState(player.main);
                 this.props.updateGameState(3);
             }}>Give {opponent.main.name} ${highMoneyLost} and lose {lowCredLost} street cred.</button>
-            <button onClick ={()=>{this.setState({dialogBox:false})}}>Cancel</button>
+            </div>
+           
+            <button className="sub-button" onClick ={()=>{this.setState({dialogBox:false})}}>I'm not a chump!</button>
         </div>
 
         this.setState({dialogContent: message, dialogBox:true});
@@ -333,29 +343,39 @@ class Combat extends Component {
                     this.state.dialogContent:
                     null
                 }
-                <div className="player-main">
-                    <h1>{player.main.name}</h1>
-                    <p>{player.main.health}/{player.main.maxHealth} HP</p>
-                    <meter value={player.main.health} min="0" max={player.main.maxHealth}></meter>
-                    <p>{player.attackPoints}/{player.maxAttackPoints} AP</p>
-                    <meter value={player.attackPoints} min="0" max={player.maxAttackPoints}></meter>
-                        {
-                            this.state.activePlayer?
-                            <div>
-                                <button onClick={()=>{this.handleEndOfAttack(true)}}>Pass</button>
-                                <button onClick={this.handleFlee}>Chump out</button>
+                <div className="combat-buttons">
+                    <button disabled={!this.state.activePlayer} className="main-button" onClick={()=>{this.handleEndOfAttack(true)}}>Pass</button>
+                    <button disabled={!this.state.activePlayer} className="main-button" onClick={this.handleFlee}>Chump out</button>
+                </div>
+                
+                <div className="combat-player main">
+                    <div className="combat-info">
+                        <h1 className="combat-name">{player.main.name}</h1>
+                        <div className="meter-section">
+                            <p className="combat-health">{player.main.health}/{player.main.maxHealth} HP</p>
+                            <meter className="combat-health-meter"value={player.main.health} min="0" max={player.main.maxHealth}></meter>    
+                        </div>
+                        <div className="meter-section">
+                            <p className="combat-ap">{player.attackPoints}/{player.maxAttackPoints} AP</p>
+                            <meter className="combat-ap-meter" value={player.attackPoints} min="0" max={player.maxAttackPoints}></meter>
+                        </div>
+                       </div>
+                       <div className="combat-options">
                                 {
                                     player.weapons.map((weapon,i)=>{
-                                            return <div key={"playerWeapon" + i}
+                                            return <button disabled={!this.state.activePlayer} className="combat-weapon" key={"playerWeapon" + i}
                                                         onClick={()=>{this.handleAttack(true,weapon)}}>
-                                                        <p>{weapon.name}</p>
-                                                        <p>{this.calculateAttackDamage(true,weapon)} DMG</p>
-                                                        <p>{weapon.apCost} AP</p>
-                                                    </div>
+                                                        <p className="weapon-name">{weapon.name}</p>
+                                                        <p className="weapon-damage">{weapon.damage} DMG</p>
+                                                        <p className="weapon-ap">{weapon.apCost} AP</p>
+                                                    </button>
                                     })
                                 }
                             </div>
-                            :
+                        {
+                            this.state.activePlayer?
+                            null
+                            : 
                             <div style={{display:'none'}}>
                             {setTimeout(this.aiAttackLogic,1500)}
                             </div>
@@ -363,22 +383,26 @@ class Combat extends Component {
                         
                 </div>
 
-                <div>
-                <h1>{opponent.main.name}</h1>
-                    <p>{opponent.main.health}/{opponent.main.maxHealth} HP</p>
-                    <meter value={opponent.main.health} min="0" max={opponent.main.maxHealth}></meter>
-                    <p>{opponent.attackPoints}/{opponent.maxAttackPoints} AP</p>
-                    <meter value={opponent.attackPoints} min="0" max={opponent.maxAttackPoints}></meter>
+                <div className="combat-opponent main">
+                <div className="combat-info">
+                    <h1 className="combat-name">{opponent.main.name}</h1>
+                    <p className="combat-health">{opponent.main.health}/{opponent.main.maxHealth} HP</p>
+                    <meter className="combat-health-meter"value={opponent.main.health} min="0" max={opponent.main.maxHealth}></meter>
+                    <p className="combat-ap">{opponent.attackPoints}/{opponent.maxAttackPoints} AP</p>
+                    <meter className="combat-ap-meter" value={opponent.attackPoints} min="0" max={opponent.maxAttackPoints}></meter>
                 </div>
+                <div className="combat-options">
                 {
                     opponent.weapons.map((weapon,i)=>{
-                            return <div key={"opponentWeapon" + i}>
-                                        <p>{weapon.name}</p>
-                                        <p>{weapon.damage} DMG</p>
-                                        <p>{weapon.apCost} AP</p>
+                            return <div className="combat-weapon" key={"opponentWeapon" + i}>
+                                        <p className="weapon-name">{weapon.name}</p>
+                                        <p className="weapon-damage">{weapon.damage} DMG</p>
+                                        <p className="weapon-ap">{weapon.apCost} AP</p>
                                     </div>
                     })
                 }
+                </div>
+                </div>
             </div>
         )
     }

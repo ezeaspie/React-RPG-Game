@@ -7,10 +7,13 @@ class InventoryOverlay extends Component {
     }
 
     handleClick = (item,i) => {
-        let returnVal = item.effect();
-        this.props.handlePlayerInventoryChanges(returnVal[0]);
-        console.log(returnVal); 
-        this.props.forceRender();
+        if(item.isConsumable){
+            let returnVal = item.effect();
+            this.props.handlePlayerInventoryChanges(returnVal[0]);
+            console.log(returnVal); 
+            this.props.forceRender();
+        }
+        return;
     }
 
     render(){

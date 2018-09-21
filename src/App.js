@@ -39,6 +39,7 @@ class App extends Component {
         {
           name: "ID Card",
           description: "Your ID Card",
+          isConsumable:false,
         }
       ],
       money: 20,
@@ -98,6 +99,7 @@ class App extends Component {
               name:"Bagel",
               description: "Warm and toasted, covered with cream cheese.",
               price: 5,
+              isConsumable:true,
               effect() {
                 handleConsumable(this);
                 return(player.updateHealth(true,5));
@@ -107,6 +109,7 @@ class App extends Component {
               name:"Fiji Water",
               description: "Water that shows you're living the high life.",
               price: 10,
+              isConsumable:true,
               effect: () => {
                 handleConsumable(this);
                 return(player.updateHealth(true,10))
@@ -129,6 +132,7 @@ class App extends Component {
             name:"Beer",
             description: "Warm and toasted, covered with cream cheese.",
             price: 10,
+            isConsumable:true,
             effect() {
               handleConsumable(this);
               return(player.updateHealth(true,5));
@@ -139,6 +143,7 @@ class App extends Component {
             description: "Strong and heavy, this is sure to bust some heads.",
             price: 10,
             isWeapon: true,
+            isConsumable:false,
             effect: () => {
             return {damage: 15, apCost: 5}
             },
@@ -147,6 +152,7 @@ class App extends Component {
             name:"Whiskey",
             description: "Water that shows you're living the high life.",
             price: 20,
+            isConsumable:true,
             effect: () => {
               handleConsumable(this);
               return(player.updateHealth(true,10))

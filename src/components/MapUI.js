@@ -15,6 +15,19 @@ class MapUI extends Component {
     handleMovement = (event) => {
         let positionY = this.state.currentPosition[0];
         let positionX = this.state.currentPosition[1];
+
+        let oldPositionY = "" + this.state.currentPosition[0];
+        let oldPositionX = "" + this.state.currentPosition[1];
+        let oldPositionYNum = this.state.currentPosition[0];
+        let oldPositionXNum = this.state.currentPosition[1];
+
+        if(oldPositionX < 10) {
+            oldPositionX = "0" + oldPositionX;
+        }
+        if(oldPositionY < 10){
+            oldPositionY = "0" + oldPositionY;
+        }
+
         //Check for offScreen position
         let key=event.key;
         if (key === 'ArrowUp') {
@@ -37,6 +50,17 @@ class MapUI extends Component {
                 positionX++;
             }
         }
+        let xID = "" + positionX;
+        let yID = "" + positionY;
+        if(positionX < 10) {
+            xID = "0" + positionX;
+        }
+        if(positionY < 10){
+            yID = "0" + positionY;
+        }
+        console.log(yID+xID);
+
+
         //Check for invalid or action tiles
         if (mapData[this.props.mapId].layout[positionY][positionX] > 400 ) {
             //Find which 'shop' to show. Use the tile value.
@@ -50,8 +74,11 @@ class MapUI extends Component {
     }
         //Execute function to update upper state.
         let newPosition = [positionY, positionX];
-        console.log(newPosition);
-        this.setState({currentPosition : newPosition});
+        document.getElementById(yID+xID).style.background = "#000";
+        document.getElementById(oldPositionY + oldPositionX).style.background = `url(./images/mapTiles/${mapData[this.props.mapId].layout[oldPositionYNum][oldPositionXNum]}.png)`;
+        console.log(mapData[this.props.mapId].layout[oldPositionYNum][oldPositionXNum]);
+
+        this.setState({currentPosition:newPosition});
     }
 
     componentWillMount(){
@@ -70,6 +97,9 @@ class MapUI extends Component {
 
         let cells = [];
         cellArray.map((cell,cellId) => {
+            let cellStyle={
+                background: `url(./images/mapTiles/${cell}.png`,
+            }
             let tempRow = rowId;
             let tempCell = cellId;
 
@@ -79,9 +109,18 @@ class MapUI extends Component {
             if(cellId < 10){
                 tempCell = "0" + cellId;
             }
-            let newCell = <div key={tempRow.toString() + tempCell.toString()} className="cell"></div>
-            if(rowId === this.state.currentPosition[0] && cellId === this.state.currentPosition[1]){
-                newCell = <div key={rowId.toString() + cellId.toString()} className="cell" style={playerPositionStyle}></div>
+            let newCell = 
+            <div 
+            id={tempRow.toString() + tempCell.toString()}
+            key={tempRow.toString() + tempCell.toString()}
+            className="cell" 
+             style={cellStyle}></div>
+            if(rowId === this.props.playerPosition[0] && cellId === this.props.playerPosition[1]){
+                newCell = <div
+                id={tempRow.toString() + tempCell.toString()}
+                key={tempRow.toString() + tempCell.toString()} 
+                className="cell" 
+                style={playerPositionStyle}></div>
             }
             cells.push(newCell)
             return true;
