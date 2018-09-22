@@ -4,8 +4,8 @@ import StartMenu from './components/StartMenu';
 import CharacterCreation from './components/CharacterCreation';
 import MapUI from './components/MapUI';
 import Interface from './components/Interface';
-import PlayerConsole from './components/PlayerConsole';
 import Combat from './components/Combat';
+import Weapons from './gameAssets/weapons';
 
 class App extends Component {
   constructor(props){
@@ -45,13 +45,21 @@ class App extends Component {
     return;
   }
 
-  saveToLocal = () => {
-    const playerData = this.state.playerObject;
-    const playerPosition = this.state.playerPosition;
-    const playerMap = this.state.playerCurrentMap;
-    localStorage.setItem("playerSave", JSON.stringify(playerData));
-    localStorage.setItem("playerPos", JSON.stringify(playerPosition));
-    localStorage.setItem('playerMap', JSON.stringify(playerMap))
+  saveToLocal = (position = null) => {
+    let getAndSetData = () => {
+      const playerData = this.state.playerObject;
+      const playerPosition = this.state.playerPosition;
+      const playerMap = this.state.playerCurrentMap;
+      localStorage.setItem("playerSave", JSON.stringify(playerData));
+      localStorage.setItem("playerPos", JSON.stringify(playerPosition));
+      localStorage.setItem('playerMap', JSON.stringify(playerMap));
+      console.log("Game Saved");
+      return;
+    }
+    if(position !== null){
+      this.setState({playerPosition:position},getAndSetData);
+    }
+    getAndSetData();
    }
 
   updatePlayerState = (playerObject) => {
@@ -104,6 +112,56 @@ class App extends Component {
       });
       let index = player.inventory.indexOf(found[0]);
       player.inventory.splice(index,1);
+    }
+
+    let createOpponent = (name,strRange,lckRange,agiRange,moneyRange,possibleWeapons,weaponAmount) => {
+      //name='string',RANGE = [lowVal,highVal],possibleWeapons=Array of all wieldable, weaponAmount=how much weapons to give opponent
+      let valueFromRange = (min,max) => {
+          return Math.floor(Math.random()*(max-min+1)+min);
+      }
+
+      let chooseWeapons = () => {
+        let equippedWeapons = [];
+        for(var i=0; i < weaponAmount; i++){
+          let selectedWeaponIndex = valueFromRange(0,possibleWeapons.length-1);
+          equippedWeapons.push(possibleWeapons[selectedWeaponIndex]);
+          possibleWeapons.splice(selectedWeaponIndex, 1);
+          console.log(possibleWeapons); 
+        }
+        return equippedWeapons;
+      }
+      
+      let opponent = {
+        name,
+        stats : [
+          {
+              name: "Charisma",
+              value:3,
+          },
+          {
+              name: "Strength",
+              value:valueFromRange(strRange[0],strRange[1]),
+          },
+          {
+              name: "Intelligence",
+              value:5,
+          },
+          {
+              name: "Agility",
+              value:valueFromRange(agiRange[0],agiRange[1]),
+          },
+          {
+              name: "Luck",
+              value:valueFromRange(lckRange[0],lckRange[1]),
+          }
+      ],
+        inventory: chooseWeapons(),
+        money: valueFromRange(moneyRange[0],moneyRange[1]),
+        health: 100,
+        maxHealth: 100,
+      }
+      console.log(opponent);
+      return opponent;
     }
 
     const storeCollection = [
@@ -168,16 +226,7 @@ class App extends Component {
               return(player.updateHealth(true,5));
             },
           },
-          {
-            name:"Wooden Baseball Bat",
-            description: "Strong and heavy, this is sure to bust some heads.",
-            price: 10,
-            isWeapon: true,
-            isConsumable:false,
-            effect: () => {
-            return {damage: 15, apCost: 5}
-            },
-          },
+          Weapons[0],
           {
             name:"Whiskey",
             description: "Water that shows you're living the high life.",
@@ -197,48 +246,7 @@ class App extends Component {
           {
             name: "Get into a fight",
             effect: ()=>{
-              let opponent = {
-                name: "Tim",
-                stats : [
-                  {
-                      name: "Charisma",
-                      value:3,
-                  },
-                  {
-                      name: "Strength",
-                      value:4,
-                  },
-                  {
-                      name: "Intelligence",
-                      value:5,
-                  },
-                  {
-                      name: "Agility",
-                      value:2,
-                  },
-                  {
-                      name: "Luck",
-                      value:4,
-                  }
-              ],
-                inventory: [
-                  {
-                    name:"Plastic Baseball Bat",
-                    description: "The plastic is pretty tough but it's still a toy.",
-                    price: 10,
-                    isWeapon: true,
-                    effect: () => {
-                    return {damage: 5, apCost: 5}
-                  },
-                  },
-                ],
-                money: 10,
-                health: 100,
-                maxHealth: 100,
-                strength: 3,
-                luck: 4,
-                agility: 7,
-              }
+              let opponent = createOpponent("Melweed",[5,10],[5,10],[5,10],[100,200],Weapons,2);
               this.setState({opponentObject:opponent},()=>this.updateGameState(4));
             }
           },
@@ -266,12 +274,9 @@ class App extends Component {
       playerPosition = {this.state.playerPosition}
       updatePlayerPosition={this.updatePlayerPosition}
       renderStoreInterface={this.renderStoreInterface}
-      />,
-      <PlayerConsole
-      playerData = {this.state.playerObject} 
       updatePlayerState={this.updatePlayerState}
-      mapId = {this.state.playerCurrentMap}
-      />
+      saveGame={this.saveToLocal}
+      />,
       ],
       <Interface 
       updatePlayerState={this.updatePlayerState}

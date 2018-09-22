@@ -89,6 +89,7 @@ class PlayerConsole extends Component {
                     <p>{'$' + playerData.money}</p>
                 </div>
                 <div className="console-row cr1">
+                    <button className="main-button" onClick={this.props.saveGame}>Save</button>
                     <button className="main-button" onClick={()=>{this.setState({isStatOverlay:true})}}>Show Stats</button>
                     <button className="main-button" onClick={()=>{this.setState({isInventoryOverlay:true})}}>Show Inventory</button>
                 </div>

@@ -214,7 +214,7 @@ class Combat extends Component {
         if(isCrit){
             console.log('CRITICAL HIT');
         }
-        console.log(`${attacker.main.name} hits ${target.main.name} for ${attackDamage}`);
+        console.log(`${attacker.main.name} uses ${weapon.name} on ${target.main.name} for ${attackDamage} DMG`);
 
         if(isPlayer){
             this.setState({player:attacker,opponent:target},
@@ -377,7 +377,11 @@ class Combat extends Component {
                             null
                             : 
                             <div style={{display:'none'}}>
-                            {setTimeout(this.aiAttackLogic,1500)}
+                            {
+                                opponent.attackPoints === 0?
+                                null:
+                                setTimeout(this.aiAttackLogic,1500)
+                            }
                             </div>
                         }
                         

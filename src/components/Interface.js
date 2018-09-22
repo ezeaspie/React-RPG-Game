@@ -32,7 +32,7 @@ class Interface extends Component {
                     this.props.storeData.isShop ?
                     productList
                      :
-                    <li>Mo Salah is overrated bc he plays for loserpool.</li>
+                    <li>loserpool is overrated.</li>
                     }
                 </ul>
                 <ul>

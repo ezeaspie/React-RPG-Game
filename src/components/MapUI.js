@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import mapData from '../gameAssets/mapData';
-
+import PlayerConsole from './PlayerConsole';
 //ADD A METHOD THAT UPDATES PARENT POSITION STATE WHEN ENTERING A SHOP OR SAVING
 
 class MapUI extends Component {
@@ -65,6 +65,7 @@ class MapUI extends Component {
         if (mapData[this.props.mapId].layout[positionY][positionX] > 400 ) {
             //Find which 'shop' to show. Use the tile value.
             let storeId = mapData[this.props.mapId].layout[positionY][positionX];
+            this.props.updatePlayerPosition(this.state.currentPosition);
             //Render that shop.
             this.props.renderStoreInterface(storeId);
             return;
@@ -131,17 +132,26 @@ class MapUI extends Component {
 
     render() {
         return(
-            <div className="map">
-                {
-                    mapData[this.props.mapId].layout.map((row,i) => {
+            <div className="map-main">
+                <div className="map">
+                    {
+                        mapData[this.props.mapId].layout.map((row,i) => {
 
-                        return (
-                            <div className="row" key={'row' + i}>
-                            {this.createCellRow(row,i)}
-                            </div>
-                        )
-                    })
-                }
+                            return (
+                                <div className="row" key={'row' + i}>
+                                {this.createCellRow(row,i)}
+                                </div>
+                            )
+                        })
+                    }
+                </div>
+                <PlayerConsole
+                playerData = {this.props.character} 
+                updatePlayerState={this.props.updatePlayerState}
+                mapId = {this.props.mapId}
+                saveGame={()=>{
+                    this.props.saveGame(this.state.currentPosition)}}
+                />
             </div>
         )
     }
