@@ -58,7 +58,6 @@ class MapUI extends Component {
         if(positionY < 10){
             yID = "0" + positionY;
         }
-        console.log(yID+xID);
 
 
         //Check for invalid or action tiles
@@ -77,7 +76,6 @@ class MapUI extends Component {
         let newPosition = [positionY, positionX];
         document.getElementById(yID+xID).style.background = "#000";
         document.getElementById(oldPositionY + oldPositionX).style.background = `url(./images/mapTiles/${mapData[this.props.mapId].layout[oldPositionYNum][oldPositionXNum]}.png)`;
-        console.log(mapData[this.props.mapId].layout[oldPositionYNum][oldPositionXNum]);
 
         this.setState({currentPosition:newPosition});
     }

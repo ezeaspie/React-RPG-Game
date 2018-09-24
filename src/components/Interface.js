@@ -15,6 +15,7 @@ class Interface extends Component {
             this.props.storeData.inventory.map((product, i)=>{
                 productList.push(
                 <Product 
+                updateLog={this.props.updateLog}
                 forceRender = {this.forceRender}
                 updatePlayerState = {this.props.updatePlayerState}
                 playerData = {this.props.playerData} 
@@ -39,6 +40,7 @@ class Interface extends Component {
                     {this.props.storeData.options.map((option,i)=>{
                         return <Option
                         updatePlayerState = {this.props.updatePlayerState}
+                        updateLog = {this.props.updateLog}
                         option={option}
                         key={"option" + i} 
                         />

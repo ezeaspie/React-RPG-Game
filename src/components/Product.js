@@ -12,7 +12,8 @@ checkPurchaseAndUpdate = () => {
         if(newPlayerObject.money - product.price >= 0){
           newPlayerObject.money -= product.price;
           newPlayerObject.inventory.push(product);
-          console.log(`Purchased ${product.name} for ${product.price}`);
+          let logMessage = `Purchased ${product.name} for ${product.price}`;
+          this.props.updateLog(logMessage);
           this.props.updatePlayerState(newPlayerObject);
           this.props.forceRender();
         }

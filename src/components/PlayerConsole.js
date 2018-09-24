@@ -35,7 +35,6 @@ class PlayerConsole extends Component {
 
     render(){
         let playerData = this.props.playerData;
-        console.log(playerData);
         let hiddenStyle = {
             position:"fixed",
             opacity:"0",
@@ -93,7 +92,6 @@ class PlayerConsole extends Component {
                     <button className="main-button" onClick={()=>{this.setState({isStatOverlay:true})}}>Show Stats</button>
                     <button className="main-button" onClick={()=>{this.setState({isInventoryOverlay:true})}}>Show Inventory</button>
                 </div>
-                
                 
                 <StatsOverlay 
                 handleClick = {this.updateOverlayState}

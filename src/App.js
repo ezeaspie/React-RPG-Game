@@ -66,6 +66,15 @@ class App extends Component {
     this.setState({playerObject});
   }
 
+  updatePlayerLog = (message) => {
+    let player = this.state.playerObject;
+    if(player.log.length+1 > 10){
+      player.log.pop();
+    }
+    player.log.unshift(message);
+    console.log(player.log);
+  }
+
   createPlayer = (name, stats) => {
     let playerObject = {
       name,
@@ -82,6 +91,7 @@ class App extends Component {
       maxHealth: 100,
       karma: 0,
       streetCred: 0,
+      log:[],
       updateHealth (upOrDown,amount) {
         if(upOrDown){
           this.health += amount;
@@ -112,6 +122,30 @@ class App extends Component {
       });
       let index = player.inventory.indexOf(found[0]);
       player.inventory.splice(index,1);
+    }
+
+    let robThePlace = (storeRank) => {
+        let strength = player.stats[1].value;
+        let luck = player.stats[4].value;
+        let agility = player.stats[3].value;
+
+        let robChance = strength + luck + agility;
+        robChance /= 3;
+        robChance = Math.ceil(robChance);
+        robChance -= storeRank;
+
+        if(robChance < 2){
+          robChance = 2;
+        }
+
+        let randomNum = Math.floor(Math.random() * 100);
+        console.log({randomNum,robChance}); 
+        if(robChance >= randomNum){
+            let message = "Robbery failed - Caught and went to jail.";
+            return [player,true,robChance,storeRank,message];
+        }
+        let message = "Robbery failed - Caught and went to jail.";
+        return [player,false,robChance,storeRank,message];
     }
 
     let createOpponent = (name,strRange,lckRange,agiRange,moneyRange,possibleWeapons,weaponAmount) => {
@@ -207,7 +241,9 @@ class App extends Component {
           options: [
             {
               name: "Rob the Place",
-              effect: ()=>{return(player.updateHealth(false,30))},
+              effect: ()=>{
+                return robThePlace(0);
+              },
             }
           ]
       },
@@ -241,7 +277,7 @@ class App extends Component {
         options: [
           {
             name: "Rob the Place",
-            effect: ()=>{return(player.updateHealth(false,30))},
+            effect: ()=>{return(robThePlace(0))},
           },
           {
             name: "Get into a fight",
@@ -283,8 +319,10 @@ class App extends Component {
       storeData={this.state.activeStore}
       updateGameState = {this.updateGameState}
       playerData = {this.state.playerObject}
+      updateLog={this.updatePlayerLog}
       />,
       <Combat 
+      updateLog={this.updatePlayerLog}
       player={this.state.playerObject}
       opponent={this.state.opponentObject}
       updatePlayerState={this.updatePlayerState}
