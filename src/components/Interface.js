@@ -27,8 +27,8 @@ class Interface extends Component {
         return(
             <div className="store">
                 <h1>{this.props.storeData.name}</h1>
-                <h2>Cash:{this.props.playerData.money}</h2>
-                <ul>
+                <h2 className="store-cash">Cash:{this.props.playerData.money}</h2>
+                <ul className="store-list products">
                     {
                     this.props.storeData.isShop ?
                     productList
@@ -36,7 +36,7 @@ class Interface extends Component {
                     <li>loserpool is overrated.</li>
                     }
                 </ul>
-                <ul>
+                <ul className="store-list options">
                     {this.props.storeData.options.map((option,i)=>{
                         return <Option
                         updatePlayerState = {this.props.updatePlayerState}
@@ -46,7 +46,7 @@ class Interface extends Component {
                         />
                     })}
                 </ul>
-                <button onClick={()=>{this.props.updateGameState(2)}}>Back</button>
+                <button className="main-button" onClick={()=>{this.props.updateGameState(2)}}>Back</button>
             </div>
             
         )

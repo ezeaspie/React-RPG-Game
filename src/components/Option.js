@@ -16,7 +16,7 @@ calculateRobChance = () => {
     if(this.props.option.name === "Rob the Place"){
         let chance = this.props.option.effect();
         console.log(chance);
-        return <div>
+        return <div className="rob">
             <p>{this.props.option.name} - {chance[2]}% chance of success</p>
             <p>Store Difficulty : {chance[3]}</p>
             </div>
@@ -26,7 +26,7 @@ calculateRobChance = () => {
 //IE: Thank you, come again - if true => BROKE ALERT - if false
     render(){
         return(
-               <li onClick={this.runEffectAndUpdate}>{this.calculateRobChance()}</li>
+               <li className="option" onClick={this.runEffectAndUpdate}>{this.calculateRobChance()}</li>
         )
     }
 }

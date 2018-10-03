@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import mapData from '../gameAssets/mapData';
 import PlayerConsole from './PlayerConsole';
+import DialougeBox from './DialougeBox';
 //ADD A METHOD THAT UPDATES PARENT POSITION STATE WHEN ENTERING A SHOP OR SAVING
 
 class MapUI extends Component {
@@ -8,6 +9,8 @@ class MapUI extends Component {
         super(props);
         this.state = {
             currentPosition : 0,
+            showDialougeBox : false,
+            npc : undefined,
         }
         this.handleMovement = this.handleMovement.bind(this);
     }
@@ -61,6 +64,15 @@ class MapUI extends Component {
 
 
         //Check for invalid or action tiles
+        if (mapData[this.props.mapId].layout[positionY][positionX] > 600){
+            let npcId = mapData[this.props.mapId].layout[positionY][positionX];
+            //Create NPC dialouge.
+            let npc = this.props.handleNPCInteractions(npcId);
+            console.log(npc);
+            this.setState({npc, showDialougeBox:true});
+            return;
+            //Show dialouge box.
+        }
         if (mapData[this.props.mapId].layout[positionY][positionX] > 400 ) {
             //Find which 'shop' to show. Use the tile value.
             let storeId = mapData[this.props.mapId].layout[positionY][positionX];
@@ -131,6 +143,14 @@ class MapUI extends Component {
     render() {
         return(
             <div className="map-main">
+                {
+                    this.state.showDialougeBox?
+                    <DialougeBox 
+                    npc = {this.state.npc}
+                    exitDialouge={()=>{this.setState({showDialougeBox:false})}}
+                    />
+                    :null
+                }
                 <div className="map">
                     {
                         mapData[this.props.mapId].layout.map((row,i) => {

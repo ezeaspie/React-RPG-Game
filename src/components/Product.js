@@ -21,11 +21,11 @@ checkPurchaseAndUpdate = () => {
 //IE: Thank you, come again - if true => BROKE ALERT - if false
     render(){
         return(
-            <li>
-                <h2>{this.props.product.name}</h2>
-                <h2>{this.props.product.description}</h2>
-                <h2>{this.props.product.price}</h2>
-                <button onClick={this.checkPurchaseAndUpdate}>Buy</button>
+            <li className="product">
+                <p>{this.props.product.name}</p>
+                <p>{this.props.product.description}</p>
+                <p>{this.props.product.price}</p>
+                <button className="sub-button" onClick={this.checkPurchaseAndUpdate}>Buy</button>
             </li>
         )
     }

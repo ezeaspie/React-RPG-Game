@@ -293,6 +293,138 @@ class App extends Component {
     this.setState({activeStore:storeObject[0]}, ()=>{this.updateGameState(3)});
   }
 
+  handleNPCInteractions = (npcId) => {
+    let player = this.state.playerObject;
+    const NPCData = [
+      {
+          id:601,
+          name: "Ya Boy",
+          dialouge: [
+              {
+                  message : "Alright, so this my ... Drake freestyle.",
+                  options: [
+                      {
+                          name:"Listen to his rap",
+                          effect:()=>{
+                            let audio = new Audio('./audio/effects/WackAssFreestyle.mp3');
+                            audio.play();
+                            return false;
+                          }
+                      },
+                      {
+                        name:"Tell him he can't freestyle",
+                        effect:()=>{
+                          let audio = new Audio('./audio/effects/WackAssFreestyle.mp3');
+                          audio.play();
+                          return false;
+                        }
+                      },
+                      {
+                        name:"Exit",
+                        effect:()=>{
+                          let audio = new Audio('./audio/effects/WackAssFreestyle.mp3');
+                          audio.play();
+                          return false;
+                        }
+                      }
+                  ]
+              },
+          ]
+      },
+      {
+        id:602,
+        name: "Charlie",
+        dialouge: [
+          {
+            message: "Excuse me, I'm thirsty and I want something to drink. Do you have anything I could have please?",
+            options: [
+              {
+              name:"Give him Fiji Water",
+              effect:()=> {
+                let foundArray = [];
+                for (let i=0 ; i < player.inventory.length; i++){
+                  if (player.inventory[i].name === "Fiji Water"){
+                    foundArray.push(i);
+                  }
+                }
+                if(foundArray[0] === undefined){
+                  return 1;
+                }
+                player.inventory.splice(foundArray[0],1);
+                this.setState({playerObject : player});
+                return 2;
+              },
+            },
+              {
+                name:"Give him Booze",
+                effect:()=> {
+                  let foundArray = [];
+                  for (let i=0 ; i < player.inventory.length; i++){
+                    if (player.inventory[i].name === "Beer" ||player.inventory[i].name === "Whiskey"){
+                      foundArray.push(i);
+                    }
+                  }
+                  if(foundArray[0] === undefined){
+                    return 1;
+                  }
+                  player.inventory.splice(foundArray[0],1);
+                  this.setState({playerObject : player});
+                  return 3; 
+              }
+            }
+            ]
+          },
+          {
+            message: "You don't have any Fiji Water! Leave me alone loser!",
+            options: [
+              {
+                name:"Exit",
+                effect: ()=>{
+                  return false;
+                }
+              }
+            ]
+          },
+          {
+            message: "Wow thanks! I'll tell all my friends how cool you are! (-5 Street Cred, +1 Charisma)",
+            options:[
+              {
+                name:"Exit",
+                effect: ()=>{
+                  player.streetCred -= 5;
+                  player.stats[0].value += 1;
+                  this.setState({playerObject:player});
+                  return false;
+                }
+              }
+            ]
+          },
+          {
+            message: "Are you sure this is better than water? I feel a bit dizzy... (+5 Street Cred, +1 Charisma)",
+            options:[
+              {
+                name:"Exit",
+                effect: ()=>{
+                  player.streetCred += 5;
+                  player.stats[0].value += 1;
+                  this.setState({playerObject:player});
+                  return false;
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+
+    let chosenNPC = NPCData.filter((npcs)=>{
+      return npcs.id === npcId;
+    });
+    let npc = chosenNPC[0];
+
+    return npc;
+  }
+
   updateGameState = (newStateId) => {
 
     const screenStateCollection = [
@@ -312,6 +444,7 @@ class App extends Component {
       renderStoreInterface={this.renderStoreInterface}
       updatePlayerState={this.updatePlayerState}
       saveGame={this.saveToLocal}
+      handleNPCInteractions={this.handleNPCInteractions}
       />,
       ],
       <Interface 
@@ -329,9 +462,9 @@ class App extends Component {
       updateGameState={this.updateGameState}
       />,
     ]
-
     this.setState({gameState : newStateId,gameScreen : screenStateCollection[newStateId]});
   }
+
   render() {
     return (
       <div className="App">
