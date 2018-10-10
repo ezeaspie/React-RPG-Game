@@ -46,6 +46,7 @@ class Interface extends Component {
                         />
                     })}
                 </ul>
+                {this.props.jobOptions}
                 <button className="main-button" onClick={()=>{this.props.updateGameState(2)}}>Back</button>
             </div>
             

@@ -6,6 +6,7 @@ import MapUI from './components/MapUI';
 import Interface from './components/Interface';
 import Combat from './components/Combat';
 import Weapons from './gameAssets/weapons';
+import Jobs from './gameAssets/jobData';
 
 class App extends Component {
   constructor(props){
@@ -13,12 +14,14 @@ class App extends Component {
     this.state = {
       gameState : undefined,
       gameScreen : undefined,
+      gameTime: 8,
       playerObject : undefined,
       playerPosition: undefined,
       playerCurrentMap: 0,
       activeStore: undefined,
       opponentObject: undefined,
       hasSavedGame:false,
+      jobOptions:undefined,
     }
   }
 
@@ -26,13 +29,14 @@ class App extends Component {
     const playerSave = JSON.parse(localStorage.getItem( "playerSave" ));
     const playerPosition = JSON.parse(localStorage.getItem("playerPos"));
     const playerMap = JSON.parse(localStorage.getItem("playerMap"));
-
+    const currentTime = JSON.parse(localStorage.getItem("gameTime"));
     if(playerSave !== null){
       this.setState( { 
         playerObject: playerSave, 
         hasSavedGame : true,
         playerPosition,
         playerCurrentMap : playerMap, 
+        gameTime : currentTime,
       },
       ()=>{
         this.updateGameState(0);
@@ -50,9 +54,11 @@ class App extends Component {
       const playerData = this.state.playerObject;
       const playerPosition = this.state.playerPosition;
       const playerMap = this.state.playerCurrentMap;
+      const currentTime = this.state.gameTime;
       localStorage.setItem("playerSave", JSON.stringify(playerData));
       localStorage.setItem("playerPos", JSON.stringify(playerPosition));
       localStorage.setItem('playerMap', JSON.stringify(playerMap));
+      localStorage.setItem('gameTime', JSON.stringify(currentTime));
       console.log("Game Saved");
       return;
     }
@@ -75,6 +81,26 @@ class App extends Component {
     console.log(player.log);
   }
 
+  updateTime = (setTime,amount=0) => {
+    if(setTime){
+      this.setState({gameTime:amount});
+    }
+    else{
+      let time = this.state.gameTime;
+      time += amount;
+      this.setState({gameTime: time});
+    }
+  }
+  
+  checkTime = (timeToAdd) => {
+    let time = this.state.gameTime;
+    time += timeToAdd;
+    if(time <= 24){
+      return true;
+    }
+    return false;
+  }
+
   createPlayer = (name, stats) => {
     let playerObject = {
       name,
@@ -92,6 +118,8 @@ class App extends Component {
       karma: 0,
       streetCred: 0,
       log:[],
+      jobs: [],
+      npcStates:[],
       updateHealth (upOrDown,amount) {
         if(upOrDown){
           this.health += amount;
@@ -115,7 +143,70 @@ class App extends Component {
 
   renderStoreInterface = (storeId) => {
     let player = this.state.playerObject;
+    let jobObject = Jobs.filter(job => job.id === storeId);
+    let playerJob = player.jobs.filter(job => job.id === storeId);
 
+    let checkQualifications = (requirements) => {
+      let playerStats = [];
+      console.log(player.stats);
+      requirements.map((req)=>{
+        let value = player.stats.filter(stat => {return stat.name === req.name});
+        if (value[0] !== undefined){
+          playerStats.push(value[0]);
+        }
+      })
+      let array = playerStats.map((stat,i)=> {return stat.value >= requirements[i].value});
+      
+      return array.every((value)=>{return value === true});
+    }
+    let handleJobRequest = (requirements) => {
+      if(checkQualifications(requirements)){
+        console.log("Got the job!");
+
+        let playerJobObject = {
+          id: jobObject[0].id,
+          name:jobObject[0].name,
+          promotion:0,
+        }
+        let content = 
+        <li>
+          <p>Work</p>
+          <p>{jobObject[0].promotion[0].name}</p>
+          <p>{jobObject[0].promotion[0].pay}</p>
+        </li>
+        player.jobs.push(playerJobObject);
+        this.setState({playerObject: player, jobOptions: content});
+        
+        //push new job object.
+        //update state.
+      }
+      else{
+        console.log("Didnt get the job");
+        //failed to get job.
+      }
+    }
+
+    if(jobObject[0] !== undefined){
+      //Filter all requirements.
+      let requirements = jobObject[0].requirements.filter(req => req.value > 0);
+      console.log(requirements);
+      if(playerJob[0] !== undefined){
+        console.log("work");
+        //print 'work' button.
+        //check for possible promotion.
+          //if true = print button.
+      }
+      else{
+        let content = 
+        <li onClick={()=>{handleJobRequest(requirements)}}>
+          <p>Apply for a job</p>
+          <p>{jobObject[0].name}</p>
+          <p>{requirements.map((req)=>{return <span>{req.name}={req.value}</span>})}</p>
+        </li>
+        this.setState({jobOptions: content});
+        //print 'get a job' button.
+      }
+    }
     let handleConsumable = (item) => {
       let found = player.inventory.filter((inventoryItem) => {
         return inventoryItem.name === item.name;
@@ -207,6 +298,7 @@ class App extends Component {
               {
                   name: "Sleep",
                   effect: () => {
+                      this.setState({gameTime:8});
                       return(player.updateHealth(true,99999));
                   }
               }
@@ -283,7 +375,12 @@ class App extends Component {
             name: "Get into a fight",
             effect: ()=>{
               let opponent = createOpponent("Melweed",[5,10],[5,10],[5,10],[100,200],Weapons,2);
-              this.setState({opponentObject:opponent},()=>this.updateGameState(4));
+              if(this.checkTime(2)){
+                this.setState({opponentObject:opponent},()=>this.updateGameState(4));
+              }
+              else{
+                return false;
+              }
             }
           },
         ]
@@ -299,6 +396,7 @@ class App extends Component {
       {
           id:601,
           name: "Ya Boy",
+          state:0,
           dialouge: [
               {
                   message : "Alright, so this my ... Drake freestyle.",
@@ -334,7 +432,7 @@ class App extends Component {
       {
         id:602,
         name: "Charlie",
-        dialouge: [
+        dialouge: [[
           {
             message: "Excuse me, I'm thirsty and I want something to drink. Do you have anything I could have please?",
             options: [
@@ -413,7 +511,26 @@ class App extends Component {
               }
             ]
           }
-        ]
+        ],
+      [
+        {
+          message: "Thanks for that buddy.",
+            options:[
+              {
+                name:"Exit",
+                effect: ()=>{
+                  player.streetCred += 5;
+                  player.stats[0].value += 1;
+                  let state={id:602,state:1}
+                  player.npcStates.push(state);
+                  this.setState({playerObject:player});
+                  return false;
+                }
+              }
+            ]
+        }
+      ]
+      ]
       }
     ]
 
@@ -445,6 +562,7 @@ class App extends Component {
       updatePlayerState={this.updatePlayerState}
       saveGame={this.saveToLocal}
       handleNPCInteractions={this.handleNPCInteractions}
+      time={this.state.gameTime}
       />,
       ],
       <Interface 
@@ -453,6 +571,7 @@ class App extends Component {
       updateGameState = {this.updateGameState}
       playerData = {this.state.playerObject}
       updateLog={this.updatePlayerLog}
+      jobOptions={this.state.jobOptions}
       />,
       <Combat 
       updateLog={this.updatePlayerLog}
@@ -460,6 +579,7 @@ class App extends Component {
       opponent={this.state.opponentObject}
       updatePlayerState={this.updatePlayerState}
       updateGameState={this.updateGameState}
+      updateTime={this.updateTime}
       />,
     ]
     this.setState({gameState : newStateId,gameScreen : screenStateCollection[newStateId]});

@@ -86,6 +86,7 @@ class PlayerConsole extends Component {
                 <div className="console-row cr2">
                     <p>{mapData[this.props.mapId].name}</p>
                     <p>{'$' + playerData.money}</p>
+                    <p>{this.props.time + ':00'}</p>
                 </div>
                 <div className="console-row cr1">
                     <button className="main-button" onClick={this.props.saveGame}>Save</button>
