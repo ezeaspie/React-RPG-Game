@@ -21,7 +21,7 @@ class App extends Component {
       activeStore: undefined,
       opponentObject: undefined,
       hasSavedGame:false,
-      jobOptions:undefined,
+      activeJob:undefined,
     }
   }
 
@@ -143,70 +143,7 @@ class App extends Component {
 
   renderStoreInterface = (storeId) => {
     let player = this.state.playerObject;
-    let jobObject = Jobs.filter(job => job.id === storeId);
-    let playerJob = player.jobs.filter(job => job.id === storeId);
 
-    let checkQualifications = (requirements) => {
-      let playerStats = [];
-      console.log(player.stats);
-      requirements.map((req)=>{
-        let value = player.stats.filter(stat => {return stat.name === req.name});
-        if (value[0] !== undefined){
-          playerStats.push(value[0]);
-        }
-      })
-      let array = playerStats.map((stat,i)=> {return stat.value >= requirements[i].value});
-      
-      return array.every((value)=>{return value === true});
-    }
-    let handleJobRequest = (requirements) => {
-      if(checkQualifications(requirements)){
-        console.log("Got the job!");
-
-        let playerJobObject = {
-          id: jobObject[0].id,
-          name:jobObject[0].name,
-          promotion:0,
-        }
-        let content = 
-        <li>
-          <p>Work</p>
-          <p>{jobObject[0].promotion[0].name}</p>
-          <p>{jobObject[0].promotion[0].pay}</p>
-        </li>
-        player.jobs.push(playerJobObject);
-        this.setState({playerObject: player, jobOptions: content});
-        
-        //push new job object.
-        //update state.
-      }
-      else{
-        console.log("Didnt get the job");
-        //failed to get job.
-      }
-    }
-
-    if(jobObject[0] !== undefined){
-      //Filter all requirements.
-      let requirements = jobObject[0].requirements.filter(req => req.value > 0);
-      console.log(requirements);
-      if(playerJob[0] !== undefined){
-        console.log("work");
-        //print 'work' button.
-        //check for possible promotion.
-          //if true = print button.
-      }
-      else{
-        let content = 
-        <li onClick={()=>{handleJobRequest(requirements)}}>
-          <p>Apply for a job</p>
-          <p>{jobObject[0].name}</p>
-          <p>{requirements.map((req)=>{return <span>{req.name}={req.value}</span>})}</p>
-        </li>
-        this.setState({jobOptions: content});
-        //print 'get a job' button.
-      }
-    }
     let handleConsumable = (item) => {
       let found = player.inventory.filter((inventoryItem) => {
         return inventoryItem.name === item.name;
@@ -387,7 +324,9 @@ class App extends Component {
     }
     ]
     let storeObject = storeCollection.filter(object => object.id === storeId);
-    this.setState({activeStore:storeObject[0]}, ()=>{this.updateGameState(3)});
+    let jobObject = Jobs.filter(job => job.id === storeId);
+    console.log(jobObject);
+    this.setState({activeStore:storeObject[0],activeJob:jobObject[0]}, ()=>{this.updateGameState(3)});
   }
 
   handleNPCInteractions = (npcId) => {
@@ -567,11 +506,14 @@ class App extends Component {
       ],
       <Interface 
       updatePlayerState={this.updatePlayerState}
+      jobData={this.state.activeJob}
       storeData={this.state.activeStore}
       updateGameState = {this.updateGameState}
       playerData = {this.state.playerObject}
       updateLog={this.updatePlayerLog}
       jobOptions={this.state.jobOptions}
+      checkTime={this.checkTime}
+      updateTime={this.updateTime}
       />,
       <Combat 
       updateLog={this.updatePlayerLog}

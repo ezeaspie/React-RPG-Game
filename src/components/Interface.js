@@ -1,6 +1,7 @@
 import React , { Component } from 'react';
 import Product from './Product';
 import Option from './Option';
+import JobOptions from './JobOptions';
 
 class Interface extends Component {
 
@@ -46,7 +47,15 @@ class Interface extends Component {
                         />
                     })}
                 </ul>
-                {this.props.jobOptions}
+                <JobOptions 
+                updateTime={this.props.updateTime}
+                checkTime={this.props.checkTime}
+                forceRender={this.forceRender}
+                storeId={this.props.storeData.id}
+                jobData={this.props.jobData}
+                playerData={this.props.playerData}
+                updatePlayerState={this.props.updatePlayerState}
+                />
                 <button className="main-button" onClick={()=>{this.props.updateGameState(2)}}>Back</button>
             </div>
             
