@@ -36,8 +36,35 @@ let Weapons = [
         isWeapon: true,
         effect: () => {
         return {damage: 5, apCost: 5}
-      },
+      } 
       },//3
+      {
+        name:"Steel Baseball Bat",
+        description: "Lightweight and powerful, use this to hit it out of the park!",
+        price: 500,
+        isWeapon: true,
+        effect: () => {
+        return {damage: 30, apCost: 7}
+      }
+    },//4
+    {
+      name:"Dull Machete",
+      description: "Might as well use a butter knife.",
+      price: 100,
+      isWeapon: true,
+      effect: () => {
+      return {damage: 6, apCost: 4}
+    },
+  },//5
+  {
+    name:"Tribal Machete",
+    description: "Used for slicing through leaves and jungle snakes, now can be used to carve open anything you want!",
+    price: 500,
+    isWeapon: true,
+    effect: () => {
+    return {damage: 25, apCost: 5}
+  },
+},//5
 ]
 
 export default Weapons;

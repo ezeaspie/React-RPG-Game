@@ -321,7 +321,39 @@ class App extends Component {
             }
           },
         ]
-    }
+    },
+    {
+      id:404,
+      isShop: false,
+      name:"Wilson High School",
+      options: [
+        {
+          name: "Get into a fight",
+          effect: ()=>{
+            let weapons = [Weapons[0],Weapons[1],Weapons[2],Weapons[3]];
+            let opponent = createOpponent("Wilson Kid",[5,10],[5,10],[5,10],[100,200],weapons,2);
+            if(this.checkTime(2)){
+              this.setState({opponentObject:opponent},()=>this.updateGameState(4));
+            }
+            else{
+              return false;
+            }
+          }
+        },
+        {
+          name: "Study",
+          effect: ()=>{console.log("i learned")}
+        },
+        {
+          name: "Go to Class",
+          effect: ()=>{console.log("i learned")}
+        },
+        {
+          name: "Use Gym Facilities",
+          effect: ()=>{console.log("i learned")}
+        },
+      ]
+  }
     ]
     let storeObject = storeCollection.filter(object => object.id === storeId);
     let jobObject = Jobs.filter(job => job.id === storeId);
@@ -371,7 +403,7 @@ class App extends Component {
       {
         id:602,
         name: "Charlie",
-        dialouge: [[
+        dialouge: [
           {
             message: "Excuse me, I'm thirsty and I want something to drink. Do you have anything I could have please?",
             options: [
@@ -451,25 +483,6 @@ class App extends Component {
             ]
           }
         ],
-      [
-        {
-          message: "Thanks for that buddy.",
-            options:[
-              {
-                name:"Exit",
-                effect: ()=>{
-                  player.streetCred += 5;
-                  player.stats[0].value += 1;
-                  let state={id:602,state:1}
-                  player.npcStates.push(state);
-                  this.setState({playerObject:player});
-                  return false;
-                }
-              }
-            ]
-        }
-      ]
-      ]
       }
     ]
 

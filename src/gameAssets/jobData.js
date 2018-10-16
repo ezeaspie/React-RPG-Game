@@ -1,6 +1,6 @@
 const Jobs = [
     {
-        id: 443,
+        id: 402,
         name: "Gas Station Employee",
         requirements: [
             {name:"Charisma", value:10},
@@ -18,14 +18,10 @@ const Jobs = [
                 name:"Store Clerk",
                 pay: 5,
             },
-            {
-                name:"CEO of Youtube",
-                pay: 10,
-            }
         ],
     },
     {
-        id: 403,
+        id: 404,
         name: "Teacher",
         requirements: [
             {name:"Charisma", value:20},
@@ -37,7 +33,7 @@ const Jobs = [
             {name:"Money", value:0},
         ],
         increment:20,
-        shiftTime:4,
+        shiftTime:6,
         promotion: [
             {
                 name:"Subsitute Teacher",

@@ -110,6 +110,7 @@ class MapUI extends Component {
         cellArray.map((cell,cellId) => {
             let cellStyle={
                 background: `url(./images/mapTiles/${cell}.png`,
+                backgroundSize:'cover',
             }
             let tempRow = rowId;
             let tempCell = cellId;
