@@ -17,6 +17,18 @@ class JobOptions extends Component {
         this.buildContent();
     }
 
+    handleAskForPromotion = () => {
+        if(this.checkRequirements(true)){
+            let player = this.props.playerData;
+            let storeId = this.props.storeId;
+            let promotionLevel = player.jobs.filter((job)=>{return storeId === job.id});
+            promotionLevel = promotionLevel[0];
+            promotionLevel.promotion++;
+            this.props.updatePlayerState(player);
+            this.forceUpdate();
+        }
+    }
+
     handleWorkShift = (promotionLevel = 0) => {
         let player = this.props.playerData;
         let shiftTime = this.props.jobData.shiftTime;
@@ -48,10 +60,18 @@ class JobOptions extends Component {
         if(jobData.promotion[promotionLevel+1] !== undefined){
             //return something.
             //calculate requirements. 
-            let requirements = jobData.requirements.filter(requirement => requirement.value > 0);
-            requirements.forEach(requirement => {
+            let jobRequirements = jobData.requirements.filter(requirement => requirement.value > 0);
+            jobRequirements.forEach(requirement => {
+                if(requirement.value === 0){
+                    requirement.value = 0;
+                    return;
+                }
+                let base = this.props.jobData.increment;
+
                 let multiplier = promotionLevel + 1;
-                requirement.value += jobData.increment * multiplier;
+
+                requirement.value = base * multiplier;
+                requirement.value += base;
             });
 
             content = 
@@ -61,11 +81,11 @@ class JobOptions extends Component {
                     <p>{jobData.promotion[promotionLevel].name}</p>
                     <p>{jobData.promotion[promotionLevel].pay}</p>
                 </div>
-                <div>
+                <div onClick={this.handleAskForPromotion}>
                     <p>Ask for promotion</p>
                     <p>{jobData.promotion[promotionLevel+1].name}</p>
                     {
-                        requirements.map((requirement)=>{
+                        jobRequirements.map((requirement)=>{
                             return(
                             <p>
                                 <span>{requirement.name}</span>
@@ -84,6 +104,25 @@ class JobOptions extends Component {
 
     checkRequirements = (hasJob = false) => {
         let jobRequirements = this.props.jobData.requirements;
+        if(hasJob){
+            //do promotions req check.
+            let storeId = this.props.storeId;
+            let promotionLevel = this.props.playerData.jobs.filter((job)=>{return job.id === storeId});
+            promotionLevel = promotionLevel[0].promotion;
+
+            jobRequirements.forEach(requirement => {
+                if(requirement.value === 0){
+                    requirement.value = 0;
+                    return;
+                }
+                let base = this.props.jobData.increment;
+
+                let multiplier = promotionLevel + 1;
+
+                requirement.value = base * multiplier;
+                requirement.value += base;
+            });
+        }
         let playerStats = this.props.playerData.stats;
         playerStats.push({name:"Street Cred", value:this.props.playerData.streetCred});
         playerStats.push({name:"Money", value: this.props.playerData.money});
@@ -122,11 +161,12 @@ class JobOptions extends Component {
 
     buildContent(){
         if(this.props.jobData === undefined){
+            console.log("no for this place found");
             return null;
         }
         let playerJob = this.props.playerData.jobs.filter(job => this.props.jobData.id === this.props.storeId)
         if(playerJob[0] !== undefined){
-            this.setState({hasJob:true});
+            this.setState({hasJob:true, playerJobData:playerJob[0]});
             //print WORK.
             //check for promotions
             return;

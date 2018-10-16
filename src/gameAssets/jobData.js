@@ -3,8 +3,8 @@ const Jobs = [
         id: 443,
         name: "Gas Station Employee",
         requirements: [
-            {name:"Charisma", value:5},
-            {name:"Strength", value:5},
+            {name:"Charisma", value:10},
+            {name:"Strength", value:10},
             {name:"Intelligence", value:0},
             {name:"Agility",value:0},
             {name:"Luck", value:0},
@@ -28,9 +28,9 @@ const Jobs = [
         id: 403,
         name: "Teacher",
         requirements: [
-            {name:"Charisma", value:3},
+            {name:"Charisma", value:20},
             {name:"Strength", value:0},
-            {name:"Intelligence", value:3},
+            {name:"Intelligence", value:20},
             {name:"Agility",value:0},
             {name:"Luck", value:0},
             {name:"Street Cred", value:0},
