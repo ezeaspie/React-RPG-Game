@@ -5,6 +5,18 @@ import JobOptions from './JobOptions';
 
 class Interface extends Component {
 
+    constructor(props) {
+        super(props);
+        this.state = {
+            dialogBox:false,
+            dialogContent:null,
+        }
+    }
+
+    setDialougeBox = (showOrHide,content) => {
+        this.setState({dialogContent:content, dialogBox:showOrHide});
+    }
+
     forceRender = () => {
         this.forceUpdate();
     }
@@ -27,6 +39,11 @@ class Interface extends Component {
         } 
         return(
             <div className="store">
+            {
+                this.state.dialogBox?
+                this.state.dialogContent:
+                null
+            }
                 <h1>{this.props.storeData.name}</h1>
                 <h2 className="store-cash">Cash:{this.props.playerData.money}</h2>
                 <ul className="store-list products">
@@ -40,6 +57,9 @@ class Interface extends Component {
                 <ul className="store-list options">
                     {this.props.storeData.options.map((option,i)=>{
                         return <Option
+                        updateTime={this.props.updateTime}
+                        checkTime={this.props.checkTime}
+                        setDialougeBox = {this.setDialougeBox}
                         updatePlayerState = {this.props.updatePlayerState}
                         updateLog = {this.props.updateLog}
                         option={option}

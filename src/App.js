@@ -78,7 +78,6 @@ class App extends Component {
       player.log.pop();
     }
     player.log.unshift(message);
-    console.log(player.log);
   }
 
   updateTime = (setTime,amount=0) => {
@@ -152,6 +151,22 @@ class App extends Component {
       player.inventory.splice(index,1);
     }
 
+    let getRobThePlaceData = (storeRank) => {
+      let strength = player.stats[1].value;
+        let luck = player.stats[4].value;
+        let agility = player.stats[3].value;
+
+        let robChance = strength + luck + agility;
+        robChance /= 3;
+        robChance = Math.ceil(robChance);
+        robChance -= storeRank;
+
+        if(robChance < 2){
+          robChance = 2;
+        }
+        return [robChance,storeRank];
+    }
+
     let robThePlace = (storeRank) => {
         let strength = player.stats[1].value;
         let luck = player.stats[4].value;
@@ -167,13 +182,54 @@ class App extends Component {
         }
 
         let randomNum = Math.floor(Math.random() * 100);
-        console.log({randomNum,robChance}); 
-        if(robChance >= randomNum){
-            let message = "Robbery failed - Caught and went to jail.";
-            return [player,true,robChance,storeRank,message];
+        let calculateRewardMultipier = () => {
+          let rewardMultipler = 0;
+          if(storeRank > 100){
+            rewardMultipler = 5;
+            return rewardMultipler;
+          }if(storeRank >= 75){
+            rewardMultipler = 4;
+            return rewardMultipler;
+          }if(storeRank >= 50){
+            rewardMultipler = 3;
+            return rewardMultipler;
+          }if(storeRank >= 25){
+            rewardMultipler = 2;
+            return rewardMultipler;
+          }
+            rewardMultipler = 1;
+            return rewardMultipler;
         }
-        let message = "Robbery failed - Caught and went to jail.";
-        return [player,false,robChance,storeRank,message];
+
+        let rewardMultipler = calculateRewardMultipier();
+
+        let cashReward = 100 * rewardMultipler;
+        cashReward += storeRank;
+        let calculateLuckBonus = () => {
+          let rank = storeRank + 1;
+          let bonus = luck + rank;
+          return Math.floor(bonus/2);
+        }
+
+        cashReward += calculateLuckBonus();
+
+        let streetCredReward = 5 + storeRank/2;
+        streetCredReward *= rewardMultipler;
+
+        console.log(cashReward,streetCredReward);
+
+        console.log({randomNum,robChance, rewardMultipler}); 
+        if(robChance >= randomNum){
+            let message = "Robbery success - Stole some cash.";
+            player.money += cashReward;
+            player.streetCred += streetCredReward;
+            return [player,true,robChance,storeRank,message,cashReward,streetCredReward];
+        }
+        let message = "Robbery failed - Caught,robbed, and beat down in jail.";
+        let beatDownAmount = Math.floor(Math.random() * player.health);
+        player.health -= beatDownAmount;
+        player.streetCred -= streetCredReward;
+        return [player,false,robChance,storeRank,message,beatDownAmount,streetCredReward];
     }
 
     let createOpponent = (name,strRange,lckRange,agiRange,moneyRange,possibleWeapons,weaponAmount) => {
@@ -307,6 +363,7 @@ class App extends Component {
           {
             name: "Rob the Place",
             effect: ()=>{return(robThePlace(0))},
+            getData: ()=>{return(getRobThePlaceData(0))}
           },
           {
             name: "Get into a fight",
