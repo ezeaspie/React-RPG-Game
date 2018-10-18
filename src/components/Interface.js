@@ -56,7 +56,7 @@ class Interface extends Component {
                 </ul>
                 <ul className="store-list options">
                     {this.props.storeData.options.map((option,i)=>{
-                        return <Option
+                        return <Option 
                         updateTime={this.props.updateTime}
                         checkTime={this.props.checkTime}
                         setDialougeBox = {this.setDialougeBox}
