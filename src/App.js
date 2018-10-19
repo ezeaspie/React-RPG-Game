@@ -143,6 +143,27 @@ class App extends Component {
   renderStoreInterface = (storeId) => {
     let player = this.state.playerObject;
 
+    let updateStat = (charisma,strength,intelligence,agility,luck) => {
+      let statArray = [charisma,strength,intelligence,agility,luck];
+      let updatedStats = statArray.map((statChange,i) => {
+        player.stats[i].value += statChange;
+        if(statChange !== 0){
+          return {name:player.stats[i].name, value:statChange}
+        }
+        return undefined;
+        });
+        updatedStats = updatedStats.filter((stat)=>{return stat !== undefined});
+        console.log(updatedStats);
+      let message = <p>
+        {
+          updatedStats.map((stat)=>{
+              return <span>{stat.name} {stat.value>0?"+":null}{stat.value}</span>
+          })
+        }
+      </p>;
+      return [player,message];
+    }
+
     let handleConsumable = (item) => {
       let found = player.inventory.filter((inventoryItem) => {
         return inventoryItem.name === item.name;
@@ -291,7 +312,7 @@ class App extends Component {
               {
                   name: "Sleep",
                   effect: () => {
-                      this.setState({gameTime:8});
+                      this.setState({gameTime:9});
                       return(player.updateHealth(true,99999));
                   }
               }
@@ -369,7 +390,7 @@ class App extends Component {
             name: "Get into a fight",
             effect: ()=>{
               let opponent = createOpponent("Melweed",[5,10],[5,10],[5,10],[100,200],Weapons,2);
-              if(this.checkTime(2)){
+              if(this.checkTime(4)){
                 this.setState({opponentObject:opponent},()=>this.updateGameState(4));
               }
               else{
@@ -399,15 +420,32 @@ class App extends Component {
         },
         {
           name: "Study",
-          effect: ()=>{console.log("i learned")}
+          effect: ()=>{
+            if(this.checkTime(4)){
+              this.updateTime(false,2);
+              return updateStat(0,0,1,0,0);
+            }
+            else{return [player, <p>It's too late!</p>]}}
         },
         {
           name: "Go to Class",
-          effect: ()=>{console.log("i learned")}
+          effect: ()=>{
+            if(this.checkTime(8)){
+              this.updateTime(false,4);
+              return updateStat(0,0,3,0,0);
+            }
+            else{return [player, <p>It's too late!</p>]}
+          }
         },
         {
           name: "Use Gym Facilities",
-          effect: ()=>{console.log("i learned")}
+          effect: ()=>{
+            if(this.checkTime(4)){
+              this.updateTime(false,3);
+              return updateStat(0,0,1,0,0);
+            }
+            else{return [player, <p>It's too late!</p>]}
+          }
         },
       ]
   }

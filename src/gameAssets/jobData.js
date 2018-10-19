@@ -12,11 +12,11 @@ const Jobs = [
             {name:"Money", value:0},
         ],//chr,str,int,lck,sC,mon
         increment:10,
-        shiftTime:4,
+        shiftTime:6,
         promotion: [
             {
                 name:"Store Clerk",
-                pay: 5,
+                pay: 3,
             },
         ],
     },
@@ -33,31 +33,31 @@ const Jobs = [
             {name:"Money", value:0},
         ],
         increment:20,
-        shiftTime:6,
+        shiftTime:8,
         promotion: [
             {
                 name:"Subsitute Teacher",
-                pay: 10,
+                pay: 7,
             },
             {
                 name:"Teacher Assistant",
-                pay: 15,
+                pay: 10,
             },
             {
                 name:"English Teacher",
-                pay: 20,
+                pay: 12,
             },
             {
                 name:"Department Dean",
-                pay: 25,
+                pay: 15,
             },
             {
                 name:"Principal",
-                pay: 35,
+                pay: 17,
             },
             {
                 name:"District Superintendent",
-                pay: 45,
+                pay: 20,
             },
         ], 
     }
