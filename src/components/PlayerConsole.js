@@ -76,8 +76,8 @@ class PlayerConsole extends Component {
                         <p>{playerData.health} / {playerData.maxHealth}</p>
                         <meter className="health-bar"
                         min="0"  
-                        low={CalculateMeterParams(0)}
-                        high={CalculateMeterParams(1)}
+                        low={CalculateMeterParams(1)}
+                        high={CalculateMeterParams(0)}
                         optimum={CalculateMeterParams(2)}
                         value={playerData.health} 
                         max={playerData.maxHealth}></meter>

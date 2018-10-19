@@ -119,16 +119,6 @@ class App extends Component {
       log:[],
       jobs: [],
       npcStates:[],
-      updateHealth (upOrDown,amount) {
-        if(upOrDown){
-          this.health += amount;
-          return [this,this.health];
-        }
-        if(!upOrDown){
-          this.health -= amount;
-          return [this,this.health];
-        }
-      },
     }
     this.setState({playerObject : playerObject,playerPosition : [15,3], playerCurrentMap:0},()=>{
       this.updateGameState(2);
@@ -138,6 +128,13 @@ class App extends Component {
 
   updatePlayerPosition = (newPosition) => {
     this.setState({playerPosition:newPosition});
+  }
+
+  updatePlayerHealth = (amount) => {
+    let player = this.state.playerObject;
+    player.health += amount;
+
+    return player;
   }
 
   renderStoreInterface = (storeId) => {
@@ -313,7 +310,7 @@ class App extends Component {
                   name: "Sleep",
                   effect: () => {
                       this.setState({gameTime:9});
-                      return(player.updateHealth(true,99999));
+                      return([this.updatePlayerHealth(20),<p>Restored 20 health</p>]);
                   }
               }
           ]
@@ -330,7 +327,8 @@ class App extends Component {
               isConsumable:true,
               effect() {
                 handleConsumable(this);
-                return(player.updateHealth(true,5));
+                
+                return([]);
               },
             },
             {
@@ -340,7 +338,7 @@ class App extends Component {
               isConsumable:true,
               effect: () => {
                 handleConsumable(this);
-                return(player.updateHealth(true,10))
+                this.setState({playerObject:this.updatePlayerHealth(10)});
               },
             },
           ],
@@ -365,7 +363,7 @@ class App extends Component {
             isConsumable:true,
             effect() {
               handleConsumable(this);
-              return(player.updateHealth(true,5));
+              this.setState({playerObject:this.updatePlayerHealth(5)});
             },
           },
           Weapons[0],
@@ -376,7 +374,7 @@ class App extends Component {
             isConsumable:true,
             effect: () => {
               handleConsumable(this);
-              return(player.updateHealth(true,10))
+              this.setState({playerObject:this.updatePlayerHealth(10)});
             },
           },
         ],

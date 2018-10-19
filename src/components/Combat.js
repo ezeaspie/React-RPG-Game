@@ -285,7 +285,7 @@ class Combat extends Component {
                 <p>The people heard how you beat down ${opponent.main.name} and you earned 5 street cred!</p>
                 <button className="main-button" onClick={()=>{
                     this.props.updatePlayerState(player.main);
-                    this.props.updateTime(false,2);
+                    this.props.updateTime(false,4);
                     this.props.updateGameState(3);
                 }}>Ok</button>
             </div>
@@ -318,14 +318,14 @@ class Combat extends Component {
                 player.main.money -= lowMoneyLost;
                 player.main.streetCred -= highCredLost;
                 this.props.updatePlayerState(player.main);
-                this.props.updateTime(false,2);
+                this.props.updateTime(false,4);
                 this.props.updateGameState(3);
             }}>Give {opponent.main.name} ${lowMoneyLost} and lose {highCredLost} street cred.</button>
             <button className="main-button" onClick={()=>{
                 player.main.money -= highMoneyLost;
                 player.main.streetCred -= lowCredLost;
                 this.props.updatePlayerState(player.main);
-                this.props.updateTime(false,2);
+                this.props.updateTime(false,4);
                 this.props.updateGameState(3);
             }}>Give {opponent.main.name} ${highMoneyLost} and lose {lowCredLost} street cred.</button>
             </div>
