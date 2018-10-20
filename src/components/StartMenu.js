@@ -48,7 +48,7 @@ class StartMenu extends Component {
                     <h2>You are a cube. You decide who you want to be in this weird town</h2>
                     <p>For some reason you never existed before ... but now you do ... and that's what matters</p>
                     <p>Load a previously made game or start a new one and earn stat points, money, and karma to become the person you want to be.</p>
-                    <button onClick = {()=>{this.updateStartMenu(0)}}>Back</button>
+                    <button className="main-button" onClick = {()=>{this.updateStartMenu(0)}}>Back</button>
                     </div>
                 });                
             }

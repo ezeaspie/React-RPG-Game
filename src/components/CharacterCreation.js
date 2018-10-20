@@ -85,7 +85,7 @@ class CharacterCreation extends Component {
 
                 {
                     this.state.stats.map((stat,i)=>{
-                        return <StatModifier statData = {stat} avaliable = {this.state.avaliblePoints} total={this.state.totalPoints} statId ={i} updateStat = {this.updateStat} key={i} />
+                        return <StatModifier statData = {stat} currentStatId={i} avaliable = {this.state.avaliblePoints} total={this.state.totalPoints} statId ={i} updateStat = {this.updateStat} key={i} />
                     })
                 }
                 <p className="points">{this.state.avaliblePoints} Points Avaliable</p>
