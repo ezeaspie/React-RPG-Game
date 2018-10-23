@@ -102,6 +102,7 @@ class PlayerConsole extends Component {
                     <p>{mapData[this.props.mapId].name}</p>
                     <p>{'$' + playerData.money}</p>
                     <p>{this.props.time + ':00'}</p>
+                    <p>Day {this.props.currentDay}</p>
                 </div>
                 <div className="console-row cr1">
                     <div className="save-group" style={{position:"relative"}}>

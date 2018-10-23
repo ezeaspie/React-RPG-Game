@@ -8,6 +8,7 @@ handleRobbery = () => {
         if(this.props.option.name === "Rob the Place"){
          this.props.updateLog(returnValue[4]); 
          this.props.updateTime(false,6);
+         //ADD 7 TO TOTAL DAYS.
          let content = 
          <div className="message-box" style={{background:"rgba(0,0,0,.75)", color: "#E7DFDD"}}>
             <p>{returnValue[4]}</p>

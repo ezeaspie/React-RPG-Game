@@ -23,6 +23,7 @@ class App extends Component {
       hasSavedGame:false,
       activeJob:undefined,
       consumableItems: undefined,
+      currentDay: 1,
     }
   }
 
@@ -32,6 +33,7 @@ class App extends Component {
     const playerPosition = JSON.parse(localStorage.getItem("playerPos"));
     const playerMap = JSON.parse(localStorage.getItem("playerMap"));
     const currentTime = JSON.parse(localStorage.getItem("gameTime"));
+    const currentDay = JSON.parse(localStorage.getItem("currentDay"));
     if(playerSave !== null){
       this.setState( { 
         playerObject: playerSave, 
@@ -39,6 +41,7 @@ class App extends Component {
         playerPosition,
         playerCurrentMap : playerMap, 
         gameTime : currentTime,
+        currentDay,
       },
       ()=>{
         this.updateGameState(0);
@@ -57,10 +60,12 @@ class App extends Component {
       const playerPosition = this.state.playerPosition;
       const playerMap = this.state.playerCurrentMap;
       const currentTime = this.state.gameTime;
+      const currentDay = this.state.currentDay;
       localStorage.setItem("playerSave", JSON.stringify(playerData));
       localStorage.setItem("playerPos", JSON.stringify(playerPosition));
       localStorage.setItem('playerMap', JSON.stringify(playerMap));
       localStorage.setItem('gameTime', JSON.stringify(currentTime));
+      localStorage.setItem('currentDay', JSON.stringify(currentDay));
       console.log("Game Saved");
       return;
     }
@@ -76,17 +81,17 @@ class App extends Component {
       {
         name:"Bagel",
         id:0,
-        description: "Warm and toasted, covered with cream cheese.",
+        description: "Warm and toasted, covered with cream cheese. +5 Health",
         price: 5,
         isConsumable:true,
         effect() {
-          return([]);
+          return this.updatePlayerHealth(5);
         },
       },
       {
         name:"Fiji Water",
         id:1,
-        description: "Water that shows you're living the high life.",
+        description: "Water that shows you're living the high life. +10 Health",
         price: 10,
         isConsumable:true,
         effect: () => {
@@ -100,7 +105,7 @@ class App extends Component {
         price: 10,
         isConsumable:true,
         effect() {
-          this.setState({playerObject:this.updatePlayerHealth(5)});
+          //update playerStats. Return updated object.
         },
       },
       {
@@ -351,7 +356,7 @@ class App extends Component {
               {
                   name: "Sleep",
                   effect: () => {
-                      this.setState({gameTime:9});
+                      this.setState({gameTime:9, currentDay: this.state.currentDay + 1});
                       return([this.updatePlayerHealth(20),<p>Restored 20 health</p>]);
                   }
               }
@@ -613,6 +618,7 @@ class App extends Component {
       saveGame={this.saveToLocal}
       handleNPCInteractions={this.handleNPCInteractions}
       time={this.state.gameTime}
+      currentDay={this.state.currentDay}
       />,
       ],
       <Interface 
