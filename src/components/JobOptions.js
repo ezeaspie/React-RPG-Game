@@ -168,20 +168,17 @@ class JobOptions extends Component {
         let playerJob = this.props.playerData.jobs.filter(job => this.props.jobData.id === this.props.storeId)
         if(playerJob[0] !== undefined){
             this.setState({hasJob:true, playerJobData:playerJob[0]});
-            //print WORK.
-            //check for promotions
             return;
         }
         let requirements = this.props.jobData.requirements.filter(requirement => requirement.value > 0);
         let content=
-            <div className="" onClick={this.handleGetJob}>
+            <div className="option" onClick={this.handleGetJob}>
             <p>Get a job</p>
             <p>{this.props.jobData.name}</p>
             {requirements.map((requirement)=>{
-                return <p key={"job"+requirement.name}><span>{requirement.name}</span><span>{requirement.value}</span></p>
+                return <p key={"job"+requirement.name}><span>{requirement.name}</span><span> {requirement.value}</span></p>
             })}
             </div>
-            //this.setState({jobContent:content});
         return content
     }
     render(){

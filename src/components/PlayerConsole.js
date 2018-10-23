@@ -20,10 +20,6 @@ class PlayerConsole extends Component {
         this.forceUpdate();
     }
 
-    handlePlayerInventoryChanges = (newObj) => {
-        this.props.updatePlayerState(newObj);
-    }
-
     handleSave = () => {
         this.props.saveGame();
         let hiddenLayer= {
@@ -115,23 +111,29 @@ class PlayerConsole extends Component {
                     <button className="main-button" onClick={()=>{this.setState({isStatOverlay:true})}}>Show Stats</button>
                     <button className="main-button" onClick={()=>{this.setState({isInventoryOverlay:true})}}>Show Inventory</button>
                 </div>
-                
-                <StatsOverlay 
-                handleClick = {this.updateOverlayState}
-                updatePlayerState={this.props.updatePlayerState}
-                style={this.state.isStatOverlay ? overlayStyle : hiddenStyle} 
-                stats={playerData.stats}
-                />
-
-                <InventoryOverlay 
-                forceRender = {this.forceRender}
-                handleClick = {this.updateOverlayState}
-                updatePlayerState={this.props.updatePlayerState}
-                style={this.state.isInventoryOverlay ? overlayStyle : hiddenStyle}
-                inventoryData={playerData.inventory}
-                handlePlayerInventoryChanges = {this.handlePlayerInventoryChanges}
-                />
-    
+                {
+                    this.state.isInventoryOverlay?
+                    <InventoryOverlay 
+                    consumableItems = {this.props.consumableItems}
+                    playerData = {this.props.playerData}
+                    forceRender = {this.forceRender}
+                    handleClick = {this.updateOverlayState}
+                    updatePlayerState={this.props.updatePlayerState}
+                    style={overlayStyle}
+                    inventoryData={playerData.inventory}
+                    />:
+                    null
+                }
+                {
+                    this.state.isStatOverlay?
+                    <StatsOverlay 
+                    handleClick = {this.updateOverlayState}
+                    updatePlayerState={this.props.updatePlayerState}
+                    style={this.state.isStatOverlay ? overlayStyle : hiddenStyle} 
+                    stats={playerData.stats}
+                    />:
+                    null
+                }
             </div>
         )
     }

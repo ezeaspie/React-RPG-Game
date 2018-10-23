@@ -22,10 +22,12 @@ class App extends Component {
       opponentObject: undefined,
       hasSavedGame:false,
       activeJob:undefined,
+      consumableItems: undefined,
     }
   }
 
   componentWillMount = () => {
+    this.setInventoryList();
     const playerSave = JSON.parse(localStorage.getItem( "playerSave" ));
     const playerPosition = JSON.parse(localStorage.getItem("playerPos"));
     const playerMap = JSON.parse(localStorage.getItem("playerMap"));
@@ -68,6 +70,53 @@ class App extends Component {
     getAndSetData();
    }
 
+   setInventoryList = () => {
+    const consumableItems = 
+    [
+      {
+        name:"Bagel",
+        id:0,
+        description: "Warm and toasted, covered with cream cheese.",
+        price: 5,
+        isConsumable:true,
+        effect() {
+          return([]);
+        },
+      },
+      {
+        name:"Fiji Water",
+        id:1,
+        description: "Water that shows you're living the high life.",
+        price: 10,
+        isConsumable:true,
+        effect: () => {
+          return this.updatePlayerHealth(10);
+        },
+      },
+      {
+        name:"Beer",
+        id:2,
+        description: "It tastes like dishwater.",
+        price: 10,
+        isConsumable:true,
+        effect() {
+          this.setState({playerObject:this.updatePlayerHealth(5)});
+        },
+      },
+      {
+        name:"Whiskey",
+        id:3,
+        description: "This drink packs a bigger punch.",
+        price: 20,
+        isConsumable:true,
+        effect: () => {
+          this.setState({playerObject:this.updatePlayerHealth(10)});
+        },
+      },
+    ]
+
+    this.setState({consumableItems});
+   }
   updatePlayerState = (playerObject) => {
     this.setState({playerObject});
   }
@@ -133,6 +182,7 @@ class App extends Component {
   updatePlayerHealth = (amount) => {
     let player = this.state.playerObject;
     player.health += amount;
+    console.log(player);
 
     return player;
   }
@@ -159,14 +209,6 @@ class App extends Component {
         }
       </p>;
       return [player,message];
-    }
-
-    let handleConsumable = (item) => {
-      let found = player.inventory.filter((inventoryItem) => {
-        return inventoryItem.name === item.name;
-      });
-      let index = player.inventory.indexOf(found[0]);
-      player.inventory.splice(index,1);
     }
 
     let getRobThePlaceData = (storeRank) => {
@@ -320,27 +362,8 @@ class App extends Component {
           isShop: true,
           name:"Shell Gas Station",
           inventory: [
-            {
-              name:"Bagel",
-              description: "Warm and toasted, covered with cream cheese.",
-              price: 5,
-              isConsumable:true,
-              effect() {
-                handleConsumable(this);
-                return([]);
-              },
-            },
-            {
-              name:"Fiji Water",
-              description: "Water that shows you're living the high life.",
-              price: 10,
-              isConsumable:true,
-              effect: () => {
-                handleConsumable(this);
-                console.log(this);
-                this.setState({playerObject:this.updatePlayerHealth(10)});
-              },
-            },
+            this.state.consumableItems[0],
+            this.state.consumableItems[1],
           ],
           options: [
             {
@@ -355,27 +378,9 @@ class App extends Component {
         isShop: true,
         name:"9:30 Bar",
         inventory: [
-          {
-            name:"Beer",
-            description: "Warm and toasted, covered with cream cheese.",
-            price: 10,
-            isConsumable:true,
-            effect() {
-              handleConsumable(this);
-              this.setState({playerObject:this.updatePlayerHealth(5)});
-            },
-          },
+          this.state.consumableItems[2],
           Weapons[0],
-          {
-            name:"Whiskey",
-            description: "Water that shows you're living the high life.",
-            price: 20,
-            isConsumable:true,
-            effect: () => {
-              handleConsumable(this);
-              this.setState({playerObject:this.updatePlayerHealth(10)});
-            },
-          },
+          this.state.consumableItems[3],
         ],
         options: [
           {
@@ -599,6 +604,7 @@ class App extends Component {
       [
       <MapUI 
       character = {this.state.playerObject} 
+      consumableItems = {this.state.consumableItems}
       mapId = {this.state.playerCurrentMap}
       playerPosition = {this.state.playerPosition}
       updatePlayerPosition={this.updatePlayerPosition}
