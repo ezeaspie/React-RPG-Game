@@ -51,7 +51,7 @@ class Interface extends Component {
                     this.props.storeData.isShop ?
                     productList
                      :
-                    <li>loserpool is overrated.</li>
+                    null
                     }
                 </ul>
                 <ul className="store-list options">

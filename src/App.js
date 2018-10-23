@@ -179,8 +179,8 @@ class App extends Component {
         robChance = Math.ceil(robChance);
         robChance -= storeRank;
 
-        if(robChance < 2){
-          robChance = 2;
+        if(robChance < 1){
+          robChance = 1;
         }
         return [robChance,storeRank];
     }
@@ -327,7 +327,6 @@ class App extends Component {
               isConsumable:true,
               effect() {
                 handleConsumable(this);
-                
                 return([]);
               },
             },
@@ -338,6 +337,7 @@ class App extends Component {
               isConsumable:true,
               effect: () => {
                 handleConsumable(this);
+                console.log(this);
                 this.setState({playerObject:this.updatePlayerHealth(10)});
               },
             },
@@ -345,9 +345,8 @@ class App extends Component {
           options: [
             {
               name: "Rob the Place",
-              effect: ()=>{
-                return robThePlace(0);
-              },
+              effect: ()=>{return(robThePlace(0))},
+              getData: ()=>{return(getRobThePlaceData(0))}
             }
           ]
       },
@@ -381,8 +380,8 @@ class App extends Component {
         options: [
           {
             name: "Rob the Place",
-            effect: ()=>{return(robThePlace(0))},
-            getData: ()=>{return(getRobThePlaceData(0))}
+            effect: ()=>{return(robThePlace(20))},
+            getData: ()=>{return(getRobThePlaceData(20))}
           },
           {
             name: "Get into a fight",

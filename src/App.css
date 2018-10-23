@@ -491,3 +491,9 @@ button:disabled,
   transition:ease .3s all;
   cursor: help;
 }
+
+@keyframes goUpAndFade {
+  0% {top: 0em; opacity:1}
+  50%{opacity: .8}
+  100%{top: -3em; opacity: 0}
+}

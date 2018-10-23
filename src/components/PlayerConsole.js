@@ -12,6 +12,7 @@ class PlayerConsole extends Component {
         this.state = {
             isStatOverlay:false,
             isInventoryOverlay:false,
+            playSaveAnimation:null,
         }
     } 
 
@@ -21,6 +22,24 @@ class PlayerConsole extends Component {
 
     handlePlayerInventoryChanges = (newObj) => {
         this.props.updatePlayerState(newObj);
+    }
+
+    handleSave = () => {
+        this.props.saveGame();
+        let hiddenLayer= {
+            position:"absolute",
+            textAlign:"center",
+            width:"100%",
+            animationName: "goUpAndFade",
+            animationDuration: "2s",
+            animationIterationCount: "1",
+        }
+
+        let mainContent = <div className="saved-message" style={hiddenLayer}>Saved!</div>
+
+        this.setState({playSaveAnimation: mainContent});
+
+        setTimeout(()=>{this.setState({playSaveAnimation:null})},2000);
     }
 
     updateOverlayState = (whichState) => {
@@ -89,7 +108,10 @@ class PlayerConsole extends Component {
                     <p>{this.props.time + ':00'}</p>
                 </div>
                 <div className="console-row cr1">
-                    <button className="main-button" onClick={this.props.saveGame}>Save</button>
+                    <div className="save-group" style={{position:"relative"}}>
+                        {this.state.playSaveAnimation}
+                        <button className="main-button" onClick={this.handleSave}>Save</button>
+                    </div>
                     <button className="main-button" onClick={()=>{this.setState({isStatOverlay:true})}}>Show Stats</button>
                     <button className="main-button" onClick={()=>{this.setState({isInventoryOverlay:true})}}>Show Inventory</button>
                 </div>
