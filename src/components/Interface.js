@@ -57,6 +57,7 @@ class Interface extends Component {
                 <ul className="store-list options">
                     {this.props.storeData.options.map((option,i)=>{
                         return <Option 
+                        forceRender = {this.forceRender}
                         updateTime={this.props.updateTime}
                         checkTime={this.props.checkTime}
                         setDialougeBox = {this.setDialougeBox}
@@ -75,6 +76,7 @@ class Interface extends Component {
                 jobData={this.props.jobData}
                 playerData={this.props.playerData}
                 updatePlayerState={this.props.updatePlayerState}
+                setDialougeBox = {this.setDialougeBox}
                 />
                 <button className="main-button" onClick={()=>{this.props.updateGameState(2)}}>Back</button>
             </div>

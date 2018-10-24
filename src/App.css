@@ -339,7 +339,9 @@ button:disabled,
 .urgent {
   background: rgb(207, 36, 36);
 }
-
+.store {
+  width: 85%;
+}
 .store-list {
   list-style-type: none;
   display: -ms-flexbox;
@@ -474,6 +476,7 @@ button:disabled,
 }
 
 .about {
+  display: -ms-flexbox;
   display: flex;
   display: inline-block;
   background: #4717F6;
@@ -483,17 +486,61 @@ button:disabled,
   text-align: center;
   margin-left:.5em;
   opacity: .8;
+  -webkit-transition:ease .3s all;
+  -o-transition:ease .3s all;
   transition:ease .3s all;
 }
 
 .about:hover {
   opacity: 1;
+  -webkit-transition:ease .3s all;
+  -o-transition:ease .3s all;
   transition:ease .3s all;
   cursor: help;
+}
+
+@-webkit-keyframes goUpAndFade {
+  0% {top: 0em; opacity:1}
+  50%{opacity: .8}
+  100%{top: -3em; opacity: 0}
 }
 
 @keyframes goUpAndFade {
   0% {top: 0em; opacity:1}
   50%{opacity: .8}
   100%{top: -3em; opacity: 0}
+}
+
+.products,.options {
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-direction: row;
+      flex-direction: row;
+}
+
+.option{
+  display: flex;
+  min-width: 40%;
+}
+
+.product {
+  position: relative;
+  min-width:25%;
+}
+
+.product-description {
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  position: absolute;
+  width: 100%;
+  top:50%;
+  bottom:-50%;
+  right:0;
+  text-align: center;
+  font-size:.9em;
+  background: rgba(0,0,0,.8);
+  color:#E7DFDD;
+  padding: .5em 1em;
+  text-align: center;
+  border-radius: 5px;
 }

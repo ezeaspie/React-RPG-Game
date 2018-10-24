@@ -16,6 +16,7 @@ handleRobbery = () => {
             <p>StreetCred: +{returnValue[6]}</p>
             <button className="sub-button" onClick ={()=>{this.props.setDialougeBox(false,null)}}>Ok</button>
         </div>
+        this.props.forceRender();
         if(!returnValue[1]){
             this.props.updateTime(true,24);
             content = 
@@ -49,6 +50,7 @@ runEffectandUpdate = () => {
             <button className="sub-button" onClick ={()=>{this.props.setDialougeBox(false,null)}}>Ok</button>
         </div>
         this.props.setDialougeBox(true,content);
+        this.props.forceRender();
     }
 
 }

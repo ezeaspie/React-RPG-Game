@@ -149,20 +149,23 @@ class JobOptions extends Component {
                 this.props.updatePlayerState(player);
                 let jobOb = player.jobs.filter(job => {return job.id === newJob.id});
                 this.setState({playerJobData: jobOb[0], hasJob:true});
-                //create new button
             }
             else{
                 console.log("You already have a job here.");
             }
         }else{
-            console.log("You do not meet the requirements to get a job here.");
+            let content = 
+            <div className="message-box" style={{background:"rgba(0,0,0,.75)", color: "#E7DFDD"}}>
+                <p>You do not meet the requirements to get a job here.</p>
+                <button className="sub-button" onClick ={()=>{this.props.setDialougeBox(false,null)}}>Ok</button>
+            </div>
+            this.props.setDialougeBox(true,content);
         }
         
     }
 
     buildContent(){
         if(this.props.jobData === undefined){
-            console.log("no for this place found");
             return null;
         }
         let playerJob = this.props.playerData.jobs.filter(job => this.props.jobData.id === this.props.storeId)

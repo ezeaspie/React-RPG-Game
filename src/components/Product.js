@@ -1,6 +1,12 @@
 import React, { Component } from 'react';
 
 class Product extends Component {
+    constructor(props){
+        super(props);
+        this.state = {
+            isInfoVisible:false,
+        }
+    }
     componentWillReceiveProps({someProp}) {
         this.setState({...this.state,someProp})
       }
@@ -22,9 +28,17 @@ checkPurchaseAndUpdate = () => {
     render(){
         return(
             <li className="product">
-                <p>{this.props.product.name}</p>
-                <p>{this.props.product.description}</p>
-                <p>{this.props.product.price}</p>
+                <h3>{this.props.product.name} 
+                <span 
+                onMouseOver={()=>{this.setState({isInfoVisible:true})}}
+                onMouseOut={()=>{this.setState({isInfoVisible:false})}}
+                className="about"> ?</span>
+                </h3>
+                <div className="product-description" 
+                style={this.state.isInfoVisible?{opacity:"1",transition:"ease .3s opacity",zIndex:99}:{opacity:"0",transition:"ease .3s opacity",zIndex:-99}}>
+                    {this.props.product.description}
+                </div>
+                <p>$ {this.props.product.price}</p>
                 <button className="sub-button" onClick={this.checkPurchaseAndUpdate}>Buy</button>
             </li>
         )

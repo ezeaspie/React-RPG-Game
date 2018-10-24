@@ -81,27 +81,27 @@ class App extends Component {
       {
         name:"Bagel",
         id:0,
-        description: "Warm and toasted, covered with cream cheese. +5 Health",
+        description: <div><p>Warm and toasted, covered with cream cheese.</p><p>+5 Health</p></div>,
         price: 5,
         isConsumable:true,
-        effect() {
-          return this.updatePlayerHealth(5);
+        effect: () => {
+          return this.updatePlayerHealth(5,false);
         },
       },
       {
         name:"Fiji Water",
         id:1,
-        description: "Water that shows you're living the high life. +10 Health",
+        description: <div><p>Why spend so much on water? Because you can that's why.</p>+10 Health<p></p></div>,
         price: 10,
         isConsumable:true,
         effect: () => {
-          return this.updatePlayerHealth(10);
+          return this.updatePlayerHealth(10,false);
         },
       },
       {
         name:"Beer",
         id:2,
-        description: "It tastes like dishwater. +1 Charisma, -1 Intelligence",
+        description: <div><p>Tastes like dishwater but good enough for what you need.</p><p>+1 Charisma -1 Intelligence</p></div>,
         price: 10,
         isConsumable:true,
         effect:()=> {
@@ -111,7 +111,7 @@ class App extends Component {
       {
         name:"Whiskey",
         id:3,
-        description: "This drink packs a bigger punch. +2 Charisma, -1 Intelligence",
+        description: <div><p>This drink packs a bigger punch.</p><p>+2 Charisma -1 Intelligence</p></div>,
         price: 40,
         isConsumable:true,
         effect: () => {
@@ -121,7 +121,7 @@ class App extends Component {
       {
         name:"Goldschläger",
         id:4,
-        description: "With gold flakes floating around, the drink of choice to show off your cash while drinking! +10 Charisma, -4 Intelligence, +1 Street Cred",
+        description: <div><p>With gold flakes floating around, the drink of choice to show off your cash while drinking!</p><p>+10 Charisma -4 Intelligence +1 StreetCred</p></div>,
         price: 500,
         isConsumable:true,
         effect: () => {
@@ -194,10 +194,21 @@ class App extends Component {
     this.setState({playerPosition:newPosition});
   }
 
-  updatePlayerHealth = (amount) => {
+  updatePlayerHealth = (amount,exceedMax) => {
     let player = this.state.playerObject;
-    player.health += amount;
-    console.log(player);
+    if(exceedMax){
+      player.health += amount;
+    }
+    else{
+      let limit = player.maxHealth;
+      if(player.health + amount >= limit){
+        player.health = player.maxHealth;
+      }
+      else{
+        player.health += amount;
+      }
+    }
+    console.log(player.health);
 
     return player;
   }
@@ -379,7 +390,7 @@ class App extends Component {
                   name: "Sleep",
                   effect: () => {
                       this.setState({gameTime:9, currentDay: this.state.currentDay + 1});
-                      return([this.updatePlayerHealth(20),<p>Restored 20 health</p>]);
+                      return([this.updatePlayerHealth(20,false),<p>Restored 20 health</p>]);
                   }
               }
           ]
@@ -645,6 +656,7 @@ class App extends Component {
       />,
       ],
       <Interface 
+      time={this.state.gameTime}
       updatePlayerState={this.updatePlayerState}
       jobData={this.state.activeJob}
       storeData={this.state.activeStore}
