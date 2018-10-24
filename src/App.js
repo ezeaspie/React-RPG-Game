@@ -101,23 +101,33 @@ class App extends Component {
       {
         name:"Beer",
         id:2,
-        description: "It tastes like dishwater.",
+        description: "It tastes like dishwater. +1 Charisma, -1 Intelligence",
         price: 10,
         isConsumable:true,
-        effect() {
-          //update playerStats. Return updated object.
+        effect:()=> {
+          return this.updatePlayerStat(1,0,-1,0,0,0);
         },
       },
       {
         name:"Whiskey",
         id:3,
-        description: "This drink packs a bigger punch.",
-        price: 20,
+        description: "This drink packs a bigger punch. +2 Charisma, -1 Intelligence",
+        price: 40,
         isConsumable:true,
         effect: () => {
-          this.setState({playerObject:this.updatePlayerHealth(10)});
+          return this.updatePlayerStat(2,0,-1,0,0,0);
         },
       },
+      {
+        name:"Goldschläger",
+        id:4,
+        description: "With gold flakes floating around, the drink of choice to show off your cash while drinking! +10 Charisma, -4 Intelligence, +1 Street Cred",
+        price: 500,
+        isConsumable:true,
+        effect: () => {
+          return this.updatePlayerStat(10,0,-4,0,0,1);
+        }
+      }
     ]
 
     this.setState({consumableItems});
@@ -189,6 +199,18 @@ class App extends Component {
     player.health += amount;
     console.log(player);
 
+    return player;
+  }
+
+  updatePlayerStat = (charisma,strength,intelligence,agility,luck,streetCred)=> {
+    let player = this.state.playerObject;
+    let statArray = [charisma,strength,intelligence,agility,luck];
+    player.streetCred += streetCred;
+    let newArray = player.stats.map((stat,i) => {
+      let newVal = stat.value += statArray[i];
+      return {name:stat.name,value:newVal}
+    });
+    player.stats = newArray;
     return player;
   }
 
@@ -386,6 +408,7 @@ class App extends Component {
           this.state.consumableItems[2],
           Weapons[0],
           this.state.consumableItems[3],
+          this.state.consumableItems[4],
         ],
         options: [
           {
