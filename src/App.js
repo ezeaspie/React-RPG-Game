@@ -7,6 +7,7 @@ import Interface from './components/Interface';
 import Combat from './components/Combat';
 import Weapons from './gameAssets/weapons';
 import Jobs from './gameAssets/jobData';
+import Jail from './components/Jail';
 
 class App extends Component {
   constructor(props){
@@ -213,6 +214,19 @@ class App extends Component {
     return player;
   }
 
+  goToJail = (bail,streetCred,luckReward,storeRank) => {
+    let JailElement = <Jail
+    bail = {bail}
+    luckReward={luckReward}
+    streetCred = {streetCred}
+    player={this.state.playerObject}
+    updateGameState={this.updateGameState}
+    updatePlayerState={this.updatePlayerState}
+    storeRank={storeRank}
+    />
+    this.setState({gameState : 5,gameScreen : JailElement});
+  }
+
   updatePlayerStat = (charisma,strength,intelligence,agility,luck,streetCred)=> {
     let player = this.state.playerObject;
     let statArray = [charisma,strength,intelligence,agility,luck];
@@ -309,26 +323,24 @@ class App extends Component {
           return Math.floor(bonus/2);
         }
 
-        cashReward += calculateLuckBonus();
+        let luckReward = calculateLuckBonus();
 
         let streetCredReward = 5 + storeRank/2;
         streetCredReward *= rewardMultipler;
 
-        console.log(cashReward,streetCredReward);
+        console.log({robChance:robChance>=randomNum});
 
-        console.log({randomNum,robChance, rewardMultipler}); 
         if(robChance >= randomNum){
             let message = "Robbery success - Stole some cash.";
-            player.money += cashReward;
+            player.money += cashReward + luckReward;
             player.streetCred += streetCredReward;
-            return [player,true,robChance,storeRank,message,cashReward,streetCredReward];
+            return [player,true,robChance,storeRank,message,cashReward+luckReward,streetCredReward];
         }
-        let message = "Robbery failed - Caught,robbed, and beat down in jail.";
-        let beatDownAmount = Math.floor(Math.random() * player.health);
-        player.health -= beatDownAmount;
-        player.streetCred -= streetCredReward;
-        return [player,false,robChance,storeRank,message,beatDownAmount,streetCredReward];
-    }
+        else{
+          let message = "Robbery failed - Caught,robbed, and beat down in jail.";
+          return [player,false,robChance,storeRank,message,cashReward,streetCredReward,luckReward,storeRank];  
+        }
+      }
 
     let createOpponent = (name,strRange,lckRange,agiRange,moneyRange,possibleWeapons,weaponAmount) => {
       //name='string',RANGE = [lowVal,highVal],possibleWeapons=Array of all wieldable, weaponAmount=how much weapons to give opponent
@@ -489,7 +501,7 @@ class App extends Component {
           }
         },
       ]
-  }
+    },
     ]
     let storeObject = storeCollection.filter(object => object.id === storeId);
     let jobObject = Jobs.filter(job => job.id === storeId);
@@ -656,6 +668,7 @@ class App extends Component {
       />,
       ],
       <Interface 
+      goToJail={this.goToJail}
       time={this.state.gameTime}
       updatePlayerState={this.updatePlayerState}
       jobData={this.state.activeJob}
@@ -675,6 +688,7 @@ class App extends Component {
       updateGameState={this.updateGameState}
       updateTime={this.updateTime}
       />,
+      <Jail />,
     ]
     this.setState({gameState : newStateId,gameScreen : screenStateCollection[newStateId]});
   }

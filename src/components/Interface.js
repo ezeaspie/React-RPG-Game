@@ -57,6 +57,8 @@ class Interface extends Component {
                 <ul className="store-list options">
                     {this.props.storeData.options.map((option,i)=>{
                         return <Option 
+                        goToJail = {this.props.goToJail}
+                        updateGameState={this.props.updateGameState}
                         forceRender = {this.forceRender}
                         updateTime={this.props.updateTime}
                         checkTime={this.props.checkTime}

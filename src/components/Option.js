@@ -19,13 +19,8 @@ handleRobbery = () => {
         this.props.forceRender();
         if(!returnValue[1]){
             this.props.updateTime(true,24);
-            content = 
-        <div className="message-box" style={{background:"rgba(0,0,0,.75)", color: "#E7DFDD"}}>
-            <p>{returnValue[4]}</p>
-            <p>Health: -{returnValue[5]}</p>
-            <p>StreetCred: -{returnValue[6]}</p>
-            <button className="sub-button" onClick ={()=>{this.props.setDialougeBox(false,null)}}>Ok</button>
-        </div>
+            this.props.goToJail(returnValue[5],returnValue[6],returnValue[7],returnValue[8]);
+            return;
         }
         this.props.setDialougeBox(true,content);
         this.props.updatePlayerState(returnValue[0]);
@@ -46,7 +41,7 @@ runEffectandUpdate = () => {
         this.props.updatePlayerState(returnValue[0]);
         let content = 
         <div className="message-box" style={{background:"rgba(0,0,0,.75)", color: "#E7DFDD"}}>
-            <p>{returnValue[1]}</p>
+            <div>{returnValue[1]}</div>
             <button className="sub-button" onClick ={()=>{this.props.setDialougeBox(false,null)}}>Ok</button>
         </div>
         this.props.setDialougeBox(true,content);
