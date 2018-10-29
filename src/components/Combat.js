@@ -4,6 +4,7 @@ class Combat extends Component {
     constructor(props){
         super(props);
         this.state = {
+            canChump:true,
             dialogBox:false,
             dialogContent:null,
             player: {
@@ -26,6 +27,7 @@ class Combat extends Component {
     }
 
     componentWillMount(){
+        this.setState({canChump:this.props.canChump});
         this.calculateAttackPoints();
         if(this.state.player.main.stats[3].value < this.state.opponent.main.stats[3].value) {
             this.setState({activePlayer:false});
@@ -348,7 +350,7 @@ class Combat extends Component {
                 }
                 <div className="combat-buttons">
                     <button disabled={!this.state.activePlayer} className="main-button" onClick={()=>{this.handleEndOfAttack(true)}}>Pass</button>
-                    <button disabled={!this.state.activePlayer} className="main-button" onClick={this.handleFlee}>Chump out</button>
+                    <button disabled={!this.state.activePlayer || !this.state.canChump} className="main-button" onClick={this.handleFlee}>Chump out</button>
                 </div>
                 
                 <div className="combat-player main">

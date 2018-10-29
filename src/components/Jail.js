@@ -1,4 +1,5 @@
 import React , { Component } from 'react';
+import Weapons from '../gameAssets/weapons';
 
 class Jail extends Component {
 
@@ -10,6 +11,8 @@ class Jail extends Component {
             bail: 0,
             money: 0,
             attemptedCharisma:false,
+            playerInventory: undefined,
+            possibleItems:undefined,
         }
     }
 
@@ -19,7 +22,105 @@ class Jail extends Component {
             <p>You got caught and taken to jail. Pay, fight, or wait your way out or take this time to try to make a little extra money and Street Cred...</p>
             <button className="sub-button" onClick ={()=>{this.setState({dialogBox:false,dialogContent:null})}}>Ok</button>
         </div>
-        this.setState({dialogBox:true,dialogContent:content,bail:this.props.bail-this.props.luckReward, money:this.props.player.money});
+        this.setState({playerInventory:this.props.player.inventory,dialogBox:true,dialogContent:content,bail:this.props.bail-this.props.luckReward, money:this.props.player.money});
+    }
+
+    handleSalesAttempt = () => {
+        let inventory = this.state.playerInventory;
+        let possibleItems = inventory.filter((item,i)=>{
+            return (
+                item.id === 2 || item.id === 3 || item.id === 4
+            )
+        });
+        console.log(possibleItems); 
+
+        let handleSale = (item,saleChance,charisma,intelligence) => {
+            let randomNum = Math.floor(Math.random() * 100);
+            if(saleChance >= randomNum){
+                console.log(true);
+                for (var i = 0; i < inventory.length; i++) {
+                if (inventory[i].id === item.id) {
+                    console.log("true",i);
+                    inventory.splice(i,1);
+                    this.setState({playerInventory:inventory,money:this.state.money + (item.price*1.5)},()=>{
+                        let player = this.props.player;
+                        player.inventory = this.state.playerInventory;
+                        player.money = this.state.money;
+                        this.props.updatePlayerState(player);
+                        this.handleSalesAttempt();
+                    });
+                    break;
+                    }
+                }
+            }
+            else{
+                let maxRemoved = this.state.possibleItems.length - Math.floor(((intelligence + charisma)/2)/20);
+                console.log(maxRemoved);
+                let counter = 0;
+                for (let i = 0; i < inventory.length; i++) {
+                    console.log(i);
+                    if (inventory[i].id === 2 || inventory[i].id === 3 || inventory[i].id === 4) {
+                        inventory.splice(i,1);
+                        counter++;
+                        i--;
+                        console.log({counter,index:i},inventory.length);
+                        if(counter >= maxRemoved){
+                            break;
+                        }
+                    }
+                }
+                this.setState({playerInventory:inventory},()=>{
+                    let player = this.props.player;
+                    player.inventory = this.state.playerInventory;
+                    this.props.updatePlayerState(player);
+                    this.handleSalesAttempt();
+                });
+            }
+        }
+
+        this.setState({possibleItems},()=>{
+            let player = this.props.player;
+            let charisma = player.stats[0].value;
+            let intelligence = player.stats[2].value;
+            let agility = player.stats[3].value;
+
+            let saleChance = Math.floor((charisma + intelligence + agility)/3);
+
+            let content = 
+            <div className="message-box" style={{background:"rgba(0,0,0,.75)", color: "#E7DFDD"}}>
+                <p>You can sell these items</p>
+                <p>{saleChance}% chance of success</p>
+                {
+                    this.state.possibleItems.map((item)=>{
+                        return <button onClick = {()=>handleSale(item,saleChance,charisma,intelligence)}className="main-button">{item.name} for ${item.price * 1.5}</button>
+                    })
+                }
+                <button className="sub-button" onClick ={()=>{this.setState({dialogBox:false,dialogContent:null})}}>Ok</button>
+            </div> 
+
+            this.setState({dialogBox:true,dialogContent:content});
+        });
+    }
+
+    handleCombat = () => {
+        if(this.props.storeRank === 100) {
+            this.props.createOpponent("Warden Dasse",[90,100],[50,70],[50,65],[700,1000],Weapons,3,true,false);
+            return;
+        }
+        if(this.props.storeRank >= 75) {
+            this.props.createOpponent("Prison Overseer", [50,70],[30,60],[50,60],[450,800],Weapons,3,true,false);
+            return;
+        }
+        if(this.props.storeRank >= 50) {
+            this.props.createOpponent("Head Guard", [30,50],[30,60],[35,45],[200,450],Weapons,3,true,false);
+            return;
+        }
+        if(this.props.storeRank >= 25) {
+            this.props.createOpponent("Senior Guard", [10,35],[20,40],[10,30],[150,300],Weapons,2,true,false);
+            return;
+        }
+        this.props.createOpponent("Guard",[5,10],[5,10],[5,10],[50,150],Weapons,2,true,false);
+        return;
     }
 
     setDialougeBox = (showOrHide,content) => {
@@ -28,18 +129,6 @@ class Jail extends Component {
 
     forceRender = () => {
         this.forceUpdate();
-    }
-
-    payBail = () => {
-        //Check if Player can pay bail.
-        //If TRUE => Deduct money
-        this.props.updateGameState(2)//and update state.
-        //ELSE
-        //show message.
-    }
-
-    updateBail = () => {
-        //Make bail amount higher or lower.
     }
 
     handlePayBail = () => {
@@ -96,12 +185,35 @@ class Jail extends Component {
         }
     }
 
+    handleWait = () => {
+        this.props.setDay(7);
+        this.props.updateGameState(2);
+    }
+
     render(){
         let charismaCheck = this.props.player.stats[0].value;
         charismaCheck -= this.props.storeRank;
         if(charismaCheck<1){
             charismaCheck = 1;
         }
+        let findOpponentName = () => {
+            if(this.props.storeRank === 100) {
+                return "Warden Dasse";
+            }
+            if(this.props.storeRank >= 75) {
+                return "Prison Overseer";
+            }
+            if(this.props.storeRank >= 50) {
+                return "Head Guard";
+            }
+            if(this.props.storeRank >= 25) {
+                return "Senior Guard";
+            }
+            return "Guard"
+        }
+        let opponentName=findOpponentName();
+
+        
         
         return(
             <div className="store">
@@ -110,7 +222,7 @@ class Jail extends Component {
                 {this.state.dialogBox?this.state.dialogContent:null}
                 <ul className="store-list options">
                     <li className="option" onClick={this.handlePayBail}>Pay Bail of ${this.state.bail}</li>
-                    <li className="option">Sell Commodities</li>
+                    <li className="option" onClick={this.handleSalesAttempt}>Sell Commodities</li>
                     <li 
                     className="option"
                     onClick={this.state.attemptedCharisma?()=>{
@@ -125,7 +237,8 @@ class Jail extends Component {
                         <p>Try to talk your way out</p>
                         <p>{charismaCheck}% chance of success</p>
                     </li>
-                    <li className="option">Fight your way out</li>
+                    <li className="option" onClick={this.handleCombat}><p>Fight your way out</p><p>vs. {opponentName}</p></li>
+                    <li className="option" onClick={this.handleWait}><p>Wait out your 7 day sentence</p></li>
                 </ul>
             </div>
             

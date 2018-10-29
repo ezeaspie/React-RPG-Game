@@ -21,6 +21,7 @@ class App extends Component {
       playerCurrentMap: 0,
       activeStore: undefined,
       opponentObject: undefined,
+      canChump:true,
       hasSavedGame:false,
       activeJob:undefined,
       consumableItems: undefined,
@@ -145,6 +146,10 @@ class App extends Component {
     player.log.unshift(message);
   }
 
+  setDay = (amount) => {
+    this.setState({currentDay:this.state.currentDay + amount});
+  }
+
   updateTime = (setTime,amount=0) => {
     if(setTime){
       this.setState({gameTime:amount});
@@ -216,15 +221,82 @@ class App extends Component {
 
   goToJail = (bail,streetCred,luckReward,storeRank) => {
     let JailElement = <Jail
+    createOpponent={this.createOpponent}
+    checkTime={this.checkTime}
     bail = {bail}
+    updateOpponent={this.updateOpponent}
     luckReward={luckReward}
     streetCred = {streetCred}
     player={this.state.playerObject}
     updateGameState={this.updateGameState}
     updatePlayerState={this.updatePlayerState}
     storeRank={storeRank}
+    setDay={this.setDay}
     />
     this.setState({gameState : 5,gameScreen : JailElement});
+  }
+
+  updateOpponent = (opponentObject) => {
+    this.setState({opponentObject});
+  }
+
+  createOpponent = (name,strRange,lckRange,agiRange,moneyRange,possibleWeapons,weaponAmount,updateState=false,canChump=true) => {
+    //name='string',RANGE = [lowVal,highVal],possibleWeapons=Array of all wieldable, weaponAmount=how much weapons to give opponent
+    let valueFromRange = (min,max) => {
+        return Math.floor(Math.random()*(max-min+1)+min);
+    }
+
+    let chooseWeapons = () => {
+      let equippedWeapons = [];
+      for(var i=0; i < weaponAmount; i++){
+        let selectedWeaponIndex = valueFromRange(0,possibleWeapons.length-1);
+        equippedWeapons.push(possibleWeapons[selectedWeaponIndex]);
+        possibleWeapons.splice(selectedWeaponIndex, 1);
+        console.log(possibleWeapons); 
+      }
+      return equippedWeapons;
+    }
+    
+    let opponent = {
+      name,
+      stats : [
+        {
+            name: "Charisma",
+            value:3,
+        },
+        {
+            name: "Strength",
+            value:valueFromRange(strRange[0],strRange[1]),
+        },
+        {
+            name: "Intelligence",
+            value:5,
+        },
+        {
+            name: "Agility",
+            value:valueFromRange(agiRange[0],agiRange[1]),
+        },
+        {
+            name: "Luck",
+            value:valueFromRange(lckRange[0],lckRange[1]),
+        }
+    ],
+      inventory: chooseWeapons(),
+      money: valueFromRange(moneyRange[0],moneyRange[1]),
+      health: 100,
+      maxHealth: 100,
+    }
+    if(!canChump){
+      this.setState({canChump:false});
+    }
+    else{
+      this.setState({canChump:true});
+    }
+    if(updateState){
+      this.setState({opponentObject:opponent},()=>this.updateGameState(4));
+      return;
+    }
+    return opponent;
   }
 
   updatePlayerStat = (charisma,strength,intelligence,agility,luck,streetCred)=> {
@@ -342,56 +414,6 @@ class App extends Component {
         }
       }
 
-    let createOpponent = (name,strRange,lckRange,agiRange,moneyRange,possibleWeapons,weaponAmount) => {
-      //name='string',RANGE = [lowVal,highVal],possibleWeapons=Array of all wieldable, weaponAmount=how much weapons to give opponent
-      let valueFromRange = (min,max) => {
-          return Math.floor(Math.random()*(max-min+1)+min);
-      }
-
-      let chooseWeapons = () => {
-        let equippedWeapons = [];
-        for(var i=0; i < weaponAmount; i++){
-          let selectedWeaponIndex = valueFromRange(0,possibleWeapons.length-1);
-          equippedWeapons.push(possibleWeapons[selectedWeaponIndex]);
-          possibleWeapons.splice(selectedWeaponIndex, 1);
-          console.log(possibleWeapons); 
-        }
-        return equippedWeapons;
-      }
-      
-      let opponent = {
-        name,
-        stats : [
-          {
-              name: "Charisma",
-              value:3,
-          },
-          {
-              name: "Strength",
-              value:valueFromRange(strRange[0],strRange[1]),
-          },
-          {
-              name: "Intelligence",
-              value:5,
-          },
-          {
-              name: "Agility",
-              value:valueFromRange(agiRange[0],agiRange[1]),
-          },
-          {
-              name: "Luck",
-              value:valueFromRange(lckRange[0],lckRange[1]),
-          }
-      ],
-        inventory: chooseWeapons(),
-        money: valueFromRange(moneyRange[0],moneyRange[1]),
-        health: 100,
-        maxHealth: 100,
-      }
-      console.log(opponent);
-      return opponent;
-    }
-
     const storeCollection = [
       {
           id:401,
@@ -442,7 +464,7 @@ class App extends Component {
           {
             name: "Get into a fight",
             effect: ()=>{
-              let opponent = createOpponent("Melweed",[5,10],[5,10],[5,10],[100,200],Weapons,2);
+              let opponent = this.createOpponent("Melweed",[5,10],[5,10],[5,10],[100,200],Weapons,2);
               if(this.checkTime(4)){
                 this.setState({opponentObject:opponent},()=>this.updateGameState(4));
               }
@@ -462,7 +484,7 @@ class App extends Component {
           name: "Get into a fight",
           effect: ()=>{
             let weapons = [Weapons[0],Weapons[1],Weapons[2],Weapons[3]];
-            let opponent = createOpponent("Wilson Kid",[5,10],[5,10],[5,10],[100,200],weapons,2);
+            let opponent = this.createOpponent("Wilson Kid",[5,10],[5,10],[5,10],[100,200],weapons,2);
             if(this.checkTime(2)){
               this.setState({opponentObject:opponent},()=>this.updateGameState(4));
             }
@@ -502,6 +524,19 @@ class App extends Component {
         },
       ]
     },
+    {
+      id:405,
+      isShop: false,
+      name:"Bank",
+      inventory: [],
+      options: [
+        {
+          name: "Rob the Place",
+          effect: ()=>{return(robThePlace(100))},
+          getData: ()=>{return(getRobThePlaceData(100))}
+        },
+      ]
+  },
     ]
     let storeObject = storeCollection.filter(object => object.id === storeId);
     let jobObject = Jobs.filter(job => job.id === storeId);
@@ -687,6 +722,7 @@ class App extends Component {
       updatePlayerState={this.updatePlayerState}
       updateGameState={this.updateGameState}
       updateTime={this.updateTime}
+      canChump={this.state.canChump}
       />,
       <Jail />,
     ]
