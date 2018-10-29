@@ -168,7 +168,9 @@ class JobOptions extends Component {
         if(this.props.jobData === undefined){
             return null;
         }
-        let playerJob = this.props.playerData.jobs.filter(job => this.props.jobData.id === this.props.storeId)
+        console.log(this.props.jobData.id, this.props.storeId);
+        let playerJob = this.props.playerData.jobs.filter(job => {return job.id === this.props.storeId});
+        
         if(playerJob[0] !== undefined){
             this.setState({hasJob:true, playerJobData:playerJob[0]});
             return;
