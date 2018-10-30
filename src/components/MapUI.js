@@ -90,7 +90,7 @@ class MapUI extends Component {
         document.getElementById(yID+xID).classList.add("playerPosition");
         console.log(document.getElementById(yID+xID).classList);
         document.getElementById(oldPositionY + oldPositionX).classList.remove("playerPosition");
-        document.getElementById(oldPositionY + oldPositionX).style.background = `url(./images/mapTiles/${mapData[this.props.mapId].layout[oldPositionYNum][oldPositionXNum]}.png)`;
+        document.getElementById(oldPositionY + oldPositionX).style.backgroundImage = `url(./images/mapTiles/${mapData[this.props.mapId].layout[oldPositionYNum][oldPositionXNum]}.png)`;
 
         this.setState({currentPosition:newPosition});
     }
@@ -109,8 +109,7 @@ class MapUI extends Component {
         let cells = [];
         cellArray.map((cell,cellId) => {
             let cellStyle={
-                background: `url(./images/mapTiles/${cell}.png`,
-                backgroundSize:'cover',
+                backgroundImage: `url(./images/mapTiles/${cell}.png`,
             }
             let tempRow = rowId;
             let tempCell = cellId;
@@ -132,6 +131,7 @@ class MapUI extends Component {
                 id={tempRow.toString() + tempCell.toString()}
                 key={tempRow.toString() + tempCell.toString()} 
                 className="cell playerPosition" 
+                style={cellStyle}
                 ></div>
             }
             cells.push(newCell)

@@ -68,9 +68,8 @@ ul {
 .cell {
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
-  border:solid 1px;
-  padding: 1em;
-  background-size:contain;
+  padding: 1.1em;
+  background-size:cover;
 }
 
 .main-button {
@@ -562,4 +561,39 @@ button:disabled,
   top:12.5%;
   left: 12.5%;
   border-radius:3px;
+}
+
+
+meter:-moz-meter-optimum::-moz-meter-bar {
+    background: #6DC06D;
+  border-radius: 3px;
+}
+meter:-moz-meter-sub-optimum::-moz-meter-bar {
+    background:  #FFFF66;
+  border-radius: 3px;
+}
+meter:-moz-meter-sub-sub-optimum::-moz-meter-bar {
+    background:  #AD3232;
+  border-radius:3px;
+}
+
+meter {
+  /* Firefox */
+  background: none; /* Required to get rid of the default background property */
+  background-color: rgba(0,0,0,0.3); 
+  border:none;
+  border-radius:3px;
+
+}
+meter:-webkit-meter-optimum-value::-webkit-meter-bar {
+  background: #6DC06D;
+border-radius: 3px;
+}
+meter:-webkit-meter-suboptimum-value::-webkit-meter-bar {
+  background:  #FFFF66;
+border-radius: 3px;
+}
+meter:-webkit-meter-even-less-good-value::-webkit-meter-bar {
+  background:  #AD3232;
+border-radius:3px;
 }

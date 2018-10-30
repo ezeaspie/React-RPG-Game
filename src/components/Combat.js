@@ -340,6 +340,28 @@ class Combat extends Component {
     render(){
         let player = this.state.player;
         let opponent = this.state.opponent;
+
+        let CalculateMeterParams = (highOrLow,isPlayer) => {
+            let playerData = undefined;
+            if(isPlayer){
+                playerData = player;
+            }
+            else{
+                playerData = opponent;
+            }
+            console.log(playerData);
+            let low = playerData.main.maxHealth/3;
+            let high = low * 2;
+            let optimum = playerData.main.maxHealth-5;
+
+            if(highOrLow === 0) {
+                return Math.ceil(high);
+            }
+            if(highOrLow === 1){
+                return Math.ceil(low);
+            }
+            return Math.ceil(optimum);
+        }
         return(
             <div className="combat">
                 {
@@ -357,7 +379,13 @@ class Combat extends Component {
                         <h1 className="combat-name">{player.main.name}</h1>
                         <div className="meter-section">
                             <p className="combat-health">{player.main.health}/{player.main.maxHealth} HP</p>
-                            <meter className="combat-health-meter"value={player.main.health} min="0" max={player.main.maxHealth}></meter>    
+                            <meter className="combat-health-meter"
+                            value={player.main.health} 
+                            low={CalculateMeterParams(1,true)}
+                            high={CalculateMeterParams(0,true)}
+                            optimum={CalculateMeterParams(2,true)}
+                            min="0" 
+                            max={player.main.maxHealth}></meter>    
                         </div>
                         <div className="meter-section">
                             <p className="combat-ap">{player.attackPoints}/{player.maxAttackPoints} AP</p>
@@ -395,7 +423,13 @@ class Combat extends Component {
                 <div className="combat-info">
                     <h1 className="combat-name">{opponent.main.name}</h1>
                     <p className="combat-health">{opponent.main.health}/{opponent.main.maxHealth} HP</p>
-                    <meter className="combat-health-meter"value={opponent.main.health} min="0" max={opponent.main.maxHealth}></meter>
+                    <meter 
+                    className="combat-health-meter"
+                    value={opponent.main.health} 
+                    low={CalculateMeterParams(1,false)}
+                    high={CalculateMeterParams(0,false)}
+                    optimum={CalculateMeterParams(2,false)}
+                    min="0" max={opponent.main.maxHealth}></meter>
                     <p className="combat-ap">{opponent.attackPoints}/{opponent.maxAttackPoints} AP</p>
                     <meter className="combat-ap-meter" value={opponent.attackPoints} min="0" max={opponent.maxAttackPoints}></meter>
                 </div>
