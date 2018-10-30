@@ -272,8 +272,7 @@ class Combat extends Component {
         let player = this.state.player;
         let opponent = this.state.opponent;
         if(isPlayer){
-            //Play you died message.
-            alert("GAME OVER YOU DIED HAHAHAHA");
+            this.props.updateGameState(6);
         }
         else{
             //Play Opponent Died message.

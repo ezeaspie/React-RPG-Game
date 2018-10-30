@@ -8,6 +8,7 @@ import Combat from './components/Combat';
 import Weapons from './gameAssets/weapons';
 import Jobs from './gameAssets/jobData';
 import Jail from './components/Jail';
+import Death from './components/Death';
 
 class App extends Component {
   constructor(props){
@@ -54,6 +55,22 @@ class App extends Component {
     }
     this.updateGameState(0);
     return;
+  }
+
+  retrieveSave = () => {
+    const playerSave = JSON.parse(localStorage.getItem( "playerSave" ));
+    const playerPosition = JSON.parse(localStorage.getItem("playerPos"));
+    const playerMap = JSON.parse(localStorage.getItem("playerMap"));
+    const currentTime = JSON.parse(localStorage.getItem("gameTime"));
+    const currentDay = JSON.parse(localStorage.getItem("currentDay"));
+    this.setState( { 
+      playerObject: playerSave, 
+      hasSavedGame : true,
+      playerPosition,
+      playerCurrentMap : playerMap, 
+      gameTime : currentTime,
+      currentDay,
+    });
   }
 
   saveToLocal = (position = null) => {
@@ -314,7 +331,7 @@ class App extends Component {
   renderStoreInterface = (storeId) => {
     let player = this.state.playerObject;
 
-    let updateStat = (charisma,strength,intelligence,agility,luck) => {
+    let updateStat = (charisma,strength,intelligence,agility,luck,money,streetCred) => {
       let statArray = [charisma,strength,intelligence,agility,luck];
       let updatedStats = statArray.map((statChange,i) => {
         player.stats[i].value += statChange;
@@ -324,14 +341,22 @@ class App extends Component {
         return undefined;
         });
         updatedStats = updatedStats.filter((stat)=>{return stat !== undefined});
+        if(money !== 0){
+          player.money += money;
+          updatedStats.push({name:"Money", value:money});
+        }
+        if(streetCred !== 0){
+          player.streetCred += streetCred;
+          updatedStats.push({name:"StreetCred", value:streetCred});
+        }
         console.log(updatedStats);
-      let message = <p>
+      let message = <div>
         {
           updatedStats.map((stat)=>{
-              return <span>{stat.name} {stat.value>0?"+":null}{stat.value}</span>
+              return <p style={{textAlign:"center"}}>{stat.name} {stat.value>0?"+":null}{stat.value}</p>
           })
         }
-      </p>;
+      </div>;
       return [player,message];
     }
 
@@ -496,18 +521,21 @@ class App extends Component {
         {
           name: "Study",
           effect: ()=>{
-            if(this.checkTime(4)){
-              this.updateTime(false,2);
+            if(this.checkTime(6)){
+              this.updateTime(false,6);
               return updateStat(0,0,1,0,0);
             }
             else{return [player, <p>It's too late!</p>]}}
         },
         {
-          name: "Go to Class",
+          name: "Go to Class for $25",
           effect: ()=>{
             if(this.checkTime(8)){
-              this.updateTime(false,4);
-              return updateStat(0,0,3,0,0);
+              if(this.state.playerObject.money >= 25){
+                this.updateTime(false,8);
+                return updateStat(0,0,3,0,0,-25,0);
+              }
+             return [player, <p>You don't have enough money</p>] 
             }
             else{return [player, <p>It's too late!</p>]}
           }
@@ -516,7 +544,7 @@ class App extends Component {
           name: "Use Gym Facilities",
           effect: ()=>{
             if(this.checkTime(4)){
-              this.updateTime(false,3);
+              this.updateTime(false,4);
               return updateStat(0,0,1,0,0);
             }
             else{return [player, <p>It's too late!</p>]}
@@ -725,6 +753,12 @@ class App extends Component {
       canChump={this.state.canChump}
       />,
       <Jail />,
+      <Death 
+      days={this.state.currentDay}
+      playerData={this.state.playerObject}
+      updateGameState={this.updateGameState}
+      retrieveSave={this.retrieveSave}
+      />,
     ]
     this.setState({gameState : newStateId,gameScreen : screenStateCollection[newStateId]});
   }

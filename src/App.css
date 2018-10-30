@@ -519,6 +519,7 @@ button:disabled,
 }
 
 .option{
+  display: -ms-flexbox;
   display: flex;
   min-width: 40%;
 }
@@ -543,4 +544,22 @@ button:disabled,
   padding: .5em 1em;
   text-align: center;
   border-radius: 5px;
+}
+
+.playerPosition{
+  position: relative;
+}
+.playerPosition::after{
+  content: "";
+  color:#fff;
+  position: absolute;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  background: orange;
+  border:solid 1px orange;
+  width: 75%;
+  height: 75%;
+  top:12.5%;
+  left: 12.5%;
+  border-radius:3px;
 }

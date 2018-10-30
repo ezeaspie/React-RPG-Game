@@ -33,22 +33,23 @@ class MapUI extends Component {
 
         //Check for offScreen position
         let key=event.key;
-        if (key === 'ArrowUp') {
+        console.log(key);
+        if (key === 'ArrowUp' || key=== 'w') {
             if(positionY - 1 > -1){
                 positionY--;
             }
         }
-        if (key === 'ArrowDown') {
+        if (key === 'ArrowDown' || key=== 's') {
             if(positionY + 1 < 20){
                 positionY++;
             }
         }
-        if (key === 'ArrowLeft') {
+        if (key === 'ArrowLeft' || key=== "a") {
             if (positionX - 1 > -1) {
                 positionX--;
             }
         }
-        if (key === 'ArrowRight') {
+        if (key === 'ArrowRight'|| key === 'd') {
             if (positionX + 1 < 20) {
                 positionX++;
             }
@@ -86,7 +87,9 @@ class MapUI extends Component {
     }
         //Execute function to update upper state.
         let newPosition = [positionY, positionX];
-        document.getElementById(yID+xID).style.background = "#000";
+        document.getElementById(yID+xID).classList.add("playerPosition");
+        console.log(document.getElementById(yID+xID).classList);
+        document.getElementById(oldPositionY + oldPositionX).classList.remove("playerPosition");
         document.getElementById(oldPositionY + oldPositionX).style.background = `url(./images/mapTiles/${mapData[this.props.mapId].layout[oldPositionYNum][oldPositionXNum]}.png)`;
 
         this.setState({currentPosition:newPosition});
@@ -102,9 +105,6 @@ class MapUI extends Component {
      }
 
     createCellRow = (cellArray,rowId) => {
-        let playerPositionStyle = {
-            background:'#000',
-        }
 
         let cells = [];
         cellArray.map((cell,cellId) => {
@@ -131,8 +131,8 @@ class MapUI extends Component {
                 newCell = <div
                 id={tempRow.toString() + tempCell.toString()}
                 key={tempRow.toString() + tempCell.toString()} 
-                className="cell" 
-                style={playerPositionStyle}></div>
+                className="cell playerPosition" 
+                ></div>
             }
             cells.push(newCell)
             return true;
