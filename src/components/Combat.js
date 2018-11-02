@@ -349,7 +349,6 @@ class Combat extends Component {
             else{
                 playerData = opponent;
             }
-            console.log(playerData);
             let low = playerData.main.maxHealth/3;
             let high = low * 2;
             let optimum = playerData.main.maxHealth-5;

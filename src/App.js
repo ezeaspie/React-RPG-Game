@@ -231,7 +231,6 @@ class App extends Component {
         player.health += amount;
       }
     }
-    console.log(player.health);
 
     return player;
   }
@@ -523,7 +522,7 @@ class App extends Component {
           effect: ()=>{
             if(this.checkTime(6)){
               this.updateTime(false,6);
-              return updateStat(0,0,1,0,0);
+              return updateStat(0,0,1,0,0,0,0);
             }
             else{return [player, <p>It's too late!</p>]}}
         },
@@ -545,7 +544,7 @@ class App extends Component {
           effect: ()=>{
             if(this.checkTime(4)){
               this.updateTime(false,4);
-              return updateStat(0,0,1,0,0);
+              return updateStat(0,1,0,0,0,0,0);
             }
             else{return [player, <p>It's too late!</p>]}
           }
@@ -568,7 +567,6 @@ class App extends Component {
     ]
     let storeObject = storeCollection.filter(object => object.id === storeId);
     let jobObject = Jobs.filter(job => job.id === storeId);
-    console.log(jobObject);
     this.setState({activeStore:storeObject[0],activeJob:jobObject[0]}, ()=>{this.updateGameState(3)});
   }
 

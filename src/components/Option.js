@@ -52,7 +52,6 @@ runEffectandUpdate = () => {
 
 calculateRobChance = () => {
         let chance = this.props.option.getData();
-        console.log(chance);
         return <div>
             <p>{this.props.option.name} - {chance[0]}% chance of success</p>
             <p>Store Difficulty : {chance[1]}</p>
@@ -66,7 +65,6 @@ calculateRobChance = () => {
             isRobbery = true;
             content = this.calculateRobChance();
         }
-        console.log(isRobbery);
         return(
             <li 
             className="option" 

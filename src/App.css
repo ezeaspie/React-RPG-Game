@@ -597,3 +597,69 @@ meter:-webkit-meter-even-less-good-value::-webkit-meter-bar {
   background:  #AD3232;
 border-radius:3px;
 }
+
+.stats-overlay{
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-direction: column;
+      flex-direction: column;
+  -ms-flex-line-pack: center;
+      align-content: center;
+  -ms-flex-align: center;
+      align-items: center;
+  padding-top:10%;
+}
+
+.stats-overlay li{
+  display: -ms-flexbox;
+  display: flex;
+  padding: 1em;
+  width:50%;
+  -ms-flex-pack: justify;
+      justify-content: space-between;
+  border:solid 2px #E7DFDD;
+  background: rgba(255,255,255,.2);
+  border-radius:5px;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  margin: 10px 0;
+  color:#E7DFDD;
+}
+
+.stats-overlay li p{
+  margin: 0 1em;
+}
+
+.instructionList {
+  margin: 0;
+  padding: 0;
+}
+
+.instructionList li{
+  list-style-type: none;
+}
+
+.instructionList .content {
+  padding: 1em;
+}
+
+.instructionList li h2{
+  list-style-type: none;
+border:solid 1px #E7DFDD;
+  border-radius: 2px;
+  padding: .5em;
+  background: rgba(255,255,255,.4);
+  -webkit-transition:ease .5s all;
+  -o-transition:ease .5s all;
+  transition:ease .5s all;
+  margin: .1em 0 ;
+}
+
+.instructionList li h2:hover {
+  color: #4717F6;
+  cursor: pointer;
+    background: rgba(255,255,255,.6);
+      -webkit-transition:ease .5s all;
+      -o-transition:ease .5s all;
+      transition:ease .5s all;
+}

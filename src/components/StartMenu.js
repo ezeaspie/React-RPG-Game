@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import Instructions from './Instructions';
 
 class StartMenu extends Component {
 
@@ -45,9 +46,7 @@ class StartMenu extends Component {
             if (newOption === 1){ //Instructions
                 this.setState({html: 
                     <div className = "instructions">
-                    <h2>You are a cube. You decide who you want to be in this weird town</h2>
-                    <p>For some reason you never existed before ... but now you do ... and that's what matters</p>
-                    <p>Load a previously made game or start a new one and earn stat points, money, and karma to become the person you want to be.</p>
+                    <Instructions/>
                     <button className="main-button" onClick = {()=>{this.updateStartMenu(0)}}>Back</button>
                     </div>
                 });                

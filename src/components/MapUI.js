@@ -33,7 +33,6 @@ class MapUI extends Component {
 
         //Check for offScreen position
         let key=event.key;
-        console.log(key);
         if (key === 'ArrowUp' || key=== 'w') {
             if(positionY - 1 > -1){
                 positionY--;
@@ -88,7 +87,6 @@ class MapUI extends Component {
         //Execute function to update upper state.
         let newPosition = [positionY, positionX];
         document.getElementById(yID+xID).classList.add("playerPosition");
-        console.log(document.getElementById(yID+xID).classList);
         document.getElementById(oldPositionY + oldPositionX).classList.remove("playerPosition");
         document.getElementById(oldPositionY + oldPositionX).style.backgroundImage = `url(./images/mapTiles/${mapData[this.props.mapId].layout[oldPositionYNum][oldPositionXNum]}.png)`;
 
@@ -108,8 +106,12 @@ class MapUI extends Component {
 
         let cells = [];
         cellArray.map((cell,cellId) => {
+            let end = '.png';
+            if(cell > 601){
+                end = '.gif';
+            }
             let cellStyle={
-                backgroundImage: `url(./images/mapTiles/${cell}.png`,
+                backgroundImage: `url(./images/mapTiles/${cell}${end}`,
             }
             let tempRow = rowId;
             let tempCell = cellId;
