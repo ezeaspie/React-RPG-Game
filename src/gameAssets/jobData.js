@@ -60,6 +60,76 @@ const Jobs = [
                 pay: 20,
             },
         ], 
+    },
+    {
+        id: 406,
+        name: "Postal Worker",
+        requirements: [
+            {name:"Charisma", value:0},
+            {name:"Strength", value:0},
+            {name:"Intelligence", value:0},
+            {name:"Agility",value:20},
+            {name:"Luck", value:0},
+            {name:"Street Cred", value:0},
+            {name:"Money", value:0},
+        ],
+        increment:20,
+        shiftTime:8,
+        promotion: [
+            {
+                name:"Large and Heavy Parcel Carrier",
+                pay: 6,
+            },
+            {
+                name:"Mail Sorter",
+                pay: 8,
+            },
+            {
+                name:"Mailman",
+                pay: 10,
+            },
+            {
+                name:"Last Leg Courier",
+                pay: 14,
+            },
+            {
+                name:"PostMaster",
+                pay: 13,
+            },
+        ], 
+    },
+    {
+        id: 407,
+        name: "Construction Worker",
+        requirements: [
+            {name:"Charisma", value:0},
+            {name:"Strength", value:25},
+            {name:"Intelligence", value:0},
+            {name:"Agility",value:0},
+            {name:"Luck", value:0},
+            {name:"Street Cred", value:0},
+            {name:"Money", value:0},
+        ],
+        increment:25,
+        shiftTime:10,
+        promotion: [
+            {
+                name:"Site Grunt",
+                pay: 8,
+            },
+            {
+                name:"Foreman Assistant",
+                pay: 11,
+            },
+            {
+                name:"Foreman",
+                pay: 14,
+            },
+            {
+                name:"General Contractor",
+                pay: 18,
+            },
+        ], 
     }
 ]
 

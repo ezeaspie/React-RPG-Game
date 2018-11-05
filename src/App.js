@@ -10,6 +10,7 @@ import Jobs from './gameAssets/jobData';
 import Jail from './components/Jail';
 import Death from './components/Death';
 import Credits from './components/Credits';
+import staticItems from './gameAssets/StaticItems';
 
 class App extends Component {
   constructor(props){
@@ -146,6 +147,48 @@ class App extends Component {
         isConsumable:true,
         effect: () => {
           return this.updatePlayerStat(10,0,-4,0,0,1);
+        }
+      },
+      {
+        name:"'From Fit to Fat' Plan",
+        id:5,
+        description: <div><p>Ignore the title, there was a misprint. No really.</p><p>+5 Strength -3 Intelligence</p></div>,
+        price: 100,
+        isConsumable:true,
+        effect: () => {
+          return this.updatePlayerStat(0,5,-3,0,0,0);
+        }
+      },
+      {
+        name:"PURE Protein",
+        id:6,
+        description: <div><p>Not your ordinary protein powder - this will make you into a beast. At the cost of several hours on the toilet</p><p>+5 Strength</p></div>,
+        price: 120,
+        isConsumable:true,
+        effect: () => {
+          return this.updatePlayerStat(0,5,0,0,0,0);
+        }
+      },
+      {
+        name:"Good Weed",
+        id:7,
+        description: <div><p>There's probably a reason why this is so cheap.</p><p>+1 Charisma</p></div>,
+        price: 25,
+        isConsumable:true,
+        effect: () => {
+          let audio = new Audio("./audio/effects/goodWeed.mp3");
+          audio.play();
+          return this.updatePlayerStat(1,0,0,0,0,0);
+        }
+      },
+      {
+        name:"Crack",
+        id:8,
+        price:150,
+        description: <div><p>Probably not the best for your health but you do you!</p><p>+2 Charisma -5 Intelligence -1 StreetCred</p></div>,
+        isConsumable:true,
+        effect: () => {
+          return this.updatePlayerStat(2,0,-5,0,0,-1);
         }
       }
     ]
@@ -541,11 +584,14 @@ class App extends Component {
           }
         },
         {
-          name: "Use Gym Facilities",
+          name: "Use Gym Facilities for $25",
           effect: ()=>{
             if(this.checkTime(4)){
-              this.updateTime(false,4);
-              return updateStat(0,1,0,0,0,0,0);
+              if(this.state.playerObject.money >= 25){
+                this.updateTime(false,4);
+                return updateStat(0,1,3,0,0,-25,0);
+              }
+             return [player, <p>You don't have enough money</p>] 
             }
             else{return [player, <p>It's too late!</p>]}
           }
@@ -567,17 +613,18 @@ class App extends Component {
   },
   {
     id:406,
-    isShop: false,
+    isShop: true,
     name:"Speedy Delivery Post Office",
     inventory: [
-      this.state.consumableItems[0],
-      this.state.consumableItems[1],
+      staticItems[0],
+      staticItems[1],
+      staticItems[2],
     ],
     options: [
       {
         name: "Rob the Place",
-        effect: ()=>{return(robThePlace(0))},
-        getData: ()=>{return(getRobThePlaceData(0))}
+        effect: ()=>{return(robThePlace(40))},
+        getData: ()=>{return(getRobThePlaceData(40))}
       }
     ]
   },
@@ -585,10 +632,7 @@ class App extends Component {
     id:407,
     isShop: false,
     name:"Renter's Construction Contracters",
-    inventory: [
-      this.state.consumableItems[0],
-      this.state.consumableItems[1],
-    ],
+    inventory: [],
     options: [
       {
         name: "Rob the Place",
@@ -599,11 +643,11 @@ class App extends Component {
   },
   {
     id:408,
-    isShop: false,
+    isShop: true,
     name:"Strong Guy's Gym",
     inventory: [
-      this.state.consumableItems[0],
-      this.state.consumableItems[1],
+      this.state.consumableItems[5],
+      this.state.consumableItems[6],
     ],
     options: [
       {
@@ -630,7 +674,7 @@ class App extends Component {
     isShop: true,
     name:"The Back Alley",
     inventory: [
-      this.state.consumableItems[0],
+      this.state.consumableItems[7],
       this.state.consumableItems[1],
     ],
     options: [

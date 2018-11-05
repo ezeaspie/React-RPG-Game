@@ -29,7 +29,7 @@ class Jail extends Component {
         let inventory = this.state.playerInventory;
         let possibleItems = inventory.filter((item,i)=>{
             return (
-                item.id === 2 || item.id === 3 || item.id === 4
+                item.id === 2 || item.id === 3 || item.id === 4 || item.id === 7 || item.id === 8
             )
         });
         console.log(possibleItems); 

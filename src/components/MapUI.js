@@ -15,6 +15,12 @@ class MapUI extends Component {
         this.handleMovement = this.handleMovement.bind(this);
     }
 
+    //Possible performance update (re-render only when showDialougeBox is true. Need a controlled input to work properly)
+    //REmove player Console from this section, add it in App, but put Save function in here.
+    //shouldComponentUpdate(nextProps, nextState) {
+    //    return this.state.showDialougeBox;
+    //  }
+
     handleMovement = (event) => {
         let positionY = this.state.currentPosition[0];
         let positionX = this.state.currentPosition[1];
