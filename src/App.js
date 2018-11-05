@@ -457,7 +457,7 @@ class App extends Component {
       {
           id:402,
           isShop: true,
-          name:"Shell Gas Station",
+          name:"Gas Station",
           inventory: [
             this.state.consumableItems[0],
             this.state.consumableItems[1],
@@ -487,7 +487,7 @@ class App extends Component {
             getData: ()=>{return(getRobThePlaceData(20))}
           },
           {
-            name: "Get into a fight",
+            name: "Get into a fight vs. Melweed",
             effect: ()=>{
               let opponent = this.createOpponent("Melweed",[5,10],[5,10],[5,10],[100,200],Weapons,2);
               if(this.checkTime(4)){
@@ -503,13 +503,13 @@ class App extends Component {
     {
       id:404,
       isShop: false,
-      name:"Wilson High School",
+      name:"Wilmox High School",
       options: [
         {
           name: "Get into a fight",
           effect: ()=>{
             let weapons = [Weapons[0],Weapons[1],Weapons[2],Weapons[3]];
-            let opponent = this.createOpponent("Wilson Kid",[5,10],[5,10],[5,10],[100,200],weapons,2);
+            let opponent = this.createOpponent("High School Kid",[5,10],[5,10],[5,10],[100,200],weapons,2);
             if(this.checkTime(2)){
               this.setState({opponentObject:opponent},()=>this.updateGameState(4));
             }
@@ -555,7 +555,7 @@ class App extends Component {
     {
       id:405,
       isShop: false,
-      name:"Bank",
+      name:"Bank of NorthWest",
       inventory: [],
       options: [
         {
@@ -564,6 +564,138 @@ class App extends Component {
           getData: ()=>{return(getRobThePlaceData(100))}
         },
       ]
+  },
+  {
+    id:406,
+    isShop: false,
+    name:"Speedy Delivery Post Office",
+    inventory: [
+      this.state.consumableItems[0],
+      this.state.consumableItems[1],
+    ],
+    options: [
+      {
+        name: "Rob the Place",
+        effect: ()=>{return(robThePlace(0))},
+        getData: ()=>{return(getRobThePlaceData(0))}
+      }
+    ]
+  },
+  {
+    id:407,
+    isShop: false,
+    name:"Renter's Construction Contracters",
+    inventory: [
+      this.state.consumableItems[0],
+      this.state.consumableItems[1],
+    ],
+    options: [
+      {
+        name: "Rob the Place",
+        effect: ()=>{return(robThePlace(0))},
+        getData: ()=>{return(getRobThePlaceData(0))}
+      }
+    ]
+  },
+  {
+    id:408,
+    isShop: false,
+    name:"Strong Guy's Gym",
+    inventory: [
+      this.state.consumableItems[0],
+      this.state.consumableItems[1],
+    ],
+    options: [
+      {
+        name: "Rob the Place",
+        effect: ()=>{return(robThePlace(0))},
+        getData: ()=>{return(getRobThePlaceData(0))}
+      },
+      {
+        name: "Get into a fight vs. Henry the Strong Guy",
+        effect: ()=>{
+          let opponent = this.createOpponent("Henry the Strong Guy",[20,30],[10,20],[20,25],[150,300],Weapons,1,false,true);
+          if(this.checkTime(4)){
+            this.setState({opponentObject:opponent},()=>this.updateGameState(4));
+          }
+          else{
+            return false;
+          }
+        }
+      },
+    ]
+  },
+  {
+    id:409,
+    isShop: true,
+    name:"The Back Alley",
+    inventory: [
+      this.state.consumableItems[0],
+      this.state.consumableItems[1],
+    ],
+    options: [
+      {
+        name: "Rob the Place",
+        effect: ()=>{return(robThePlace(50))},
+        getData: ()=>{return(getRobThePlaceData(50))}
+      },
+      {
+        name: "Get into a fight vs. Frank",
+        effect: ()=>{
+          let opponent = this.createOpponent("Frank",[50,60],[20,30],[30,55],[500,550],Weapons,3,false,true);
+          if(this.checkTime(4)){
+            this.setState({opponentObject:opponent},()=>this.updateGameState(4));
+          }
+          else{
+            return false;
+          }
+        }
+      },
+    ]
+  },
+  {
+    id:410,
+    isShop: false,
+    name:"Mattress Discounters",
+    inventory: [
+      this.state.consumableItems[0],
+      this.state.consumableItems[1],
+    ],
+    options: [
+      {
+        name: "Rob the Place",
+        effect: ()=>{return(robThePlace(0))},
+        getData: ()=>{return(getRobThePlaceData(0))}
+      },
+    ]
+  },
+  {
+    id:411,
+    isShop: false,
+    name:"Channy Used Auto Sales",
+    inventory: [
+      this.state.consumableItems[0],
+      this.state.consumableItems[1],
+    ],
+    options: [
+      {
+        name: "Rob the Place",
+        effect: ()=>{return(robThePlace(0))},
+        getData: ()=>{return(getRobThePlaceData(0))}
+      },
+      {
+        name: "Get into a fight vs. a Car Salesman",
+        effect: ()=>{
+          let opponent = this.createOpponent("Jim the Salesman",[5,10],[5,10],[5,10],[50,70],Weapons,0,false,true);
+          if(this.checkTime(4)){
+            this.setState({opponentObject:opponent},()=>this.updateGameState(4));
+          }
+          else{
+            return false;
+          }
+        }
+      },
+    ]
   },
     ]
     let storeObject = storeCollection.filter(object => object.id === storeId);
