@@ -15,7 +15,9 @@ class Product extends Component {
 checkPurchaseAndUpdate = () => {
     let newPlayerObject = this.props.playerData;
     let product = this.props.product;
+    let registerSound = new Audio('././audio/effects/cashRegister.mp3');
         if(newPlayerObject.money - product.price >= 0){
+          registerSound.play();  
           newPlayerObject.money -= product.price;
           newPlayerObject.inventory.push(product);
           let logMessage = `Purchased ${product.name} for ${product.price}`;

@@ -18,11 +18,15 @@ handleRobbery = () => {
         </div>
         this.props.forceRender();
         if(!returnValue[1]){
+            let jail = new Audio('././audio/effects/jailDoor.mp3');
+            jail.play();
             this.props.updateTime(true,24);
             this.props.goToJail(returnValue[5],returnValue[6],returnValue[7],returnValue[8]);
             return;
         }
         this.props.setDialougeBox(true,content);
+        let registerSound = new Audio('././audio/effects/cashRegister.mp3');
+        registerSound.play();
         this.props.updatePlayerState(returnValue[0]);
         }
     }

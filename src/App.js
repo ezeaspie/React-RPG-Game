@@ -9,6 +9,7 @@ import Weapons from './gameAssets/weapons';
 import Jobs from './gameAssets/jobData';
 import Jail from './components/Jail';
 import Death from './components/Death';
+import Credits from './components/Credits';
 
 class App extends Component {
   constructor(props){
@@ -757,6 +758,7 @@ class App extends Component {
       updateGameState={this.updateGameState}
       retrieveSave={this.retrieveSave}
       />,
+      <Credits />,
     ]
     this.setState({gameState : newStateId,gameScreen : screenStateCollection[newStateId]});
   }
