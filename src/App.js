@@ -189,8 +189,38 @@ class App extends Component {
         isConsumable:true,
         effect: () => {
           return this.updatePlayerStat(2,0,-5,0,0,-1);
-        }
-      }
+        },
+      },
+        {
+          name:"Greek Yogurt",
+          id:9,
+          price:10,
+          description: <div><p>Rich and organic, this is sure to give you a healthy boost for the day!</p><p>+10 Health</p></div>,
+          isConsumable:true,
+          effect: () => {
+            return this.updatePlayerHealth(10,false);
+          }
+        },
+        {
+          name:"Kale Salad",
+          id:10,
+          price:25,
+          description: <div><p>If you manage to actually get it down, you'll feel great!</p><p>+30 Health</p></div>,
+          isConsumable:true,
+          effect: () => {
+            return this.updatePlayerHealth(30,false);
+          },
+        },
+        {
+          name:"SuperFruit",
+          id:11,
+          price:50,
+          description: <div><p>+100 Health</p><p>Hi welcome to superfruit today's my birthday so the whole episode's going to be about me! That's not true. It is. It's not happening. I wish you could just stay calm instead of flying off the handle all the time! I hope you're happy. I hope you're happy. I hope you're happy when you grovel in submission to feed your own ambition. And now i can't imagine how. I hope you're happy. RIGHT NOWWWWWWW.</p></div>,
+          isConsumable:true,
+          effect: () => {
+            return this.updatePlayerHealth(100,false);
+          },
+        },
     ]
 
     this.setState({consumableItems});
@@ -636,8 +666,8 @@ class App extends Component {
     options: [
       {
         name: "Rob the Place",
-        effect: ()=>{return(robThePlace(0))},
-        getData: ()=>{return(getRobThePlaceData(0))}
+        effect: ()=>{return(robThePlace(25))},
+        getData: ()=>{return(getRobThePlaceData(25))}
       }
     ]
   },
@@ -652,8 +682,8 @@ class App extends Component {
     options: [
       {
         name: "Rob the Place",
-        effect: ()=>{return(robThePlace(0))},
-        getData: ()=>{return(getRobThePlaceData(0))}
+        effect: ()=>{return(robThePlace(30))},
+        getData: ()=>{return(getRobThePlaceData(30))}
       },
       {
         name: "Get into a fight vs. Henry the Strong Guy",
@@ -708,8 +738,8 @@ class App extends Component {
     options: [
       {
         name: "Rob the Place",
-        effect: ()=>{return(robThePlace(0))},
-        getData: ()=>{return(getRobThePlaceData(0))}
+        effect: ()=>{return(robThePlace(20))},
+        getData: ()=>{return(getRobThePlaceData(20))}
       },
     ]
   },
@@ -724,8 +754,8 @@ class App extends Component {
     options: [
       {
         name: "Rob the Place",
-        effect: ()=>{return(robThePlace(0))},
-        getData: ()=>{return(getRobThePlaceData(0))}
+        effect: ()=>{return(robThePlace(35))},
+        getData: ()=>{return(getRobThePlaceData(35))}
       },
       {
         name: "Get into a fight vs. a Car Salesman",
@@ -741,6 +771,23 @@ class App extends Component {
       },
     ]
   },
+  {
+    id:412,
+    isShop: true,
+    name:"Fresh! Organic Market",
+    inventory: [
+      this.state.consumableItems[9],
+      this.state.consumableItems[10],
+      this.state.consumableItems[11],
+    ],
+    options: [
+      {
+        name: "Rob the Place",
+        effect: ()=>{return(robThePlace(10))},
+        getData: ()=>{return(getRobThePlaceData(10))}
+      },
+    ]
+  }
     ]
     let storeObject = storeCollection.filter(object => object.id === storeId);
     let jobObject = Jobs.filter(job => job.id === storeId);
@@ -749,6 +796,39 @@ class App extends Component {
 
   handleNPCInteractions = (npcId) => {
     let player = this.state.playerObject;
+
+    let filterNPCState = (id) => {
+      let isNew = false;
+      let filteredObjectArray = player.npcStates.filter((npc) =>{
+        return id === npc.id;
+      });
+      if(filteredObjectArray[0] === undefined){
+        player.npcStates.push({id, state:0});
+        filteredObjectArray.push({id,state:0});
+        isNew = true;
+      }
+        return [filteredObjectArray[0],isNew];
+    }
+
+    let checkForNewNPCState = (id,isNew) => {
+      if(isNew){
+        this.setState({playerObject: player});
+      }
+      else{
+        return;
+      }
+    }
+
+    let setNPCState = (id,newState) => {
+        player.npcStates.filter((npc,i) =>{
+        if(id === npc.id){
+          player.npcStates[i].state = newState;
+          this.setState({playerObject:player});
+        }        
+        return id === npc.id;
+      });
+    }
+
     const NPCData = [
       {
           id:601,
@@ -868,6 +948,120 @@ class App extends Component {
               }
             ]
           }
+        ],
+      },
+      {
+        id:603,
+        name: "Frank",
+        dialouge: [
+          {
+            message: "You the guy who bringing the goods?",
+            options: [
+              {
+              name:"No, I think you've mistaken me for someone else.",
+              effect:()=> {
+                return 2
+              },
+            },
+              {
+                name:"Yeah that's me. Where do I drop them off?",
+                effect:()=> {
+                  return 1; 
+              }
+            }
+            ]
+          },
+          {
+            message: "What do mean 'Where do I drop them off'? You got the location. Can't tell you - people might be listening in.",
+            options: [
+              {
+                name:"[Charisma/100] Try to get more info from him.",
+                effect: ()=>{
+                  let NPCStateReturn = filterNPCState(603);
+                  let isNew = NPCStateReturn[1];
+                  let npcState = NPCStateReturn[0];
+                  checkForNewNPCState(603,isNew);
+                  console.log(npcState);
+                  if(npcState.state === 1){
+                    return 5;
+                  }
+                  if(npcState.state === 2){
+                    return 6;
+                  }
+                  let randomNum = Math.floor(Math.random() * 100);
+                  if(player.stats[0].value >= randomNum){
+                    setNPCState(603,2)
+                    return 3;
+                  }
+                  else{
+                    setNPCState(603,1)
+                    return 4;
+                  }
+                }
+              },
+              {
+                name:"Exit",
+                effect: ()=>{
+                  return false;
+                }
+              }
+            ]
+          },
+          {
+            message: "Oh. We never talked.",
+            options:[
+              {
+                name:"Exit",
+                effect: ()=>{
+                  return false;
+                }
+              }
+            ]
+          },
+          {
+            message: "Hmm... you don't look like a cop. The Back Alley is in the back of the Mattress Discount. Go into the alley and at the end turn to the right.",
+            options:[
+              {
+                name:"Exit",
+                effect: ()=>{
+                  return false;
+                }
+              }
+            ]
+          },
+          {
+            message: "Nu-uh. You might be a cop. I ain't telling you nothing.",
+            options:[
+              {
+                name:"Exit",
+                effect: ()=>{
+                  return false;
+                }
+              }
+            ]
+          },
+          {
+            message: "I already told you no! Now get outta my face.",
+            options:[
+              {
+                name:"Exit",
+                effect: ()=>{
+                  return false;
+                }
+              }
+            ]
+          },
+          {
+            message: "Huh? I already told you. In the alley next to the Mattress Discount. Get to the end of the alley and turn right.",
+            options:[
+              {
+                name:"Exit",
+                effect: ()=>{
+                  return false;
+                }
+              }
+            ]
+          },
         ],
       }
     ]

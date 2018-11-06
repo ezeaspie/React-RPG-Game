@@ -397,6 +397,7 @@ button:disabled,
   color:#E7DFDD;
   border-radius: 5px;
   padding: 1em;
+  z-index:100;
   
 }
 
