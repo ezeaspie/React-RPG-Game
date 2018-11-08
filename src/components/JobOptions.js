@@ -88,7 +88,7 @@ class JobOptions extends Component {
                         jobRequirements.map((requirement)=>{
                             return(
                             <p>
-                                <span>{requirement.name}</span>
+                                <span>{requirement.name} </span>
                                 <span>{requirement.value}</span>
                             </p>
                             )

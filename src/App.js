@@ -787,6 +787,21 @@ class App extends Component {
         getData: ()=>{return(getRobThePlaceData(10))}
       },
     ]
+  },
+  {
+    id:413,
+    isShop: true,
+    name:"Homeowner's Depot",
+    inventory: [
+      staticItems[3],
+    ],
+    options: [
+      {
+        name: "Rob the Place",
+        effect: ()=>{return(robThePlace(10))},
+        getData: ()=>{return(getRobThePlaceData(10))}
+      },
+    ]
   }
     ]
     let storeObject = storeCollection.filter(object => object.id === storeId);
@@ -796,7 +811,7 @@ class App extends Component {
 
   handleNPCInteractions = (npcId) => {
     let player = this.state.playerObject;
-
+    let stats = this.state.playerObject.stats;
     let filterNPCState = (id) => {
       let isNew = false;
       let filteredObjectArray = player.npcStates.filter((npc) =>{
@@ -829,6 +844,35 @@ class App extends Component {
       });
     }
 
+    let noCheck = () => {
+      return true
+    }
+
+    let checkForItem = (itemId) => {
+      let foundArray = [];
+      for (let i=0 ; i < player.inventory.length; i++){
+        if (player.inventory[i].id === itemId){
+          foundArray.push(i);
+        }
+      }
+      if(foundArray[0] === undefined){
+        return false;
+      }
+      console.log(true);
+      return true;
+    }
+
+    let removeInventoryItem = (itemId) => {
+      let foundArray = [];
+      for (let i=0 ; i < player.inventory.length; i++){
+        if (player.inventory[i].id === itemId){
+          foundArray.push(i);
+        }
+      }
+      player.inventory.splice(foundArray[0],1);
+      this.setState({playerObject : player});
+    }
+
     const NPCData = [
       {
           id:601,
@@ -839,7 +883,8 @@ class App extends Component {
                   message : "Alright, so this my ... Drake freestyle.",
                   options: [
                       {
-                          name:"Listen to his rap",
+                          name:"Alright, let me hear it.",
+                          check: ()=>noCheck(),
                           effect:()=>{
                             let audio = new Audio('./audio/effects/WackAssFreestyle.mp3');
                             audio.play();
@@ -847,7 +892,8 @@ class App extends Component {
                           }
                       },
                       {
-                        name:"Tell him he can't freestyle",
+                        name:"You can't freestyle!",
+                        check: ()=>noCheck(),
                         effect:()=>{
                           let audio = new Audio('./audio/effects/WackAssFreestyle.mp3');
                           audio.play();
@@ -856,6 +902,7 @@ class App extends Component {
                       },
                       {
                         name:"Exit",
+                        check: ()=>noCheck(),
                         effect:()=>{
                           let audio = new Audio('./audio/effects/WackAssFreestyle.mp3');
                           audio.play();
@@ -875,7 +922,7 @@ class App extends Component {
             options: [
               {
               name:"Give him Fiji Water",
-              effect:()=> {
+              check: ()=>{
                 let foundArray = [];
                 for (let i=0 ; i < player.inventory.length; i++){
                   if (player.inventory[i].name === "Fiji Water"){
@@ -883,7 +930,16 @@ class App extends Component {
                   }
                 }
                 if(foundArray[0] === undefined){
-                  return 1;
+                  return false;
+                }
+                return true;
+              },
+              effect:()=> {
+                let foundArray = [];
+                for (let i=0 ; i < player.inventory.length; i++){
+                  if (player.inventory[i].name === "Fiji Water"){
+                    foundArray.push(i);
+                  }
                 }
                 player.inventory.splice(foundArray[0],1);
                 this.setState({playerObject : player});
@@ -892,7 +948,7 @@ class App extends Component {
             },
               {
                 name:"Give him Booze",
-                effect:()=> {
+                check: ()=>{
                   let foundArray = [];
                   for (let i=0 ; i < player.inventory.length; i++){
                     if (player.inventory[i].name === "Beer" ||player.inventory[i].name === "Whiskey"){
@@ -900,13 +956,29 @@ class App extends Component {
                     }
                   }
                   if(foundArray[0] === undefined){
-                    return 1;
+                    return false;
+                  }
+                  return true;
+                },
+                effect:()=> {
+                  let foundArray = [];
+                  for (let i=0 ; i < player.inventory.length; i++){
+                    if (player.inventory[i].name === "Beer" ||player.inventory[i].name === "Whiskey"){
+                      foundArray.push(i);
+                    }
                   }
                   player.inventory.splice(foundArray[0],1);
                   this.setState({playerObject : player});
                   return 3; 
               }
-            }
+            },
+            {
+              name:"Exit",
+              check: ()=>noCheck(),
+              effect: ()=>{
+                return false;
+              }
+            },
             ]
           },
           {
@@ -914,10 +986,11 @@ class App extends Component {
             options: [
               {
                 name:"Exit",
+                check: ()=>noCheck(),
                 effect: ()=>{
                   return false;
                 }
-              }
+              },
             ]
           },
           {
@@ -925,6 +998,7 @@ class App extends Component {
             options:[
               {
                 name:"Exit",
+                check: ()=>noCheck(),
                 effect: ()=>{
                   player.streetCred -= 5;
                   player.stats[0].value += 1;
@@ -939,6 +1013,7 @@ class App extends Component {
             options:[
               {
                 name:"Exit",
+                check: ()=>noCheck(),
                 effect: ()=>{
                   player.streetCred += 5;
                   player.stats[0].value += 1;
@@ -959,12 +1034,14 @@ class App extends Component {
             options: [
               {
               name:"No, I think you've mistaken me for someone else.",
+              check: ()=>noCheck(),
               effect:()=> {
                 return 2
               },
             },
               {
                 name:"Yeah that's me. Where do I drop them off?",
+                check: ()=>noCheck(),
                 effect:()=> {
                   return 1; 
               }
@@ -975,7 +1052,8 @@ class App extends Component {
             message: "What do mean 'Where do I drop them off'? You got the location. Can't tell you - people might be listening in.",
             options: [
               {
-                name:"[Charisma/100] Try to get more info from him.",
+                name:`[Charisma ${stats[0].value * 2>=100?100:stats[0].value *2}%] Try to get more info from him.`,
+                check: ()=>noCheck(),
                 effect: ()=>{
                   let NPCStateReturn = filterNPCState(603);
                   let isNew = NPCStateReturn[1];
@@ -1001,6 +1079,7 @@ class App extends Component {
               },
               {
                 name:"Exit",
+                check: ()=>noCheck(),
                 effect: ()=>{
                   return false;
                 }
@@ -1012,6 +1091,7 @@ class App extends Component {
             options:[
               {
                 name:"Exit",
+                check: ()=>noCheck(),
                 effect: ()=>{
                   return false;
                 }
@@ -1023,6 +1103,7 @@ class App extends Component {
             options:[
               {
                 name:"Exit",
+                check: ()=>noCheck(),
                 effect: ()=>{
                   return false;
                 }
@@ -1034,6 +1115,7 @@ class App extends Component {
             options:[
               {
                 name:"Exit",
+                check: ()=>noCheck(),
                 effect: ()=>{
                   return false;
                 }
@@ -1045,6 +1127,7 @@ class App extends Component {
             options:[
               {
                 name:"Exit",
+                check: ()=>noCheck(),
                 effect: ()=>{
                   return false;
                 }
@@ -1056,6 +1139,7 @@ class App extends Component {
             options:[
               {
                 name:"Exit",
+                check: ()=>noCheck(),
                 effect: ()=>{
                   return false;
                 }
@@ -1063,6 +1147,158 @@ class App extends Component {
             ]
           },
         ],
+      },
+      {
+        id:604,
+        name: "Jacob",
+        dialouge: [
+          {
+            message: "My mom's birthday is coming up... Ah I can't think of a present! What am I going to do?",
+            options: [
+              {
+              name:"Sorry, not my business.",
+              check: ()=> {
+                let returnVal = filterNPCState(604);
+                if(returnVal[0].state !== 2){
+                  return true;
+                }
+              },
+              effect:()=> {
+                return 2
+              },
+            },
+              {
+                name:"What does she like?",
+                check: ()=>{
+                  let returnVal = filterNPCState(604);
+                if(returnVal[0].state !== 2 && returnVal[0].state !== 1){
+                  return true;
+                }
+                },
+                effect:()=> {
+                  return 1; 
+              }
+            },
+            {
+              name:"I gave you a gift already. Did you say you need something else?",
+              check: ()=> {
+                let returnVal = filterNPCState(604);
+                if(returnVal[0].state === 1){
+                  return true;
+                }
+              },
+              effect:()=>{
+                return 3;
+              }
+            },
+            {
+              name:"Uh... I gave you the gift and packing supplies.",
+              check: ()=> {
+                let returnVal = filterNPCState(604);
+                console.log(returnVal);
+                if(returnVal[0].state === 2){
+                  return true;
+                }
+              },
+              effect:()=>{
+                return 5;
+              }
+            },
+            ]
+          },
+          {
+            message: "Her tastes are too expensive for me! She always mentions how sore her bed makes her back... she did mention she wanted a new sewing machine... oh and she likes fancy liqour. Not to drink but just to keep as decor. Yeah, I don't understand it either.",
+            options: [
+              {
+                name:`Yeah that's too much money. Maybe get her a card?`,
+                check: ()=>noCheck(),
+                effect: ()=>{
+                  return 2
+                }
+              },
+              {
+                name:"Here's a sewing machine. I don't need it.[+25 Charisma]",
+                check: ()=>checkForItem(104),
+                effect: ()=>{
+                  removeInventoryItem(104);
+                  checkForNewNPCState(604,true);
+                  setNPCState(604,1);
+                  this.updatePlayerStat(25,0,0,0,0,0);
+                  return 3;
+                }
+              },
+              {
+                name:"Expensive liquor? I have a bottle of Goldschläger you can have.[+25 Charisma]",
+                check: ()=>checkForItem(4),
+                effect: ()=>{
+                  removeInventoryItem(4);
+                  checkForNewNPCState(604,true);
+                  setNPCState(604,1);
+                  this.updatePlayerStat(25,0,0,0,0,0);
+                  return 3;
+                }
+              }
+            ]
+          },
+          {
+            message: "Yeah I guess. Sorry to bother you.",
+            options:[
+              {
+                name:"Exit",
+                check: ()=>noCheck(),
+                effect: ()=>{
+                  return false;
+                }
+              }
+            ]
+          },
+          {
+            message: "Thanks a bunch! But my mom lives out of state and I don't have any packing supplies... I don't suppose you can help me there.",
+            options:[
+              {
+                name:"Here's some packing supplies. [+2 StreetCred]",
+                check: ()=> checkForItem(101),
+                effect: ()=> {
+                  removeInventoryItem(101);
+                  setNPCState(604,2);
+                  this.updatePlayerStat(25,0,0,0,0,2);
+                  return 4;
+                }
+              },
+              {
+                name:"Exit",
+                check: ()=>noCheck(),
+                effect: ()=>{
+                  return false;
+                }
+              }
+            ]
+          },
+          {
+            message: "Thanks a bunch - you're really kind! I'll make sure to let everyone know how good you are!",
+            options:[
+              {
+                name:"Exit",
+                check: ()=>noCheck(),
+                effect: ()=>{
+                  return false;
+                }
+              }
+            ]
+          },
+          {
+            message: "Oh right. That was you. Sorry, I'm a bit forgetful. Thanks again!",
+            options:[
+              {
+                name:"Exit",
+                check: ()=>noCheck(),
+                effect: ()=>{
+                  return false;
+                }
+              }
+            ]
+          },
+        ], 
       }
     ]
 

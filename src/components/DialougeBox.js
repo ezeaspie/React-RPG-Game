@@ -31,6 +31,7 @@ handlePlayerChoice = (choiceObject) => {
           npc.dialouge[dialougeIndex].options.map((choice,i)=> {
             return <li 
             key={"choice"+i} 
+            style={npc.dialouge[dialougeIndex].options[i].check()?null:{display:"none"}}
             className="player-choice"
             onClick= {()=>{this.handlePlayerChoice(choice)}}
             >{choice.name}</li>

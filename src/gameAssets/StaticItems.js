@@ -31,6 +31,16 @@ const staticItems = [
               return false;
             },
         },
+        {
+          name:"Antiqued Sewing Machine",
+          id:104,
+          price:500,
+          description: <div><p>A fine piece of machinery, from quite some time ago.</p></div>,
+          isConsumable:false,
+          effect: () => {
+            return false;
+          },
+        },
 
 ]
 
