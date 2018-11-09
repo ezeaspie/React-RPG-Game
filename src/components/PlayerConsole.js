@@ -115,6 +115,7 @@ class PlayerConsole extends Component {
                 {
                     this.state.isInventoryOverlay?
                     <InventoryOverlay 
+                    removeInventoryItem={this.props.removeInventoryItem}
                     consumableItems = {this.props.consumableItems}
                     playerData = {this.props.playerData}
                     forceRender = {this.forceRender}

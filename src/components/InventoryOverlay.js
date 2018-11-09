@@ -1,48 +1,72 @@
 import React, {Component} from 'react';
+import InventoryItem from './InventoryItem';
 
 class InventoryOverlay extends Component {
     constructor(props) {
         super(props);
+        this.state={
+            activeItem:undefined,
+        }
         this.onClick = this.handleClick.bind(this);
     }
 
-    handleClick = (item,i) => {
-        console.log(item, i);
-        console.log(item.effect);
-        if(item.effect === undefined){
-            let newItem = this.props.consumableItems.filter((baseItem)=>{return item.id === baseItem.id});
-            item = newItem[0];
-            console.log(item);
+    componentWillMount() {
+        this.setDefaultState();
+    }
+
+    setDefaultState = () => {
+        let item = {
+            name:"Select an item",
+            id:undefined,
+            description: <div><p>Item info will appear here.</p></div>,
+            price: undefined,
+            isConsumable:false,
         }
-        if(item.isConsumable){
-            let player = this.props.playerData;
-            let returnVal = item.effect();
-            console.log(returnVal);
-            let handleConsumable = () => {
-                player.inventory.splice(i,1);
-            }
-            handleConsumable();
+        this.setState({activeItem:item});
+    }
+
+    handleClick = () => {
+        if(this.state.activeItem.isConsumable){
+            //get the item object and run it's effect. Might be easier to just set the state to the entire item object instead of splitting it up like it is now.
+            this.props.removeInventoryItem(this.state.activeItem.id);
+            let returnVal = this.state.activeItem.effect();
             this.props.updatePlayerState(returnVal);
-            this.props.forceRender();
-            console.log(item);
+            this.setDefaultState();
         }
         return;
     }
 
+    updateConsole = (itemObject) => {
+        this.setState({activeItem:itemObject});
+    }
+
     render(){
         return(
-            <ul className="overlay inv-overlay"style={this.props.style} >
-                <li><button className="main-button" onClick={() => {this.props.handleClick(false)}}>Back</button></li>
-                <div className="inv-overlay-list">
+            <div className="overlay inv-overlay"style={this.props.style} >
+                <button className="main-button" onClick={() => {this.props.handleClick(false)}}>Back</button>
+                <ul className="inv-overlay-list">
                 {this.props.inventoryData.map((item,i)=>{
-                    return <li className="inv-item" key={'item'+ i} id={i} onClick={this.handleClick.bind(this,item,i)} 
-                    style={{zIndex : "1"}}>
-                    <p className="inv-item-title">{item.name}</p>
-                    <p>{item.description}</p>
-                    </li>
+                    return(
+                    <InventoryItem
+                        item={item}
+                        index={i}
+                        updateConsole={this.updateConsole}
+                    /> 
+                    )
                 })}
+                </ul>
+                <div className="inv-console">
+                    <div className="inv-console-image">
+                    </div>
+                    <h2 className="inv-console-title">
+                        {this.state.activeItem.name}
+                    </h2>
+                    <div className="inv-console-description">
+                        {this.state.activeItem.description}
+                    </div>
+                    <button disabled={!this.state.activeItem.isConsumable} onClick ={this.handleClick} className="main-button">Use</button>
                 </div>  
-            </ul>
+            </div>
         )
     }
 }

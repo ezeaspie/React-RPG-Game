@@ -49,6 +49,7 @@ class App extends Component {
         currentDay,
       },
       ()=>{
+        this.rebuildInventory();
         this.updateGameState(0);
       } 
       );
@@ -57,6 +58,34 @@ class App extends Component {
     }
     this.updateGameState(0);
     return;
+  }
+
+  rebuildInventory = () => {
+    let player = this.state.playerObject;
+    this.state.playerObject.inventory.map((item,i)=>{
+      let id = item.id;
+      let restoredItem = null;
+      let array = [];
+      if(id < 100){//Consumable item
+        array = this.state.consumableItems;
+      }
+      else if(id > 100 && id < 300){
+        array= staticItems;
+      }else{
+        array=Weapons;
+      }
+      array.filter((item)=>{
+        if(id === item.id){
+          restoredItem = item;
+        }
+        return id === item.id;
+      });
+      if(restoredItem !== null){
+        player.inventory[i] = restoredItem;
+      }
+      return restoredItem;
+    });
+    this.setState({playerObject : player});
   }
 
   retrieveSave = () => {
@@ -266,11 +295,6 @@ class App extends Component {
       name,
       stats,
       inventory : [
-        {
-          name: "ID Card",
-          description: "Your ID Card",
-          isConsumable:false,
-        }
       ],
       money: 20,
       health: 90,
@@ -342,7 +366,6 @@ class App extends Component {
         let selectedWeaponIndex = valueFromRange(0,possibleWeapons.length-1);
         equippedWeapons.push(possibleWeapons[selectedWeaponIndex]);
         possibleWeapons.splice(selectedWeaponIndex, 1);
-        console.log(possibleWeapons); 
       }
       return equippedWeapons;
     }
@@ -389,6 +412,18 @@ class App extends Component {
     return opponent;
   }
 
+  removeInventoryItem = (itemId) => {
+    let player = this.state.playerObject;
+    let foundArray = [];
+    for (let i=0 ; i < player.inventory.length; i++){
+      if (player.inventory[i].id === itemId){
+        foundArray.push(i);
+      }
+    }
+    player.inventory.splice(foundArray[0],1);
+    this.setState({playerObject : player});
+  }
+
   updatePlayerStat = (charisma,strength,intelligence,agility,luck,streetCred)=> {
     let player = this.state.playerObject;
     let statArray = [charisma,strength,intelligence,agility,luck];
@@ -422,7 +457,6 @@ class App extends Component {
           player.streetCred += streetCred;
           updatedStats.push({name:"StreetCred", value:streetCred});
         }
-        console.log(updatedStats);
       let message = <div>
         {
           updatedStats.map((stat)=>{
@@ -497,8 +531,6 @@ class App extends Component {
 
         let streetCredReward = 5 + storeRank/2;
         streetCredReward *= rewardMultipler;
-
-        console.log({robChance:robChance>=randomNum});
 
         if(robChance >= randomNum){
             let message = "Robbery success - Stole some cash.";
@@ -862,14 +894,26 @@ class App extends Component {
       return true;
     }
 
-    let removeInventoryItem = (itemId) => {
-      let foundArray = [];
-      for (let i=0 ; i < player.inventory.length; i++){
-        if (player.inventory[i].id === itemId){
-          foundArray.push(i);
+    let addInventoryItem = (item, isItemId,isConsumable) => {
+      if(isItemId){
+        let foundArray = [];
+        let array = [];
+        if(isConsumable){
+          array = this.state.consumableItems;
         }
+        else{
+          array = staticItems;
+        }
+        for (let i=0 ; i < array.length; i++){
+          if (this.state.consumableItems[i].id === item){
+            foundArray.push(this.state.consumableItems[i]);
+          }
+        }
+        player.inventory.push(foundArray[0]);
       }
-      player.inventory.splice(foundArray[0],1);
+      else{
+        player.inventory.push(item);
+      }
       this.setState({playerObject : player});
     }
 
@@ -1195,7 +1239,6 @@ class App extends Component {
               name:"Uh... I gave you the gift and packing supplies.",
               check: ()=> {
                 let returnVal = filterNPCState(604);
-                console.log(returnVal);
                 if(returnVal[0].state === 2){
                   return true;
                 }
@@ -1220,7 +1263,7 @@ class App extends Component {
                 name:"Here's a sewing machine. I don't need it.[+25 Charisma]",
                 check: ()=>checkForItem(104),
                 effect: ()=>{
-                  removeInventoryItem(104);
+                  this.removeInventoryItem(104);
                   checkForNewNPCState(604,true);
                   setNPCState(604,1);
                   this.updatePlayerStat(25,0,0,0,0,0);
@@ -1231,7 +1274,7 @@ class App extends Component {
                 name:"Expensive liquor? I have a bottle of Goldschläger you can have.[+25 Charisma]",
                 check: ()=>checkForItem(4),
                 effect: ()=>{
-                  removeInventoryItem(4);
+                  this.removeInventoryItem(4);
                   checkForNewNPCState(604,true);
                   setNPCState(604,1);
                   this.updatePlayerStat(25,0,0,0,0,0);
@@ -1259,7 +1302,7 @@ class App extends Component {
                 name:"Here's some packing supplies. [+2 StreetCred]",
                 check: ()=> checkForItem(101),
                 effect: ()=> {
-                  removeInventoryItem(101);
+                  this.removeInventoryItem(101);
                   setNPCState(604,2);
                   this.updatePlayerStat(25,0,0,0,0,2);
                   return 4;
@@ -1299,7 +1342,123 @@ class App extends Component {
             ]
           },
         ], 
-      }
+      },
+      {
+        id:605,
+        name: "Zaxon",
+        dialouge: [
+          {
+            message: "Is it 'me and him','him and I'?",
+            options: [
+              {
+              name:"I don't know.",
+              check: ()=>noCheck(),
+              effect:()=> {
+                return 2
+              },
+              },
+              {
+                name:"[Intelligence] I don't know.",
+                check: ()=>{
+                  if(stats[2].value >= 25){
+                    return true;
+                  }
+                  return false;
+                },
+                effect:()=> {
+                  return 3;
+                },
+                },
+              {
+                name:"[Intelligence] ksi.",
+                check: ()=>{
+                  if(stats[2].value <= 0){
+                    return true;
+                  }
+                  return false;
+                },
+                effect:()=> {
+                  return 1; 
+              }
+            }
+            ]
+          },
+          {
+            message: "Wow you're really stupid aren't you? Here, take this - if you find yourself in a fight - I think you might die. I'm sure even an idiot like you can learn to use it. ",
+            options: [
+              {
+                name:"i watched the ksi movie.",
+                check: ()=>noCheck(),
+                effect: ()=>{
+                  addInventoryItem(0,true,true);
+                  return false;
+                }
+              }
+            ]
+          },
+          {
+            message: "Oh. That's fine. Noone in this town seems to know.",
+            options:[
+              {
+                name:"Exit",
+                check: ()=>noCheck(),
+                effect: ()=>{
+                  return false;
+                }
+              }
+            ]
+          },
+          {
+            message: "Ha! I knew it! You passed my little test. You'd be surpised at how much people fail. Here, take this. I'm giving them away because noone seems to buy them. It's hard being a genius.",
+            options:[
+              {
+                name:"Take 'Zaxon's Zappy Beater' and Exit",
+                check: ()=>noCheck(),
+                effect: ()=>{
+                  addInventoryItem(0,true,true);
+                  return false;
+                }
+              }
+            ]
+          },
+          {
+            message: "Nu-uh. You might be a cop. I ain't telling you nothing.",
+            options:[
+              {
+                name:"Exit",
+                check: ()=>noCheck(),
+                effect: ()=>{
+                  return false;
+                }
+              }
+            ]
+          },
+          {
+            message: "I already told you no! Now get outta my face.",
+            options:[
+              {
+                name:"Exit",
+                check: ()=>noCheck(),
+                effect: ()=>{
+                  return false;
+                }
+              }
+            ]
+          },
+          {
+            message: "Huh? I already told you. In the alley next to the Mattress Discount. Get to the end of the alley and turn right.",
+            options:[
+              {
+                name:"Exit",
+                check: ()=>noCheck(),
+                effect: ()=>{
+                  return false;
+                }
+              }
+            ]
+          },
+        ],
+      },
     ]
 
     let chosenNPC = NPCData.filter((npcs)=>{
@@ -1322,6 +1481,7 @@ class App extends Component {
       createPlayer = {this.createPlayer} />,
       [
       <MapUI 
+      removeInventoryItem={this.removeInventoryItem}
       character = {this.state.playerObject} 
       consumableItems = {this.state.consumableItems}
       mapId = {this.state.playerCurrentMap}
