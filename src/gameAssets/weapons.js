@@ -78,6 +78,17 @@ let Weapons = [
     return {damage: 25, apCost: 5}
   },
 },//5
+{
+  id:308,
+  name:"Zaxon's Zappy Beeter",
+  description: <div><p>Wow this thing sucks</p><p>5 DMG | 3 AP</p></div>,
+  price: 1000,
+  isWeapon: true,
+  isConsumable:false,
+  effect: () => {
+  return {damage: 5, apCost: 3}
+},
+},
 ]
 
 export default Weapons;

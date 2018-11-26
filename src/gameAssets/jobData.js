@@ -62,6 +62,76 @@ const Jobs = [
         ], 
     },
     {
+        id: 405,
+        name: "Bank Employee",
+        requirements: [
+            {name:"Charisma", value:0},
+            {name:"Strength", value:0},
+            {name:"Intelligence", value:30},
+            {name:"Agility",value:0},
+            {name:"Luck", value:0},
+            {name:"Street Cred", value:0},
+            {name:"Money", value:0},
+        ],
+        increment:20,
+        shiftTime:8,
+        promotion: [
+            {
+                name:"Drive Thru Teller",
+                pay: 7,
+            },
+            {
+                name:"Teller",
+                pay: 10,
+            },
+            {
+                name:"Financial Advisor",
+                pay: 14,
+            },
+            {
+                name:"Bank Manager",
+                pay: 20,
+            },
+        ], 
+    },
+    {
+        id: 408,
+        name: "Gym Worker",
+        requirements: [
+            {name:"Charisma", value:20},
+            {name:"Strength", value:20},
+            {name:"Intelligence", value:0},
+            {name:"Agility",value:0},
+            {name:"Luck", value:0},
+            {name:"Street Cred", value:0},
+            {name:"Money", value:0},
+        ],
+        increment:15,
+        shiftTime:8,
+        promotion: [
+            {
+                name:"Locker Room Cleaner",
+                pay: 5,
+            },
+            {
+                name:"Equipment Manager",
+                pay: 8,
+            },
+            {
+                name:"Membership Salesman",
+                pay: 10,
+            },
+            {
+                name:"Yoga Instructor",
+                pay: 15,
+            },
+            {
+                name:"Personal Trainer",
+                pay: 20,
+            },
+        ], 
+    },
+    {
         id: 406,
         name: "Postal Worker",
         requirements: [
@@ -130,7 +200,77 @@ const Jobs = [
                 pay: 18,
             },
         ], 
-    }
+    },
+    {
+        id: 409,
+        name: "Drug Peddler",
+        requirements: [
+            {name:"Charisma", value:20},
+            {name:"Strength", value:50},
+            {name:"Intelligence", value:0},
+            {name:"Agility",value:0},
+            {name:"Luck", value:0},
+            {name:"Street Cred", value:30},
+            {name:"Money", value:0},
+        ],
+        increment:25,
+        shiftTime:10,
+        promotion: [
+            {
+                name:"Cigarette Carrier",
+                pay: 15,
+            },
+            {
+                name:"Weed Dealer",
+                pay: 45,
+            },
+            {
+                name:"Crack Runner",
+                pay: 60,
+            },
+            {
+                name:"Heroin Merchant",
+                pay: 80,
+            },
+            {
+                name:"Drug Overlord",
+                pay: 90,
+            },
+        ], 
+    },
+    {
+        id: 411,
+        name: "Car Salesman",
+        requirements: [
+            {name:"Charisma", value:25},
+            {name:"Strength", value:0},
+            {name:"Intelligence", value:0},
+            {name:"Agility",value:0},
+            {name:"Luck", value:0},
+            {name:"Street Cred", value:0},
+            {name:"Money", value:0},
+        ],
+        increment:15,
+        shiftTime:9,
+        promotion: [
+            {
+                name:"Car Salesman",
+                pay: 7,
+            },
+            {
+                name:"Insurance and Car Salesman",
+                pay: 9,
+            },
+            {
+                name:"Insurance and Tire and Car Salesman",
+                pay: 11,
+            },
+            {
+                name:"Auto Tycoon",
+                pay: 18,
+            },
+        ], 
+    },
 ]
 
 export default Jobs;

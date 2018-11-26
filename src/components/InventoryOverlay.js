@@ -48,6 +48,7 @@ class InventoryOverlay extends Component {
                 {this.props.inventoryData.map((item,i)=>{
                     return(
                     <InventoryItem
+                        key={item.id}
                         item={item}
                         index={i}
                         updateConsole={this.updateConsole}

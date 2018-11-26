@@ -834,7 +834,7 @@ class App extends Component {
         getData: ()=>{return(getRobThePlaceData(10))}
       },
     ]
-  }
+  },
     ]
     let storeObject = storeCollection.filter(object => object.id === storeId);
     let jobObject = Jobs.filter(job => job.id === storeId);
@@ -894,19 +894,22 @@ class App extends Component {
       return true;
     }
 
-    let addInventoryItem = (item, isItemId,isConsumable) => {
+    let addInventoryItem = (item, isItemId,isConsumable,isWeapon=false) => {
       if(isItemId){
         let foundArray = [];
         let array = [];
         if(isConsumable){
           array = this.state.consumableItems;
         }
+        else if(isWeapon){
+          array=Weapons;
+        }
         else{
           array = staticItems;
         }
         for (let i=0 ; i < array.length; i++){
-          if (this.state.consumableItems[i].id === item){
-            foundArray.push(this.state.consumableItems[i]);
+          if (array[i].id === item){
+            foundArray.push(array[i]);
           }
         }
         player.inventory.push(foundArray[0]);
@@ -1360,6 +1363,10 @@ class App extends Component {
               {
                 name:"[Intelligence] I don't know.",
                 check: ()=>{
+                  let returnVal = filterNPCState(605);
+                  if(returnVal[0].state === 1){
+                    return false;
+                  }
                   if(stats[2].value >= 25){
                     return true;
                   }
@@ -1372,6 +1379,10 @@ class App extends Component {
               {
                 name:"[Intelligence] ksi.",
                 check: ()=>{
+                  let returnVal = filterNPCState(605);
+                  if(returnVal[0].state === 1){
+                    return false;
+                  }
                   if(stats[2].value <= 0){
                     return true;
                   }
@@ -1390,7 +1401,9 @@ class App extends Component {
                 name:"i watched the ksi movie.",
                 check: ()=>noCheck(),
                 effect: ()=>{
-                  addInventoryItem(0,true,true);
+                  checkForNewNPCState(605,true);
+                  setNPCState(605,1);
+                  addInventoryItem(308,true,false,true);
                   return false;
                 }
               }
@@ -1415,14 +1428,197 @@ class App extends Component {
                 name:"Take 'Zaxon's Zappy Beater' and Exit",
                 check: ()=>noCheck(),
                 effect: ()=>{
-                  addInventoryItem(0,true,true);
+                  checkForNewNPCState(605,true);
+                  setNPCState(605,1);
+                  addInventoryItem(308,true,false,true);
+                  return false;
+                }
+              }
+            ]
+          },
+        ],
+      },
+      {
+        id:606,
+        name: "The Emperor",
+        dialouge: [
+          {
+            message: "You have five seconds to get out of my face. I don't deal with no-names.",
+            options: [
+            {
+              name:`[StreetCred] You really haven't heard of ${player.name}?`,
+              check: ()=>{
+                if(player.streetCred >= 25){
+                  return true;
+                }
+              },
+              effect: ()=>{
+                return 1;
+              }
+            },
+            {
+              name:"Exit",
+              check: ()=>noCheck(),
+              effect: ()=>{
+                return false;
+              }
+            },
+            ]
+          },
+          {
+            message: "Hm, someone did mention your name before. Maybe you're not so useless after all. I'm The Emperor, leader of the White Lotus gang. You looking for work kid?",
+            options: [
+              {
+                name:`I can do that.`,
+                check: ()=>noCheck(),
+                effect: ()=>{
+                  return 2;
+                }
+              },
+              {
+                name:"No thanks.",
+                check: ()=>noCheck(),
+                effect: ()=>{
+                  return false;
+                }
+              },
+            ]
+          },
+          {
+            message: "This new mayor has actually been resisting our money and is making the police come after us. Hard. We've been taking hits in our drug sales and I need to figure out a way to stop him. But first, I need people to help cripple the police department. They always seem to know where our shipments are and where we operate. I think one of our members is a mole. Find out who it is and let me know. You'll be paid handsomley. What do you say?",
+            options:[
+              {
+                name:"Sounds interesting. I'll do it.",
+                check: ()=>noCheck(),
+                effect: ()=>{
+                  checkForNewNPCState(606,true);
+                  setNPCState(606,1);
+                  return 3;
+                }
+              },
+              {
+                name:"[Intelligence]Yeah for a hundred bucks.",
+                check: ()=>{
+                  console.log(stats[2]);
+                  if(stats[2].value <= 25){
+                    return true;
+                  }
+                },
+                effect: ()=>{
+                  checkForNewNPCState(606,true);
+                  setNPCState(606,2);
+                  return 4;
+                }
+              },
+              {
+                name:"Not my type of work.",
+                check: ()=>noCheck(),
+                effect: ()=>{
+                  return false;
+                }
+              },
+            ]
+          },
+          {
+            message: "Fantastic! I think it's one of the trio of Marcus, Frank, and Chuck. Talk to each of them. Find out which one is lying. Once you do, come back and tell me so we can continue forward.",
+            options:[
+              {
+                name:"Sounds like a plan.",
+                check: ()=>noCheck(),
+                effect: ()=>{
                   return false;
                 }
               }
             ]
           },
           {
-            message: "Nu-uh. You might be a cop. I ain't telling you nothing.",
+            message: "A hundred bucks? I was going to give you more but if that's what you want - that's what you'll get. Talk to Marcus, Frank, and Chuck. Find out which is the mole and report back to me so we can move forward.",
+            options:[
+              {
+                name:"Sounds like a plan.",
+                check: ()=>noCheck(),
+                effect: ()=>{
+                  return false;
+                }
+              }
+            ]
+          }
+        ],
+      },
+      {
+        id:607,
+        name: "Marcus",
+        dialouge: [
+          {
+            message: "What do you want?",
+            options: [
+            {
+              name:`[Quest] The Emperor mentioned you might know something about the mole issue?`,
+              check: ()=>{
+                let returnVal = filterNPCState(606);
+                if(returnVal[0].state === 1 || returnVal[0].state === 2){
+                  return true;
+                }
+              },
+              effect: ()=>{
+                return 1;
+              }
+            },
+            {
+              name:"Exit",
+              check: ()=>noCheck(),
+              effect: ()=>{
+                return false;
+              }
+            },
+            ]
+          },
+          {
+            message: "Yeah someone's been leaking our info to the cops but it wasn't me! Frank will try to tell you it was me - he just dosen't like me. But it wasn't Frank either. It's Chuck. He knows where all our drug stashes are. Frank doesn't.",
+            options: [
+              {
+                name:`Do you know about the drug stashes?`,
+                check: ()=>noCheck(),
+                effect: ()=>{
+                  return 2;
+                }
+              },
+            ]
+          },
+          {
+            message: "No. I mean, I have a high position but the boss says I can't be trusted.",
+            options:[
+              {
+                name:"[Charisma] You're lying.",
+                check: ()=>{
+                  if(player.stats[0].value >= 30){
+                    return true;
+                  }
+                },
+                effect: ()=>{
+                  return 4;
+                }
+              },
+              {
+                name:"Okay, thanks for the info.",
+                check: ()=>noCheck(),
+                effect: ()=>{
+                  checkForNewNPCState(607,true);
+                  setNPCState(607,1);
+                  return false;
+                }
+              },
+              {
+                name:"Not my type of work.",
+                check: ()=>noCheck(),
+                effect: ()=>{
+                  return false;
+                }
+              },
+            ]
+          },
+          {
+            message: "No I'm -- okay so what if I am. I know where all the warehouses are. But it wasn't me. I just know you're going to tell the Emperor I did it if I told you that I knew because you look like that kind of person.",
             options:[
               {
                 name:"Exit",
@@ -1434,7 +1630,86 @@ class App extends Component {
             ]
           },
           {
-            message: "I already told you no! Now get outta my face.",
+            message: "A hundred bucks? I was going to give you more but if that's what you want - that's what you'll get. Talk to Marcus, Frank, and Chuck. Find out which is the mole and report back to me so we can move forward.",
+            options:[
+              {
+                name:"Sounds like a plan.",
+                check: ()=>noCheck(),
+                effect: ()=>{
+                  return false;
+                }
+              }
+            ]
+          }
+        ],
+      },
+      {
+        id:608,
+        name: "Frank",
+        dialouge: [
+          {
+            message: "You looking to get laid out? Then go away.",
+            options: [
+            {
+              name:`[Quest] The Emperor mentioned you might know something about the mole issue?`,
+              check: ()=>{
+                let returnVal = filterNPCState(606);
+                if(returnVal[0].state === 1 || returnVal[0].state === 2){
+                  return true;
+                }
+              },
+              effect: ()=>{
+                return 1;
+              }
+            },
+            {
+              name:"Exit",
+              check: ()=>noCheck(),
+              effect: ()=>{
+                return false;
+              }
+            },
+            ]
+          },
+          {
+            message: "It was Marcus. He knows all the warehouses and is always lying. About everything. Sent him to the store to get me a bag of chips, comes back and says they didn't have any. I go in an hour later and they did! Liar liar liar!",
+            options: [
+              {
+                name:`Do you know about the drug stashes?`,
+                check: ()=>noCheck(),
+                effect: ()=>{
+                  return 2;
+                }
+              },
+            ]
+          },
+          {
+            message: "I just joined in a month ago. You think the Emperor going to give me access to all that?",
+            options:[
+              {
+                name:"[Intelligence] But there must be a reason why he suspects you to be the leaker.",
+                check: ()=>{
+                  if(player.stats[2].value >= 30){
+                    return true;
+                  }
+                },
+                effect: ()=>{
+                  return 3;
+                }
+              },
+              {
+                name:"Okay, thanks for the info.",
+                check: ()=>noCheck(),
+                effect: ()=>{
+                  checkForNewNPCState(608,true);
+                  setNPCState(608,1);
+                  return false;
+                }
+              },
+            ]
+          },
+          {
+            message: "Hmm, probably because I get arrested almost every week. But I don't do it on purpose! I swear! I only know Officer Robert Winston because of how much time I spend in the cell, not because of how much I talk to him or anything.",
             options:[
               {
                 name:"Exit",
@@ -1446,17 +1721,17 @@ class App extends Component {
             ]
           },
           {
-            message: "Huh? I already told you. In the alley next to the Mattress Discount. Get to the end of the alley and turn right.",
+            message: "A hundred bucks? I was going to give you more but if that's what you want - that's what you'll get. Talk to Marcus, Frank, and Chuck. Find out which is the mole and report back to me so we can move forward.",
             options:[
               {
-                name:"Exit",
+                name:"Sounds like a plan.",
                 check: ()=>noCheck(),
                 effect: ()=>{
                   return false;
                 }
               }
             ]
-          },
+          }
         ],
       },
     ]
