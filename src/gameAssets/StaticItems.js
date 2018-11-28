@@ -41,6 +41,26 @@ const staticItems = [
             return false;
           },
         },
+        {
+          name:"NorthWest Police High Commander Badge",
+          id:105,
+          price:250,
+          description:<div><p>Looks to be the real thing, as long as you place your finger over the 'Made in China' engraving on the back.</p></div>,
+          isConsumable:false,
+          effect: ()=> {
+            return false;
+          }
+        },
+        {
+          name:"Phoebe's Running Shoes",
+          id:106,
+          price:1500,
+          description:<div><p>Unique and elegant, these look quite valuable and rare.</p></div>,
+          isConsumable:false,
+          effect: ()=> {
+            return false;
+          }
+        }
 
 ]
 

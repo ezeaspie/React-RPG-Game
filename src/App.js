@@ -746,9 +746,9 @@ class App extends Component {
         getData: ()=>{return(getRobThePlaceData(50))}
       },
       {
-        name: "Get into a fight vs. Frank",
+        name: "Get into a fight vs. Mel",
         effect: ()=>{
-          let opponent = this.createOpponent("Frank",[50,60],[20,30],[30,55],[500,550],Weapons,3,false,true);
+          let opponent = this.createOpponent("Mel",[50,60],[20,30],[30,55],[500,550],Weapons,3,false,true);
           if(this.checkTime(4)){
             this.setState({opponentObject:opponent},()=>this.updateGameState(4));
           }
@@ -835,6 +835,26 @@ class App extends Component {
       },
     ]
   },
+  {
+    id:414,
+    isShop: false,
+    name:"NorthWest Police Station",
+    inventory: [
+    ],
+    options: [
+    ]
+  },
+  {
+    id:415,
+    isShop: true,
+    name:"Cristina's Place",
+    inventory: [
+      staticItems[4],
+      this.state.consumableItems[7],
+    ],
+    options: [
+    ]
+  },
     ]
     let storeObject = storeCollection.filter(object => object.id === storeId);
     let jobObject = Jobs.filter(job => job.id === storeId);
@@ -844,14 +864,17 @@ class App extends Component {
   handleNPCInteractions = (npcId) => {
     let player = this.state.playerObject;
     let stats = this.state.playerObject.stats;
+
+
+    //Returns NPC State Object && Creates a new object if not found. 
     let filterNPCState = (id) => {
       let isNew = false;
       let filteredObjectArray = player.npcStates.filter((npc) =>{
         return id === npc.id;
       });
       if(filteredObjectArray[0] === undefined){
-        player.npcStates.push({id, state:0});
-        filteredObjectArray.push({id,state:0});
+        player.npcStates.push({id, state:0,relationship:0});
+        filteredObjectArray.push({id,state:0,relationship:0});
         isNew = true;
       }
         return [filteredObjectArray[0],isNew];
@@ -867,9 +890,19 @@ class App extends Component {
     }
 
     let setNPCState = (id,newState) => {
-        player.npcStates.filter((npc,i) =>{
+      player.npcStates.filter((npc,i) =>{
         if(id === npc.id){
           player.npcStates[i].state = newState;
+          this.setState({playerObject:player});
+        }        
+        return id === npc.id;
+      });
+    }
+
+    let updateNPCRelationship = (id,change) =>{
+      player.npcStates.filter((npc,i) =>{
+        if(id === npc.id){
+          player.npcStates[i].relationship += change;
           this.setState({playerObject:player});
         }        
         return id === npc.id;
@@ -1074,7 +1107,7 @@ class App extends Component {
       },
       {
         id:603,
-        name: "Frank",
+        name: "Mel",
         dialouge: [
           {
             message: "You the guy who bringing the goods?",
@@ -1114,7 +1147,7 @@ class App extends Component {
                     return 6;
                   }
                   let randomNum = Math.floor(Math.random() * 100);
-                  if(player.stats[0].value >= randomNum){
+                  if(player.stats[0].value*2 >= randomNum){
                     setNPCState(603,2)
                     return 3;
                   }
@@ -1448,7 +1481,8 @@ class App extends Component {
             {
               name:`[StreetCred] You really haven't heard of ${player.name}?`,
               check: ()=>{
-                if(player.streetCred >= 25){
+                let returnVal = filterNPCState(606);
+                if(player.streetCred >= 25 && returnVal[0].state === 0){
                   return true;
                 }
               },
@@ -1463,6 +1497,36 @@ class App extends Component {
                 return false;
               }
             },
+            {
+              name:"[Quest COMPLETE] Chuck is the mole.",
+              check: ()=>{
+                let returnVal = filterNPCState(606);
+                if(returnVal[0].state === 3){
+                  return 5;
+                }
+              },
+              effect: ()=>{
+                return false;
+              }
+            },
+            {
+              name:"[Quest COMPLETE] Chuck is the mole.",
+              check: ()=>{
+                let returnVal = filterNPCState(606);
+                if(returnVal[0].state === 4){
+                  return 6;
+                }
+              }
+            },
+            {
+              name:"[Quest COMPLETE] Frank is the mole.",
+              check: ()=>{
+                let returnVal = filterNPCState(606);
+                if(returnVal[0].state === 5){
+                  return 7;
+                }
+              }
+            }
             ]
           },
           {
@@ -1491,7 +1555,6 @@ class App extends Component {
                 name:"Sounds interesting. I'll do it.",
                 check: ()=>noCheck(),
                 effect: ()=>{
-                  checkForNewNPCState(606,true);
                   setNPCState(606,1);
                   return 3;
                 }
@@ -1505,7 +1568,6 @@ class App extends Component {
                   }
                 },
                 effect: ()=>{
-                  checkForNewNPCState(606,true);
                   setNPCState(606,2);
                   return 4;
                 }
@@ -1542,6 +1604,58 @@ class App extends Component {
                 }
               }
             ]
+          },
+          {
+            message: "Yep, sounds about right. You know what they say about snitches. I'll deal with Chuck. Thanks a bunch kid. Come back some other time, might have some more work for you.",
+            options:[
+              {
+                name:"[+$650 +20 StreetCred +5 INT] Exit",
+                check: ()=>noCheck(),
+                effect: ()=>{
+                  stats[2].value+= 5;
+                  player.money += 650;
+                  player.streetCred += 20;
+                  this.updatePlayerState(player); 
+                  setNPCState(606,6);                 
+                  return false;
+                }
+              }
+            ]
+          },
+          {
+            message: "A hundred bucks right? Here you go. Thanks for the help kid, come back soon - might have some other jobs for you.",
+            options:[
+              {
+                name:"[+$100 +20 StreetCred +5 INT] Exit",
+                check: ()=>noCheck(),
+                effect: ()=>{
+                  stats[2].value+= 5;
+                  player.money += 100;
+                  player.streetCred += 20;
+                  this.updatePlayerState(player);
+                  setNPCState(606,6);                  
+                  return false;
+                }
+              }
+            ]
+          },
+          {
+            message: "I doubt it. But if that's your verdict, that's it.",
+            options:[
+              {
+                name:"[+$100 +5 INT +5 LCK] Exit",
+                check: ()=>noCheck(),
+                effect: ()=>{
+                  stats[2].value+= 5;
+                  stats[4].value += 5;
+                  player.money += 100;
+                  player.streetCred += 20;
+                  this.updatePlayerState(player);
+                  setNPCState(606,6);                  
+                  return false;
+                }
+              }
+            ]
           }
         ],
       },
@@ -1561,6 +1675,7 @@ class App extends Component {
                 }
               },
               effect: ()=>{
+                filterNPCState(607);
                 return 1;
               }
             },
@@ -1596,20 +1711,23 @@ class App extends Component {
                   }
                 },
                 effect: ()=>{
-                  return 4;
+                  return 3;
+                }
+              },
+              {
+                name:"[Quest] Frank said you know about where all the warehouses and hideouts are. You're lying.",
+                check: ()=>{
+                  let returnVal = filterNPCState(607);
+                  if(returnVal[0].state === 1){
+                    return true;
+                  }
+                },
+                effect: ()=>{
+                  return 3;
                 }
               },
               {
                 name:"Okay, thanks for the info.",
-                check: ()=>noCheck(),
-                effect: ()=>{
-                  checkForNewNPCState(607,true);
-                  setNPCState(607,1);
-                  return false;
-                }
-              },
-              {
-                name:"Not my type of work.",
                 check: ()=>noCheck(),
                 effect: ()=>{
                   return false;
@@ -1621,6 +1739,17 @@ class App extends Component {
             message: "No I'm -- okay so what if I am. I know where all the warehouses are. But it wasn't me. I just know you're going to tell the Emperor I did it if I told you that I knew because you look like that kind of person.",
             options:[
               {
+                name:`[Intelligence ${stats[2].value * 3>=100?100:stats[2].value *3}%]How do I know you're not lying to me again?`,
+                check: ()=>noCheck(),
+                effect: ()=>{
+                  let randomNum = Math.floor(Math.random() * 100);
+                  if(stats[2].value*3 >= randomNum){
+                    return 4;
+                  }
+                  return 5;
+                }
+              },
+              {
                 name:"Exit",
                 check: ()=>noCheck(),
                 effect: ()=>{
@@ -1630,12 +1759,28 @@ class App extends Component {
             ]
           },
           {
-            message: "A hundred bucks? I was going to give you more but if that's what you want - that's what you'll get. Talk to Marcus, Frank, and Chuck. Find out which is the mole and report back to me so we can move forward.",
+            message: "Because I hate the police. I've killed a few too. Really! But you know who dosen't? Chuck. I know for a fact that he's close friends with that officer standing outside the station. Talk to him. He'll tell you.",
             options:[
               {
-                name:"Sounds like a plan.",
+                name:"Exit",
                 check: ()=>noCheck(),
                 effect: ()=>{
+                  filterNPCState(610);
+                  setNPCState(610,1);
+                  return false;
+                }
+              }
+            ]
+          },
+          {
+            message: "[FAILED] I'm not lying.",
+            options:[
+              {
+                name:"Exit",
+                check: ()=>noCheck(),
+                effect: ()=>{
+                  filterNPCState(610);
+                  setNPCState(610,1);
                   return false;
                 }
               }
@@ -1663,6 +1808,18 @@ class App extends Component {
               }
             },
             {
+              name:`[Quest] Those shoes you have on the ground... Are they for sale?`,
+              check: ()=>{
+                let returnVal = filterNPCState(611);
+                if(returnVal[0].state === 1){
+                  return true;
+                }
+              },
+              effect: ()=>{
+                return 4;
+              }
+            },
+            {
               name:"Exit",
               check: ()=>noCheck(),
               effect: ()=>{
@@ -1678,6 +1835,8 @@ class App extends Component {
                 name:`Do you know about the drug stashes?`,
                 check: ()=>noCheck(),
                 effect: ()=>{
+                  filterNPCState(607);
+                  setNPCState(607,1);
                   return 2;
                 }
               },
@@ -1721,10 +1880,410 @@ class App extends Component {
             ]
           },
           {
-            message: "A hundred bucks? I was going to give you more but if that's what you want - that's what you'll get. Talk to Marcus, Frank, and Chuck. Find out which is the mole and report back to me so we can move forward.",
+            message: "These things? I found them over there in the gas station parking lot. They look like new. Smell pretty clean too. How about you give me 150 and they're yours?",
             options:[
               {
-                name:"Sounds like a plan.",
+                name:"[Purchase Phoebe's Running Shoes] Sounds like a deal.",
+                check: ()=>noCheck(),
+                effect: ()=>{
+                  addInventoryItem(106,true,false,false);
+                  player.money -= 150;
+                  this.setState({playerObject:player});
+                  return false;
+                }
+              },
+              {
+                name:"No thanks",
+                check: ()=>noCheck(),
+                effect: ()=>{
+                  return false;
+                }
+              }
+            ]
+          }
+        ],
+      },
+      {
+        id:609,
+        name: "Chuck",
+        dialouge: [
+          {
+            message: "What do you want?",
+            options: [
+            {
+              name:`[Quest] The Emperor mentioned you might know something about the mole issue?`,
+              check: ()=>{
+                let returnVal = filterNPCState(606);
+                if(returnVal[0].state === 1 || returnVal[0].state === 2){
+                  return true;
+                }
+              },
+              effect: ()=>{
+                return 1;
+              }
+            },
+            {
+              name:"Exit",
+              check: ()=>noCheck(),
+              effect: ()=>{
+                return false;
+              }
+            },
+            ]
+          },
+          {
+            message: "Frank's your man. Boy always gets arrested. If you ask me, it's on purpose. He's giving the officers info in exchange for shorter sentences. He steals some fruit, gets put in the slammer for a week. Talks to his police buddies, he's out the next day. Pretty suspicious if you ask me.",
+            options: [
+              {
+                name:`Do you know about the drug stashes?`,
+                check: ()=>noCheck(),
+                effect: ()=>{
+                  return 2;
+                }
+              },
+            ]
+          },
+          {
+            message: "Yeah but what does that have to do with anything. So does Marcus but you're over here questioning me.",
+            options:[
+              {
+                name:"[Strength] You're not telling me something. Tell me or I'll break your arms.",
+                check: ()=>{
+                  if(player.stats[1].value >= 30){
+                    return true;
+                  }
+                },
+                effect: ()=>{
+                  return 3;
+                }
+              },
+              {
+                name:"Okay, thanks for the info.",
+                check: ()=>noCheck(),
+                effect: ()=>{
+                  checkForNewNPCState(608,true);
+                  setNPCState(608,1);
+                  return false;
+                }
+              },
+            ]
+          },
+          {
+            message: "What? You know about it? How? I never told anyone about my friendship with Robert Winston! We were friends in high school and we've kinda kept in touch - but that's it! I don't tell him nothing! Please don't kill me.",
+            options:[
+              {
+                name:"[STR,CHR,STCRD] You know, the Emperor already knows who did it. He just told me to find out which one of you losers would lie to him. Tell me the truth and I won't tell him you lied.",
+                check: ()=>{
+                  if(player.stats[1].value >= 30 && stats[0].value >= 30 && player.streetCred >= 30){
+                    return true;
+                  }
+                },
+                effect: ()=>{
+                  return 4;
+                }
+              },
+              {
+                name:"Exit",
+                check: ()=>noCheck(),
+                effect: ()=>{
+                  return false;
+                }
+              }
+            ]
+          },
+          {
+            message: "Alright it was me. Stupid of me to try to lie. Please don't tell. The Emperor will have me killed. How about you blame Frank and I'll make it worth your while?",
+            options:[
+              {
+                name:"[+$800 -20 StreetCred] Sounds like a plan.",
+                check: ()=>noCheck(),
+                effect: ()=>{
+                  setNPCState(606,5);                  
+                  player.money += 500;
+                  player.streetCred -= 20;
+                  this.setState({playerObject:player});
+                  return false;
+                }
+              },
+              {
+                name:"Exit",
+                check: ()=>noCheck(),
+                effect: ()=>{
+                  return false;
+                }
+              }
+            ]
+          }
+        ],
+      },
+      {
+        id:610,
+        name: "Officer Robert Winston",
+        dialouge: [
+          {
+            message: "Good day citizen. Do you need help?",
+            options: [
+            {
+              name:`[Quest] Do you know Chuck?`,
+              check: ()=>{
+                let returnVal = filterNPCState(610);
+                if(returnVal[0].state !== 0){
+                  return true;
+                }
+              },
+              effect: ()=>{
+                return 1;
+              }
+            },
+            {
+              name:"Exit",
+              check: ()=>noCheck(),
+              effect: ()=>{
+                return false;
+              }
+            },
+            ]
+          },
+          {
+            message: "Chuck and I used to be close friends. He's gone down the wrong path in life but I still consider us friends. In fact, I think he's been using his position for good!",
+            options: [
+              {
+                name:`So Chuck is a source of insider information correct?`,
+                check: ()=>noCheck(),
+                effect: ()=>{
+                  return 2;
+                }
+              },
+            ]
+          },
+          {
+            message: "What are you talking about? Why do you care?",
+            options:[
+              {
+                name:`[Charisma ${stats[0].value * 2>=100?100:stats[0].value *2}%]Because I'm an undercover agent. I'm looking to see if my agency can protect moles like Marcus from being ousted or found out.`,
+                check: ()=>{
+                  let returnVal = filterNPCState(610);
+                  if(returnVal[0].state === 2){
+                    return false;
+                  }
+                  return true;
+                },
+                effect: ()=>{
+                  let returnVal = filterNPCState(610);
+                  if(returnVal[0].state === 3){
+                    return 4;
+                  }
+                  let randomNum = Math.floor(Math.random() * 100);
+                  if(player.stats[0].value*2 >= randomNum){
+                    setNPCState(610,2);
+                    return 3;
+                  }
+                  else{
+                    setNPCState(610,3);
+                    return 4;
+                  }
+                }
+              },
+              {
+                name:"[Police Badge] As a fellow commander, I demand to know about your information sources.",
+                check:()=>checkForItem(105),
+                effect: ()=>{
+                  return 3;
+                }
+              },
+              {
+                name:"Nothing. Just curious is all.",
+                check: ()=>noCheck(),
+                effect: ()=>{
+                  return false;
+                }
+              },
+            ]
+          },
+          {
+            message: "Of course. Chuck is our insider. I've noticed that The Emperor has labeled him as a suspect in his mole hunt. I think we should move to offer him more protection or find a new mole.",
+            options:[
+              {
+                name:"Thank you officer.",
+                check: ()=>noCheck(),
+                effect: ()=>{
+                  let returnVal = filterNPCState(606);
+                  if(returnVal[0].state === 1){
+                    setNPCState(606,3);
+                    return false;
+                  }
+                  if(returnVal[0].state === 2){
+                    setNPCState(606,4)
+                    return false;
+                  }
+                }
+              },
+            ]
+          },
+          {
+            message: "[FAILED] Do you think I'm stupid? You're not with the department. Get out of here!",
+            options:[
+              {
+                name:"Exit",
+                check: ()=>noCheck(),
+                effect: ()=>{
+                  return false;
+                }
+              },
+            ]
+          }
+        ],
+      },
+      {
+        id:611, //Phoebe is a potential companion
+        name: "Phoebe",
+        dialouge: [
+          {
+            message: "Hi. I'm about to run a marathon.",
+            options: [
+            {
+              name:'Why are you barefoot?',
+              check: ()=>{
+                let returnVal = filterNPCState(611);
+                if(returnVal[0].state === 0 || returnVal[0].state === 1){
+                  return true;
+                }
+              },
+              effect: ()=>{
+                return 1;
+              }
+            },
+            {
+              name:"[Phoebe's Running Shoes]I found your shoes.",
+              check: ()=>checkForItem(106),
+              effect:()=>{
+                setNPCState(611,2);
+                updateNPCRelationship(611,3);
+                return 7;
+              }
+            },
+            {
+              name:"Exit",
+              check: ()=>noCheck(),
+              effect: ()=>{
+                return false;
+              }
+            },
+            ]
+          },
+          {
+            message: "Oh right! So I was at the park - training for my marathon - when I realized my marathon running shoes went missing! I read some articles online about how barefoot training is better for marathon running so I tried it. Ah, how am I going to run my marathon now?",
+            options: [
+              {
+                name:`I can try to find your shoes.`,
+                check: ()=>noCheck(),
+                effect: ()=>{
+                  setNPCState(611,1);
+                  return 2;
+                }
+              },
+              {
+                name:`[Running Shoes]I have these shoes - brand new - you can have them.`,
+                check: ()=>checkForItem(12),
+                effect: ()=>{
+                  this.removeInventoryItem(12);
+                  setNPCState(611,2);
+                  updateNPCRelationship(611,2);
+                  return 6;
+                }
+              },
+              {
+                name:`[Intelligence+Charisma ${(stats[0].value+stats[2].value)}%]According to scientific research - there's plenty of evidence to suggest that running while barefoot is better than with shoes because it connects the body with nature to give you a spiritual boost.`,
+                check: ()=>noCheck(),
+                effect: ()=>{
+                  let randomNum = Math.floor(Math.random() * 100);
+                  if((stats[0].value+stats[2].value) >= randomNum){
+                    updateNPCRelationship(611, 1);
+                    setNPCState(611,2);
+                    return 4;
+                  }
+                  else{
+                    updateNPCRelationship(611,-1);
+                    return 5;
+                  }
+                }
+              
+              }
+            ]
+          },
+          {
+            message: "Wow really? You're so sweet! I lost them when practicing marathon distance running around here. I took them off near the gas station and when I came back they were gone.",
+            options:[
+              {
+                name:`Wow you're pretty stupid for leaving them out in the open like that.`,
+                check: ()=>noCheck(),
+                effect: ()=>{
+                  updateNPCRelationship(611,-1);
+                    return 3;
+                  }
+              },
+              {
+                name:"Exit",
+                check: ()=>noCheck(),
+                effect: ()=>{
+                  return false;
+                }
+              },
+            ]
+          },
+          {
+            message: "[-1 Phoebe Relationship]Rude! You try training for a marathon! All the preperation is really stressful and I don't need someone like you to ruin my mood anymore than it already is.",
+            options:[
+              {
+                name:"Exit",
+                check: ()=>noCheck(),
+                effect: ()=>{
+                  return false;
+                }
+              },
+            ]
+          },
+          {
+            message: "[+1 Phoebe Relationship] Really? Well it does make sense. Alright, I'll run the marathon without the shoes. Thanks for the advice!",
+            options:[
+              {
+                name:"Exit",
+                check: ()=>noCheck(),
+                effect: ()=>{
+                  return false;
+                }
+              },
+            ]
+          },
+          {
+            message: "[-1 Phoebe Relationship] I'm not stupid you stupid! If I run the marathon barefoot I'll slice open my foot and bleed out in the middle of the road. And I won't finish my marathon. What's wrong with you?",
+            options:[
+              {
+                name:"Exit",
+                check: ()=>noCheck(),
+                effect: ()=>{
+                  return false;
+                }
+              },
+            ]
+          },
+          {
+            message: "[+2 Phoebe Relationship] Whoa, new in box? Really? Aw that's super sweet of you! I can't thank you enough!",
+            options:[
+              {
+                name:"Exit",
+                check: ()=>noCheck(),
+                effect: ()=>{
+                  return false;
+                }
+              },
+            ]
+          },
+          {
+            message:"[+3 Phoebe Relationship] Wow! You actually found them! This is great! Now nothing will stop me from marathon domination! Hahahahahahahahahahahahahahahahaha!",
+            options:[
+              {
+                name:"Glad I could help",
                 check: ()=>noCheck(),
                 effect: ()=>{
                   return false;

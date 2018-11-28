@@ -115,9 +115,6 @@ class MapUI extends Component {
             let end = '.png';
             if(cell > 601){
                 end = '.gif';
-                if(cell > 602){
-                    end = '.png';
-                }
             }
             let cellStyle={
                 backgroundImage: `url(./images/mapTiles/${cell}${end})`,
