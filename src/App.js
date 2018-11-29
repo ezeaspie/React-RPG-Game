@@ -1886,10 +1886,13 @@ class App extends Component {
                 name:"[Purchase Phoebe's Running Shoes] Sounds like a deal.",
                 check: ()=>noCheck(),
                 effect: ()=>{
-                  addInventoryItem(106,true,false,false);
-                  player.money -= 150;
-                  this.setState({playerObject:player});
-                  return false;
+                  if(player.money >= 150){
+                    addInventoryItem(106,true,false,false);
+                    player.money -= 150;
+                    this.setState({playerObject:player});
+                    return false;
+                  }
+                  return 5;
                 }
               },
               {
@@ -1898,6 +1901,16 @@ class App extends Component {
                 effect: ()=>{
                   return false;
                 }
+              }
+            ]
+          },
+          {
+            message: "With what money fool!?",
+            options:[
+              {
+                name:"Exit",
+                check: ()=>noCheck(),
+                effect: ()=>{return false}
               }
             ]
           }
