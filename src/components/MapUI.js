@@ -88,6 +88,8 @@ class MapUI extends Component {
             return;
         }
         else if(mapData[this.props.mapId].layout[positionY][positionX] > 200 ){
+            let bumpSound = new Audio('./audio/effects/bump.mp3');
+            bumpSound.play();
             return;
     }
         //Execute function to update upper state.
