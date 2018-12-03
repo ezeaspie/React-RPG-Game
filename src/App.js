@@ -304,6 +304,7 @@ class App extends Component {
       log:[],
       jobs: [],
       npcStates:[],
+      companion:undefined,
     }
     this.setState({playerObject : playerObject,playerPosition : [15,3], playerCurrentMap:0},()=>{
       this.updateGameState(2);
@@ -313,6 +314,12 @@ class App extends Component {
 
   updatePlayerPosition = (newPosition) => {
     this.setState({playerPosition:newPosition});
+  }
+
+  updatePlayerCompanion = (companionIndex) => {
+    let player = this.state.playerObject;
+    player.companion = companionIndex;
+    this.setState({playerObject:player});
   }
 
   updatePlayerHealth = (amount,exceedMax) => {
@@ -878,6 +885,22 @@ class App extends Component {
         isNew = true;
       }
         return [filteredObjectArray[0],isNew];
+    }
+
+    let checkNPCState = (id,stateToCheck) => {
+      let item = filterNPCState(id);
+      if(item[0].state === stateToCheck){
+        return true;
+      }
+      return false;
+    }
+
+    let checkNPCRelationship = (id,check) => {
+      let item = filterNPCState(id);
+      if(item[0].relationship >= check){
+        return true;
+      }
+      return false;
     }
 
     let checkForNewNPCState = (id,isNew) => {
@@ -2152,7 +2175,7 @@ class App extends Component {
         name: "Phoebe",
         dialouge: [
           {
-            message: "Hi. I'm about to run a marathon.",
+            message: `${checkNPCState(611,2)?"Thanks for the help. The marathon is about to start... but since I lost my shoes, I stopped prepping and now I don't think I can finish it with my current fitness. What do you think I should do?":"Hi. I'm about to run a marathon."}`,
             options: [
             {
               name:'Why are you barefoot?',
@@ -2170,9 +2193,90 @@ class App extends Component {
               name:"[Phoebe's Running Shoes]I found your shoes.",
               check: ()=>checkForItem(106),
               effect:()=>{
+                this.removeInventoryItem(106);
                 setNPCState(611,2);
                 updateNPCRelationship(611,3);
                 return 7;
+              }
+            },
+            {
+              name:`[50 Agility 35 Strength]${stats[1].value>=35&&stats[3].value>=50?"I've done my share of running. If you want, we can train together so you can crush the marathon.":"If you ignore my belly fat and inability to climb stairs - I could train you up to par."}`,
+              check: ()=>{
+                return checkNPCState(611,2);
+              },
+              effect:()=>{
+                if(stats[1].value>=35&&stats[3].value>=50){
+                  updateNPCRelationship(611,2);
+                  setNPCState(611,3);
+                  return 9;
+                }
+                return 8;
+              }
+            },
+            {
+              name:`[AGI+ Chance] Train with Phoebe`,
+              check:()=>{
+              let returnVal = filterNPCState(611);
+              if(returnVal[0].state >= 3){
+                return true;
+              }
+              return false;
+              },
+              effect:()=>{
+                let luck = stats[4].value;
+                let item = filterNPCState(611);
+                let relationship = item[0].relationship;
+                luck /= 2;
+                luck += relationship;
+                let randomNum = Math.floor(Math.random() * 100);
+                if(luck >= randomNum){
+                  stats[3] += 1;
+                  this.setState({playerObject:player});
+                  return 10;
+                }
+                return 11;
+              }
+            },
+            {
+              name:`[Charisma ${stats[0].value>=100?100:stats[0].value}%] Flirt with Phoebe`,
+              check: ()=>{
+                checkNPCRelationship(611,5);
+              },
+              effect: ()=>{
+                let randomNum = Math.floor(Math.random() * 100);
+                if(stats[0].value>=randomNum){
+                  updateNPCRelationship(611,1);
+                  return 12;
+                }
+                  updateNPCRelationship(611,-1);
+                  return 13;
+              }
+            },
+            {
+              name:`[Agility] I'd say you're more than ready to tackle the marathon.`,
+              check: ()=>{
+                let item = filterNPCState(611);
+                if(item[0].state >= 3 && stats[3].value >= 100){
+                  return true;
+                }
+                return false;
+              },
+              effect: ()=>{
+                setNPCState(611,4);
+                return 14;
+              }
+            },
+            {
+              name:`[120 AGI,50 STR,Engagement Ring,15 Relationship, CHR ${stats[0].value-20}%] Propose to Phoebe`,
+              check:()=>{
+                return checkNPCState(611,5);
+              },
+              effect:()=>{
+                let randomNum = Math.floor(Math.random() * 100);
+                if(stats[0].value-20 >= randomNum){
+                  return 15;
+                }
+                return 15; //THIS NEEDS TO BE FIXED. THIS SHOULD BE 16. THIS IS FOR TESTING
               }
             },
             {
@@ -2302,6 +2406,205 @@ class App extends Component {
                   return false;
                 }
               }
+            ]
+          },
+          {
+            message:"Uhhh... sorry but I kinda want to do well at the marathon.",
+            options:[
+              {
+                name:"Exit",
+                check: ()=>noCheck(),
+                effect: ()=>{
+                  return false;
+                }
+              }
+            ]
+          },
+          {
+            message:`"[+2 Phoebe Relationship] You're really a peach you know? ${checkNPCRelationship(611,5)?"Oops, did I say that? I mean... uh. Train me. Please? Call me? I mean... call me to let me know when you're ready to start.":"Thanks for the help. Come back and we can train together when you're ready!"}`,
+            options:[
+              {
+                name:"Glad I could help",
+                check: ()=>noCheck(),
+                effect: ()=>{
+                  return false;
+                }
+              }
+            ]
+          },
+          {
+            message:`"[+1 Agility] Wow that was an incredible workout! Laps around the whole city? I didn't even know I had it in me! You're really good at this.`,
+            options:[
+              {
+                name:"Glad I could help",
+                check: ()=>noCheck(),
+                effect: ()=>{
+                  return false;
+                }
+              }
+            ]
+          },
+          {
+            message:`That was tiring and I feel fitter but I can't help but feel that we could have done a bit more...`,
+            options:[
+              {
+                name:"Glad I could help",
+                check: ()=>noCheck(),
+                effect: ()=>{
+                  return false;
+                }
+              }
+            ]
+          },
+          {
+            message:`[+1 Phoebe Relationship] Heehee, oh hush you! ${checkNPCRelationship(10)?"I don't know. I guess you're okay too.":"You really make me feel special! Maybe I feel the same way about you."}`,
+            options:[
+              {
+                name:"Exit",
+                check: ()=>noCheck(),
+                effect: ()=>{
+                  return false;
+                }
+              }
+            ]
+          },
+          {
+            message:`[-1 Phoebe Relationship] Uh... thanks I guess? ${checkNPCRelationship(10)?"You're really sweet but I don't think we're at that state in our relationship just yet.":"We have a pretty strong bond but... I'm not really feeling it."}`,
+            options:[
+              {
+                name:"Exit",
+                check: ()=>noCheck(),
+                effect: ()=>{
+                  return false;
+                }
+              }
+            ]
+          },
+          {
+            message:`I really can't believe it. When I met you I was nothing. Just some barefoot girl, fresh out of college, looking to add some sort of meaning to my life by running a marathon. First the shoes, then the help training, and then the support you gave me when I actually finished it. You were a train that led me to my goals. And I really can't thank you enough for that. Well... maybe I can. Yes! Yes! I'll marry you! Here's to hoping that our new life together is full of joy and more marathons!`,
+            options:[
+              {
+                name:"Marry Phoebe",
+                check: ()=>noCheck(),
+                effect: ()=>{
+                  this.updatePlayerCompanion(0);
+                  return false;
+                }
+              }
+            ]
+          }
+        ],
+      },
+      {
+        id:612,
+        name: "Sgt. Forge",
+        dialouge: [
+          {
+            message: `${checkNPCState(611,0)?"[He appears to be injured and unconcious]":"For the record, I didn't need your help. I was just sleeping."}`,
+            options: [
+            {
+              name:`[Intelligence] Use Medical Knowledge to heal him`,
+              check: ()=>{
+                if(stats[2].value >= 60){
+                  return true;
+                }
+                return false;
+              },
+              effect: ()=>{
+                setNPCState(612,1);
+                player.streetCred += 5;
+                this.setState({playerObject:player});
+                return 1;
+              }
+            },
+            {
+              name:"Exit",
+              check: ()=>noCheck(),
+              effect: ()=>{
+                return false;
+              }
+            },
+            ]
+          },
+          {
+            message: "[+5 StreetCred] Goodness, I must have taken quite a beating. I'm not getting up from here. Say, you think you can help me get a bit of revenge? I have some high tech weapons you can have if you help.",
+            options: [
+              {
+                name:`You want me to beat up whoever beat you up?`,
+                check: ()=>noCheck(),
+                effect: ()=>{
+                  return 2;
+                }
+              },
+              {
+                name:"No thanks. I don't do drama",
+                check: ()=>noCheck(),
+                effect: ()=>{
+                  return false;
+                }
+                
+              }
+            ]
+          },
+          {
+            message: "If you can dish out some pain to that strong guy at the local gym... this plasma gun is yours.",
+            options:[
+              {
+                name:`Okay, I'll do it.`,
+                check: ()=>{
+                  noCheck();
+                },
+                effect: ()=>{
+                  setNPCState(612,2);
+                  return false;
+                }
+              },
+              {
+                name:"[Police Badge] As a fellow commander, I demand to know about your information sources.",
+                check:()=>checkForItem(105),
+                effect: ()=>{
+                  return 3;
+                }
+              },
+              {
+                name:"Nothing. Just curious is all.",
+                check: ()=>noCheck(),
+                effect: ()=>{
+                  return false;
+                }
+              },
+            ]
+          },
+          {
+            message: "Of course. Chuck is our insider. I've noticed that The Emperor has labeled him as a suspect in his mole hunt. I think we should move to offer him more protection or find a new mole.",
+            options:[
+              {
+                name:"Thank you officer.",
+                check: ()=>noCheck(),
+                effect: ()=>{
+                  let returnVal = filterNPCState(606);
+                  if(returnVal[0].state === 1){
+                    setNPCState(606,3);
+                    return false;
+                  }
+                  if(returnVal[0].state === 2){
+                    setNPCState(606,4)
+                    return false;
+                  }
+                }
+              },
+            ]
+          },
+          {
+            message: "[FAILED] Do you think I'm stupid? You're not with the department. Get out of here!",
+            options:[
+              {
+                name:"Exit",
+                check: ()=>noCheck(),
+                effect: ()=>{
+                  return false;
+                }
+              },
             ]
           }
         ],

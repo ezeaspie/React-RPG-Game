@@ -22,6 +22,10 @@ class Interface extends Component {
     }
 
     render(){
+        let renderCompanionData = false;
+        if(this.props.storeData.id === 401){
+            renderCompanionData = true;
+        }
         let productList =[];
 
         if(this.props.storeData.isShop) {
@@ -57,6 +61,8 @@ class Interface extends Component {
                 <ul className="store-list options">
                     {this.props.storeData.options.map((option,i)=>{
                         return <Option 
+                        playerData={this.props.playerData}
+                        renderCompanionData={renderCompanionData}
                         goToJail = {this.props.goToJail}
                         updateGameState={this.props.updateGameState}
                         forceRender = {this.forceRender}
