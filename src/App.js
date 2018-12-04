@@ -310,7 +310,6 @@ class App extends Component {
   }
 
   equipWeapon = (weapon) => {
-    console.log("added a weapon");
     let id = Number(weapon.id);
     let player = this.state.playerObject;
 
@@ -321,10 +320,18 @@ class App extends Component {
     if(check[0] !== undefined){
         return;
     }
+    console.log("added a weapon");
+
     if(player.activeWeapons.length > 3){
       player.activeWeapons.pop();
     }
     player.activeWeapons.unshift(id);
+    this.setState({playerObject:player});
+  }
+
+  removeWeapon = (index) => {
+    let player = this.state.playerObject;
+    player.activeWeapons.splice(index,1);
     this.setState({playerObject:player});
   }
 
@@ -2709,6 +2716,7 @@ class App extends Component {
       time={this.state.gameTime}
       currentDay={this.state.currentDay}
       equipWeapon={this.equipWeapon}
+      removeWeapon={this.removeWeapon}
       />,
       ],
       <Interface 

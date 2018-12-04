@@ -45,6 +45,9 @@ class InventoryOverlay extends Component {
     }
 
     removeItem = (index) => {
+        let player = this.props.playerData;
+        player.activeWeapons.splice(index,1);
+        this.setState({weaponList:player.activeWeapons},()=>{this.props.removeWeapon(index)});
     //Add remove ITem code. Ensure that the indexes update after removing or it will remove wrong ones after the first removal
     }
 
@@ -108,7 +111,7 @@ class InventoryOverlay extends Component {
                                             return weapon.id === weaponId;
                                         });
                                         let weaponObject = selectedWeapon[0];
-                                        return <li><p>{weaponObject.name}</p><button onClick={this.removeItem(i)}>Remove</button></li>
+                                        return <li><p>{weaponObject.name}</p><button onClick={()=>{this.removeItem(i)}}>Remove</button></li>
                                     })
                                 }
                             </ul>
