@@ -664,3 +664,50 @@ border:solid 1px #E7DFDD;
       -o-transition:ease .5s all;
       transition:ease .5s all;
 }
+
+.inv-overlay-main {
+  display: -ms-flexbox;
+  display: flex;
+  width:100%;
+  -ms-flex-pack: justify;
+      justify-content: space-between;
+  -ms-flex-line-pack: center;
+      align-content: center;
+}
+
+.inv-overlay-list {
+  width:70%;
+}
+
+.inv-overlay-list .inv-item {
+  color:#E7DFDD;
+  text-align:center;
+}
+.inv-console{
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  color:#E7DFDD;
+  padding:0 1em;
+  width:30%;
+}
+
+.inv-console h2 {
+  color:#E7DFDD;
+}
+
+.combat-visuals{
+  display: flex;
+  justify-content: space-between;
+  height:10em;
+}
+
+.combat-log{
+  list-style-type: none;
+  overflow-y: scroll;
+  height:10em;
+}
+
+.combat-log-item {
+  padding:.2em;
+}
+

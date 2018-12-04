@@ -21,6 +21,8 @@ class Combat extends Component {
             },
             enviornment: null,
             activePlayer: true,
+            isQuest:false,
+            log:[],
         }
 
         this.handleFlee = this.handleFlee.bind(this);
@@ -28,11 +30,23 @@ class Combat extends Component {
 
     componentWillMount(){
         this.setState({canChump:this.props.canChump});
+        if(this.props.bountyObject !== null){
+            this.setState({isQuest:true});
+        }
         this.calculateAttackPoints();
         if(this.state.player.main.stats[3].value < this.state.opponent.main.stats[3].value) {
             this.setState({activePlayer:false});
         }
         this.filterWeapons();
+    }
+
+    updateLog = (message) => {
+        let log = this.state.log;
+        log.unshift(message);
+        if(log.length > 10){
+            log.pop();
+        }
+        this.setState({log});
     }
 
     filterWeapons = () => {
@@ -44,13 +58,13 @@ class Combat extends Component {
             name: 'Punch',
             description: 'Good old fashioned knuckle sandwich.',
             apCost: 5,
-            damage: 1,
+            damage: 3,
         }
         let kick = {
             name: 'Kick',
             description: 'Kick him RIGBABY',
-            apCost: 8,
-            damage: 2,
+            apCost: 10,
+            damage: 6,
         }
 
         let playerWeapons = [];
@@ -130,7 +144,7 @@ class Combat extends Component {
         });
         if(possibleMoves.length === 0){
             console.log("no possible moves");
-            this.handleEndOfAttack(true);
+            this.handleEndOfAttack(true,false);
             return;
         }
         if(killerMoves[0] !== undefined){
@@ -150,8 +164,13 @@ class Combat extends Component {
 
         const attackPointFunction = (agility) => {
             let floorAgility = Math.floor(agility/2);
-            let finalAgility = 5 + floorAgility;
-            return finalAgility;
+            if(floorAgility < 5){
+                floorAgility = 5;
+            }
+            if(floorAgility >= 50){
+                floorAgility = 50;
+            }
+            return floorAgility;
         }
         
         let playerAP = attackPointFunction(pAgility);
@@ -214,15 +233,15 @@ class Combat extends Component {
         attacker.attackPoints -= weapon.apCost;
 
         if(isCrit){
-            console.log('CRITICAL HIT');
+            this.updateLog(console.log('CRITICAL HIT'));
         }
-        console.log(`${attacker.main.name} uses ${weapon.name} on ${target.main.name} for ${attackDamage} DMG`);
+        this.updateLog(`${attacker.main.name} uses ${weapon.name} on ${target.main.name} for ${attackDamage} DMG`);
 
         if(isPlayer){
             this.setState({player:attacker,opponent:target},
                 ()=>{
                     if(attacker.attackPoints <= 0){
-                        this.handleEndOfAttack(true);
+                        this.handleEndOfAttack(true,true);
                     }
                     else{
                         this.handleEndOfAttack(false);
@@ -232,7 +251,7 @@ class Combat extends Component {
         else{
             this.setState({player:target,opponent:attacker},()=>{
                 if(attacker.attackPoints <= 0){
-                    this.handleEndOfAttack(true);
+                    this.handleEndOfAttack(true,false);
                 }
                 else{
                     this.handleEndOfAttack(false);
@@ -241,13 +260,23 @@ class Combat extends Component {
         }
     }
 
-    handleEndOfAttack = (forceEndTurn) => {
+    handleEndOfAttack = (forceEndTurn,isPlayer=false) => {
         let player = this.state.player;
         let opponent = this.state.opponent;
 
         if(forceEndTurn){
-            player.attackPoints = player.maxAttackPoints;
-            opponent.attackPoints = opponent.maxAttackPoints;
+            if(isPlayer){
+                player.attackPoints += Math.ceil(player.maxAttackPoints*.75);
+                if(player.attackPoints >= player.maxAttackPoints || player.attackPoints < 5){
+                    player.attackPoints = player.maxAttackPoints;
+                }
+            }
+            else{
+                opponent.attackPoints += Math.ceil(opponent.maxAttackPoints*.75);
+                if(opponent.attackPoints >= opponent.maxAttackPoints || opponent.attackPoints < 5){
+                    opponent.attackPoints = opponent.maxAttackPoints;
+                }
+            }
             this.setState({
                 player,
                 opponent,
@@ -285,6 +314,11 @@ class Combat extends Component {
                 <p>You find {opponent.main.money} dollars in {opponent.main.name}'s' wallet.</p>
                 <p>The people heard how you beat down ${opponent.main.name} and you earned 5 street cred!</p>
                 <button className="main-button" onClick={()=>{
+                    if(this.state.isQuest){
+                        let bountyObject = this.props.bountyObject;
+                        bountyObject.complete = true;
+                        this.props.updateBountyList(bountyObject);
+                    }
                     this.props.updatePlayerState(player.main);
                     this.props.updateTime(false,4);
                     this.props.updateGameState(3);
@@ -369,7 +403,7 @@ class Combat extends Component {
                     null
                 }
                 <div className="combat-buttons">
-                    <button disabled={!this.state.activePlayer} className="main-button" onClick={()=>{this.handleEndOfAttack(true)}}>Pass</button>
+                    <button disabled={!this.state.activePlayer} className="main-button" onClick={()=>{this.handleEndOfAttack(true,true)}}>Pass</button>
                     <button disabled={!this.state.activePlayer || !this.state.canChump} className="main-button" onClick={this.handleFlee}>Chump out</button>
                 </div>
                 
@@ -416,6 +450,22 @@ class Combat extends Component {
                             </div>
                         }
                         
+                </div>
+
+                <div className="combat-visuals">
+                    <div>
+                        <div>COMBAT ICON</div>
+                        <div>COMBAT ICON II</div>
+                    </div>
+                    <div>
+                        <ul className="combat-log">
+                            {
+                                this.state.log.map((logItem,i)=>{
+                                    return <li className = "combat-log-item" key={"log"+i}>{logItem}</li>
+                                })
+                            }
+                        </ul>
+                    </div>
                 </div>
 
                 <div className="combat-opponent main">

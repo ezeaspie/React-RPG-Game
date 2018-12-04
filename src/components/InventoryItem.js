@@ -29,7 +29,6 @@ checkPurchaseAndUpdate = () => {
 handleClick = () => {
     this.props.updateConsole(this.props.item);
 }
-//IE: Thank you, come again - if true => BROKE ALERT - if false
     render(){
         return(
             <li 

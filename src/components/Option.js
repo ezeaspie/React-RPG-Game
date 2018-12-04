@@ -7,7 +7,6 @@ handleRobbery = () => {
     if(this.props.checkTime(6)){
         let returnValue = this.props.option.effect();
         if(this.props.option.name === "Rob the Place"){
-         this.props.updateLog(returnValue[4]); 
          this.props.updateTime(false,6);
          //ADD 7 TO TOTAL DAYS.
          let content = 

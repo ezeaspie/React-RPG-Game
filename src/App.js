@@ -17,6 +17,7 @@ class App extends Component {
     super(props);
     this.state = {
       gameState : undefined,
+      bountyList :[],
       gameScreen : undefined,
       gameTime: 8,
       playerObject : undefined,
@@ -39,6 +40,7 @@ class App extends Component {
     const playerMap = JSON.parse(localStorage.getItem("playerMap"));
     const currentTime = JSON.parse(localStorage.getItem("gameTime"));
     const currentDay = JSON.parse(localStorage.getItem("currentDay"));
+    const bountyList = JSON.parse(localStorage.getItem("bountyList"));
     if(playerSave !== null){
       this.setState( { 
         playerObject: playerSave, 
@@ -47,6 +49,7 @@ class App extends Component {
         playerCurrentMap : playerMap, 
         gameTime : currentTime,
         currentDay,
+        bountyList:bountyList,
       },
       ()=>{
         this.rebuildInventory();
@@ -111,11 +114,13 @@ class App extends Component {
       const playerMap = this.state.playerCurrentMap;
       const currentTime = this.state.gameTime;
       const currentDay = this.state.currentDay;
+      const bountyList = this.state.bountyList;
       localStorage.setItem("playerSave", JSON.stringify(playerData));
       localStorage.setItem("playerPos", JSON.stringify(playerPosition));
       localStorage.setItem('playerMap', JSON.stringify(playerMap));
       localStorage.setItem('gameTime', JSON.stringify(currentTime));
       localStorage.setItem('currentDay', JSON.stringify(currentDay));
+      localStorage.setItem('bountyList',JSON.stringify(bountyList));
       console.log("Game Saved");
       return;
     }
@@ -258,13 +263,6 @@ class App extends Component {
     this.setState({playerObject});
   }
 
-  updatePlayerLog = (message) => {
-    let player = this.state.playerObject;
-    if(player.log.length+1 > 10){
-      player.log.pop();
-    }
-    player.log.unshift(message);
-  }
 
   setDay = (amount) => {
     this.setState({currentDay:this.state.currentDay + amount});
@@ -301,7 +299,6 @@ class App extends Component {
       maxHealth: 100,
       karma: 0,
       streetCred: 0,
-      log:[],
       jobs: [],
       npcStates:[],
       companion:undefined,
@@ -603,10 +600,11 @@ class App extends Component {
             effect: ()=>{
               let opponent = this.createOpponent("Melweed",[5,10],[5,10],[5,10],[100,200],Weapons,2);
               if(this.checkTime(4)){
-                this.setState({opponentObject:opponent},()=>this.updateGameState(4));
+                this.startCombat(opponent);
+                //this.setState({opponentObject:opponent},()=>this.updateGameState(4));
               }
               else{
-                return false;
+                return [player, <p>It's too late!</p>];
               }
             }
           },
@@ -626,7 +624,7 @@ class App extends Component {
               this.setState({opponentObject:opponent},()=>this.updateGameState(4));
             }
             else{
-              return false;
+              return [player, <p>It's too late!</p>];
             }
           }
         },
@@ -934,6 +932,22 @@ class App extends Component {
 
     let noCheck = () => {
       return true
+    }
+
+    let handleBountyList = (id) => {
+      let bountyList = this.state.bountyList;
+      let index = undefined;
+      let found = bountyList.filter((item,i)=>{
+        index = i;
+        return id === item.id;
+      })
+      console.log(found[0]);
+      if(found[0].complete){
+        bountyList.splice(index,1);
+        this.setState({bountyList});
+        return true;
+      }
+      return false;
     }
 
     let checkForItem = (itemId) => {
@@ -2524,6 +2538,16 @@ class App extends Component {
                 return false;
               }
             },
+            {
+              name:"[Quest] I defeated Henry the Strong Guy for you.",
+              check: ()=>checkNPCState(612,2),
+              effect: ()=>{
+                if(handleBountyList(612)){
+                  return 3;
+                }
+                return 4;
+              }
+            },
             ]
           },
           {
@@ -2551,23 +2575,17 @@ class App extends Component {
             options:[
               {
                 name:`Okay, I'll do it.`,
-                check: ()=>{
-                  noCheck();
-                },
+                check: ()=>noCheck(),
                 effect: ()=>{
+                  let list = this.state.bountyList;
+                  list.push({name:"Henry the Strong Guy", complete:false, id:612});
+                  this.setState({bountyList:list});
                   setNPCState(612,2);
                   return false;
                 }
               },
               {
-                name:"[Police Badge] As a fellow commander, I demand to know about your information sources.",
-                check:()=>checkForItem(105),
-                effect: ()=>{
-                  return 3;
-                }
-              },
-              {
-                name:"Nothing. Just curious is all.",
+                name:"No thanks.",
                 check: ()=>noCheck(),
                 effect: ()=>{
                   return false;
@@ -2576,27 +2594,20 @@ class App extends Component {
             ]
           },
           {
-            message: "Of course. Chuck is our insider. I've noticed that The Emperor has labeled him as a suspect in his mole hunt. I think we should move to offer him more protection or find a new mole.",
+            message: "Great job soldier. A promise is a promise. Here you go.",
             options:[
               {
-                name:"Thank you officer.",
+                name:"Thank you sergeant.",
                 check: ()=>noCheck(),
                 effect: ()=>{
-                  let returnVal = filterNPCState(606);
-                  if(returnVal[0].state === 1){
-                    setNPCState(606,3);
-                    return false;
-                  }
-                  if(returnVal[0].state === 2){
-                    setNPCState(606,4)
-                    return false;
-                  }
+                  addInventoryItem(309,true,false,true);
+                  return false;
                 }
               },
             ]
           },
           {
-            message: "[FAILED] Do you think I'm stupid? You're not with the department. Get out of here!",
+            message: "No you didn't. Stop the lies.",
             options:[
               {
                 name:"Exit",
@@ -2617,6 +2628,41 @@ class App extends Component {
     let npc = chosenNPC[0];
 
     return npc;
+  }
+
+  startCombat = (opponent,bonusReward=null,isDouble=false) => {
+    let bountyList = this.state.bountyList;
+    let found = bountyList.filter((item)=>{
+      return item.name === opponent.name;
+    });
+
+    let jsxObject = 
+    <Combat 
+      bonusReward={bonusReward}
+      updateBountyList={this.updateBountyList}
+      bountyObject = {found[0] !== undefined?found[0]:null}
+      player={this.state.playerObject}
+      opponent={opponent}
+      updatePlayerState={this.updatePlayerState}
+      updateGameState={this.updateGameState}
+      updateTime={this.updateTime}
+      canChump={this.state.canChump}
+    />
+
+    this.setState({gameScreen:jsxObject});
+  }
+
+  updateBountyList = (bountyObject) => {
+    let id = bountyObject.id;
+    let bountyList = this.state.bountyList;
+    bountyList.filter((item,i)=>{
+      if(id === item.id){
+        bountyList.splice(i,1);
+        bountyList.push(bountyObject);
+        this.setState({bountyList});
+      }
+      return id === item.id;
+    })
   }
 
   updateGameState = (newStateId) => {
@@ -2653,13 +2699,11 @@ class App extends Component {
       storeData={this.state.activeStore}
       updateGameState = {this.updateGameState}
       playerData = {this.state.playerObject}
-      updateLog={this.updatePlayerLog}
       jobOptions={this.state.jobOptions}
       checkTime={this.checkTime}
       updateTime={this.updateTime}
       />,
       <Combat 
-      updateLog={this.updatePlayerLog}
       player={this.state.playerObject}
       opponent={this.state.opponentObject}
       updatePlayerState={this.updatePlayerState}

@@ -44,29 +44,31 @@ class InventoryOverlay extends Component {
         return(
             <div className="overlay inv-overlay"style={this.props.style} >
                 <button className="main-button" onClick={() => {this.props.handleClick(false)}}>Back</button>
-                <ul className="inv-overlay-list">
-                {this.props.inventoryData.map((item,i)=>{
-                    return(
-                    <InventoryItem
-                        key={item.id}
-                        item={item}
-                        index={i}
-                        updateConsole={this.updateConsole}
-                    /> 
-                    )
-                })}
-                </ul>
-                <div className="inv-console">
-                    <div className="inv-console-image">
+                <div className="inv-overlay-main">
+                    <ul className="inv-overlay-list">
+                    {this.props.inventoryData.map((item,i)=>{
+                        return(
+                        <InventoryItem
+                            key={item.id}
+                            item={item}
+                            index={i}
+                            updateConsole={this.updateConsole}
+                        /> 
+                        )
+                    })}
+                    </ul>
+                    <div className="inv-console">
+                        <div className="inv-console-image">
+                        </div>
+                        <h2 className="inv-console-title">
+                            {this.state.activeItem.name}
+                        </h2>
+                        <div className="inv-console-description">
+                            {this.state.activeItem.description}
+                        </div>
+                        <button disabled={!this.state.activeItem.isConsumable} onClick ={this.handleClick} className="main-button">Use</button>
                     </div>
-                    <h2 className="inv-console-title">
-                        {this.state.activeItem.name}
-                    </h2>
-                    <div className="inv-console-description">
-                        {this.state.activeItem.description}
-                    </div>
-                    <button disabled={!this.state.activeItem.isConsumable} onClick ={this.handleClick} className="main-button">Use</button>
-                </div>  
+                </div>
             </div>
         )
     }
