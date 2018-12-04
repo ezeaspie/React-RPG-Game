@@ -175,6 +175,7 @@ class MapUI extends Component {
                     }
                 </div>
                 <PlayerConsole
+                equipWeapon={this.props.equipWeapon}
                 removeInventoryItem={this.props.removeInventoryItem}
                 consumableItems = {this.props.consumableItems}
                 currentDay={this.props.currentDay}

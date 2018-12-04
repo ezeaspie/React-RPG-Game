@@ -130,7 +130,7 @@ class App extends Component {
     getAndSetData();
    }
 
-   setInventoryList = () => {
+  setInventoryList = () => {
     const consumableItems = 
     [
       {
@@ -297,16 +297,35 @@ class App extends Component {
       money: 20,
       health: 90,
       maxHealth: 100,
-      karma: 0,
       streetCred: 0,
       jobs: [],
       npcStates:[],
       companion:undefined,
+      activeWeapons:[],
     }
     this.setState({playerObject : playerObject,playerPosition : [15,3], playerCurrentMap:0},()=>{
       this.updateGameState(2);
       this.saveToLocal();
       });
+  }
+
+  equipWeapon = (weapon) => {
+    console.log("added a weapon");
+    let id = Number(weapon.id);
+    let player = this.state.playerObject;
+
+    let check = player.activeWeapons.filter((weaponId)=>{
+      return id === weaponId;
+    });
+
+    if(check[0] !== undefined){
+        return;
+    }
+    if(player.activeWeapons.length > 3){
+      player.activeWeapons.pop();
+    }
+    player.activeWeapons.unshift(id);
+    this.setState({playerObject:player});
   }
 
   updatePlayerPosition = (newPosition) => {
@@ -2689,6 +2708,7 @@ class App extends Component {
       handleNPCInteractions={this.handleNPCInteractions}
       time={this.state.gameTime}
       currentDay={this.state.currentDay}
+      equipWeapon={this.equipWeapon}
       />,
       ],
       <Interface 
