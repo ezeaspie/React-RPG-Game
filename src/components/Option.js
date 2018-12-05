@@ -71,17 +71,21 @@ calculateRobChance = () => {
         }
         //Move the companion stuff to interface instead. Render a special OPTION for talking to companion.
         return(
-            this.props.renderCompanionData?
+            <div>
+            {this.props.renderCompanionData&&this.props.playerData.companion !== undefined?
             <div className="companion">
             <img alt="companion gif" src={companions[this.props.playerData.companion].image}></img>
                 <li>Talk to {companions[this.props.playerData.companion].name}</li>
             </div>
             :
+            null}
             <li 
             className="option" 
             onClick={isRobbery?this.handleRobbery:this.runEffectandUpdate}>
             {content}
             </li>
+            </div>
+            
         )
     }
 }

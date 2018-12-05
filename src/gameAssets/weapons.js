@@ -4,6 +4,9 @@ let WeaponFactory = (id,name,description,price,damage,apCost,accuracy,isMelee,mo
   let weaponObject = {
     id,
     name,
+    damage,
+    apCost,
+    accuracy,
     description: <div>{description}<p>{damage} DMG | {apCost} AP | {accuracy} ACC</p></div>,
     price,
     isMelee,
@@ -59,9 +62,13 @@ let Weapons = [
   {
     id:309,
     name:"Plasma Pistol",
+    damage: 4,
+    apCost: 5,
+    accuracy: 90,
     description: <div><p>1 in 5 chance of a charged bolt for 3x damage.</p><p>5 DMG | 3 AP</p></div>,
     price: 1000,
     isWeapon: true,
+    isMelee:false,
     isConsumable:false,
     effect: ()=>{
       let randomNum = Math.floor(Math.random() * 100);

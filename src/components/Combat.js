@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import Weapons from '../gameAssets/weapons';
+import CombatWeapon from './CombatWeapon';
 
 class Combat extends Component {
     constructor(props){
@@ -52,52 +54,45 @@ class Combat extends Component {
     filterWeapons = () => {
         let player = this.state.player;
         let opponent = this.state.opponent;
-        let tempPlayerWeapons = [];
-        let tempOpponentWeapons = [];
         let punch = {
             name: 'Punch',
             description: 'Good old fashioned knuckle sandwich.',
             apCost: 5,
             damage: 3,
+            accuracy: 95,
+            effect: () => {
+                return {damage:3, apCost:5,accuracy:95}
+              }
         }
         let kick = {
             name: 'Kick',
             description: 'Kick him RIGBABY',
             apCost: 10,
             damage: 6,
+            accuracy: 95,
+            effect: () => {
+                return {damage:6, apCost:5,accuracy:95}
+              }
         }
 
         let playerWeapons = [];
         let opponentWeapons = [];
 
-        tempPlayerWeapons = player.main.inventory.filter(item => item.isWeapon);
-        tempOpponentWeapons = opponent.main.inventory.filter(item => item.isWeapon); 
+        playerWeapons = player.main.activeWeapons;
 
-        playerWeapons.push(punch,kick);
-        opponentWeapons.push(punch,kick);
-        tempPlayerWeapons.map((weapon)=>{
-            let stats = weapon.effect();
-            let weaponObj = {
-                name: weapon.name,
-                description: weapon.description,
-                apCost: stats.apCost,
-                damage: stats.damage,
-            }
-            playerWeapons.push(weaponObj);
-            return weaponObj;
-        })
-        tempOpponentWeapons.map((weapon)=>{
-            let stats = weapon.effect();
-            let weaponObj = {
-                name: weapon.name,
-                description: weapon.description,
-                apCost: stats.apCost,
-                damage: stats.damage,
-            }
-            opponentWeapons.push(weaponObj);
-            return weaponObj;
+        playerWeapons.forEach((weaponId,i)=>{
+            let selectedWeapon = Weapons.filter((weapon)=>{
+                return weapon.id === weaponId;
+            });
+            let weaponObject = selectedWeapon[0];
+            return playerWeapons[i] = weaponObject;
         })
 
+        opponentWeapons = opponent.main.inventory.filter(item => item.isWeapon); 
+
+        playerWeapons.unshift(punch,kick);
+        opponentWeapons.unshift(punch,kick);
+        
         player.weapons = playerWeapons;
         opponent.weapons = opponentWeapons;
         
@@ -106,8 +101,9 @@ class Combat extends Component {
 
     calculateAttackDamage = (isPlayer,weapon,isCriticalHit) => {
         let user = undefined;
-        let baseDamage = weapon.damage;
-        let damageBuff = 0;
+        let runAttack = weapon.effect();
+        let baseDamage = runAttack.damage;
+        let damageBuff = 0; //Used to add to perks and stuff probably in the future
         if(isPlayer){
             user = this.state.player.main;
         }
@@ -115,11 +111,17 @@ class Combat extends Component {
             user = this.state.opponent.main;
         }
 
-        let strength = user.stats[1].value;
+        let meeleeBuffCalculation = () => {
+            let strength = user.stats[1].value;
+            let buffCap = baseDamage/2;
+            let strengthPercentage = strength * .01;
 
-        let coefficent = strength/100;
+            let buff = buffCap * strengthPercentage;
+            console.log({buff,buffCap,strength});
+            return Math.floor(buff);
+        }
 
-        damageBuff = Math.ceil(coefficent * baseDamage);
+        damageBuff = meeleeBuffCalculation();
 
         damageBuff += baseDamage;
 
@@ -208,10 +210,23 @@ class Combat extends Component {
     }
 
     handleAttack = (isPlayer, weapon) => {
-
         let attacker = null;
         let target = null;
 
+        let calculateAccuracy = () => {
+            let randomNum = Math.floor(Math.random() * 100);
+            //let playerAccuracyModifier = player.accuracy <= this will be a way to track accuracy deficits and boosts +-5,etc.
+            let accuracy = weapon.accuracy;
+            if(accuracy >= randomNum){
+                return true;
+            }
+            return false;
+        }
+
+        if(!calculateAccuracy){
+            this.updateLog(`${attacker.main.name}'s ${weapon.name} attack missed!`);
+            return;
+        }
         if(isPlayer){
             attacker = this.state.player;
             target = this.state.opponent;
@@ -428,12 +443,14 @@ class Combat extends Component {
                        <div className="combat-options">
                                 {
                                     player.weapons.map((weapon,i)=>{
-                                            return <button disabled={!this.state.activePlayer} className="combat-weapon" key={"playerWeapon" + i}
-                                                        onClick={()=>{this.handleAttack(true,weapon)}}>
-                                                        <p className="weapon-name">{weapon.name}</p>
-                                                        <p className="weapon-damage">{weapon.damage} DMG</p>
-                                                        <p className="weapon-ap">{weapon.apCost} AP</p>
-                                                    </button>
+                                        return <CombatWeapon 
+                                            key={"playerWeapon" + i}
+                                            isPlayer={true}
+                                            weapon={weapon}
+                                            isActive={this.state.activePlayer}
+                                            handleAttack={this.handleAttack}
+                                            attackPoints={player.attackPoints}
+                                        />
                                     })
                                 }
                             </div>
@@ -485,11 +502,11 @@ class Combat extends Component {
                 <div className="combat-options">
                 {
                     opponent.weapons.map((weapon,i)=>{
-                            return <div className="combat-weapon" key={"opponentWeapon" + i}>
-                                        <p className="weapon-name">{weapon.name}</p>
-                                        <p className="weapon-damage">{weapon.damage} DMG</p>
-                                        <p className="weapon-ap">{weapon.apCost} AP</p>
-                                    </div>
+                        return <CombatWeapon 
+                            key={"opponentWeapon" + i}
+                            isPlayer={false}
+                            weapon={weapon}
+                        />
                     })
                 }
                 </div>

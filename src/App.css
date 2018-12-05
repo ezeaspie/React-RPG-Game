@@ -217,6 +217,11 @@ ul {
   color: rgba(255,255,255,0.5);
 }
 
+.combat-weapon-unavaliable:hover {
+  cursor: not-allowed;
+  background: rgba(255,255,255,.2);
+}
+
 .combat {
   min-width:1000px;
 }
@@ -696,8 +701,10 @@ border:solid 1px #E7DFDD;
 }
 
 .combat-visuals{
+  display: -ms-flexbox;
   display: flex;
-  justify-content: space-between;
+  -ms-flex-pack: justify;
+      justify-content: space-between;
   height:10em;
 }
 
