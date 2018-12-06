@@ -289,6 +289,14 @@ class App extends Component {
   }
 
   createPlayer = (name, stats) => {
+    let ammoFactory = (name,id) => {
+      return{
+        id,
+        name,
+        amount:0,
+      }
+
+    }
     let playerObject = {
       name,
       stats,
@@ -300,13 +308,30 @@ class App extends Component {
       streetCred: 0,
       jobs: [],
       npcStates:[],
-      companion:undefined,
+      companion:null,
       activeWeapons:[],
+      ammo:[
+        ammoFactory("Light Bullets",0),
+        ammoFactory("Medium Bullets",1),
+        ammoFactory("Heavy Bullets",2),
+        ammoFactory('Batteries',3),
+        ammoFactory('Energy Cells', 4),
+        ammoFactory('Power Charges',5),
+        ammoFactory('Cherry Bombs', 6),
+        ammoFactory('Explosive Shells', 7),
+      ]
     }
     this.setState({playerObject : playerObject,playerPosition : [15,3], playerCurrentMap:0},()=>{
       this.updateGameState(2);
       this.saveToLocal();
       });
+  }
+
+  editAmmo = (ammoId,amount) => {
+    let player = this.state.playerObject;
+    player.ammo[ammoId].amount += amount;
+
+    this.setState({playerObject:player});
   }
 
   equipWeapon = (weapon) => {
@@ -394,6 +419,7 @@ class App extends Component {
       let equippedWeapons = [];
       for(var i=0; i < weaponAmount; i++){
         let selectedWeaponIndex = valueFromRange(0,possibleWeapons.length-1);
+        console.log(possibleWeapons.length, Weapons);
         equippedWeapons.push(possibleWeapons[selectedWeaponIndex]);
         possibleWeapons.splice(selectedWeaponIndex, 1);
       }
@@ -882,6 +908,9 @@ class App extends Component {
     inventory: [
       staticItems[4],
       this.state.consumableItems[7],
+      staticItems[13],
+      staticItems[6],
+      Weapons[9],
     ],
     options: [
     ]
@@ -2720,6 +2749,7 @@ class App extends Component {
       />,
       ],
       <Interface 
+      editAmmo={this.editAmmo}
       goToJail={this.goToJail}
       time={this.state.gameTime}
       updatePlayerState={this.updatePlayerState}

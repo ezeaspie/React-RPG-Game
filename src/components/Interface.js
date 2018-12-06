@@ -32,6 +32,7 @@ class Interface extends Component {
             this.props.storeData.inventory.map((product, i)=>{
                 productList.push(
                 <Product 
+                editAmmo={this.props.editAmmo}
                 forceRender = {this.forceRender}
                 updatePlayerState = {this.props.updatePlayerState}
                 playerData = {this.props.playerData} 

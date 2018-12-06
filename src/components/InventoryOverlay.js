@@ -104,6 +104,18 @@ class InventoryOverlay extends Component {
                             <button disabled={!this.state.activeItem.isWeapon?true:false} className="main-button" onClick={this.equipItem}>Equip</button>
                         </div>
                         <div className="inv-console-equipment">
+                            <ul className="inv-console-ammo">
+                                {
+                                    this.props.playerData.ammo.map((ammoType)=>{
+                                        return (
+                                        <li className="inv-console-ammo-type">
+                                            <p>{ammoType.name}</p>
+                                            <p>{ammoType.amount}</p>
+                                        </li>
+                                        )
+                                    })
+                                }
+                            </ul>
                             <ul>
                                 {
                                     this.state.weaponList.map((weaponId,i)=>{

@@ -19,7 +19,12 @@ checkPurchaseAndUpdate = () => {
         if(newPlayerObject.money - product.price >= 0){
           registerSound.play();  
           newPlayerObject.money -= product.price;
-          newPlayerObject.inventory.push(product);
+          if(!product.isAmmo){
+            newPlayerObject.inventory.push(product);
+          }
+          else{
+              this.props.editAmmo(product.ammoPurchaseInfo.id,product.ammoPurchaseInfo.amount);
+          }
           this.props.updatePlayerState(newPlayerObject);
           this.props.forceRender();
         }

@@ -72,7 +72,7 @@ calculateRobChance = () => {
         //Move the companion stuff to interface instead. Render a special OPTION for talking to companion.
         return(
             <div>
-            {this.props.renderCompanionData&&this.props.playerData.companion !== undefined?
+            {this.props.renderCompanionData&&this.props.playerData.companion !== null?
             <div className="companion">
             <img alt="companion gif" src={companions[this.props.playerData.companion].image}></img>
                 <li>Talk to {companions[this.props.playerData.companion].name}</li>

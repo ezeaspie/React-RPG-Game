@@ -31,15 +31,15 @@ class Combat extends Component {
     }
 
     componentWillMount(){
+        this.filterWeapons();
+        this.calculateAttackPoints();
         this.setState({canChump:this.props.canChump});
         if(this.props.bountyObject !== null){
             this.setState({isQuest:true});
         }
-        this.calculateAttackPoints();
         if(this.state.player.main.stats[3].value < this.state.opponent.main.stats[3].value) {
             this.setState({activePlayer:false});
         }
-        this.filterWeapons();
     }
 
     updateLog = (message) => {
@@ -79,12 +79,14 @@ class Combat extends Component {
         let opponentWeapons = [];
 
         playerWeapons = player.main.activeWeapons;
+        console.log(playerWeapons);
 
         playerWeapons.forEach((weaponId,i)=>{
             let selectedWeapon = Weapons.filter((weapon)=>{
                 return weapon.id === weaponId;
             });
             let weaponObject = selectedWeapon[0];
+            console.log(selectedWeapon);
             return playerWeapons[i] = weaponObject;
         })
 
