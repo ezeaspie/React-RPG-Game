@@ -2,6 +2,7 @@ import React , { Component } from 'react';
 import Product from './Product';
 import Option from './Option';
 import JobOptions from './JobOptions';
+import Companion from './Companion';
 
 class Interface extends Component {
 
@@ -50,6 +51,14 @@ class Interface extends Component {
             }
                 <h1>{this.props.storeData.name}</h1>
                 <h2 className="store-cash">Cash:{this.props.playerData.money}</h2>
+                {
+                    renderCompanionData?
+                    <Companion 
+                    playerData={this.props.playerData}
+                    />
+                    :
+                    null
+                }
                 <ul className="store-list products">
                     {
                     this.props.storeData.isShop ?
@@ -62,7 +71,6 @@ class Interface extends Component {
                     {this.props.storeData.options.map((option,i)=>{
                         return <Option 
                         playerData={this.props.playerData}
-                        renderCompanionData={renderCompanionData}
                         goToJail = {this.props.goToJail}
                         updateGameState={this.props.updateGameState}
                         forceRender = {this.forceRender}

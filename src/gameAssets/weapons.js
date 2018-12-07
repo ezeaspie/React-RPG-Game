@@ -36,6 +36,8 @@ let plasmaP = {
   price: 1000,
   isWeapon: true,
   isMelee:false,
+  ammoId:3,
+  ammoCost:3,
   isConsumable:false,
   effect: ()=>{
     let randomNum = Math.floor(Math.random() * 100);
@@ -52,7 +54,7 @@ Weapons.push(    WeaponFactory(303,"Spiked Knuckles",<p>Skewer your opponents us
 Weapons.push(    WeaponFactory(304,"Plastic Baseball Bat",<p>Plastic is pretty tough but it's still a toy</p>,70,5,10,95,true))
 Weapons.push(    WeaponFactory(306,"Ssd",<p>Made of heavy metal, this will be sure to hit it out the park!</p>,500,30,25,95,true))
 Weapons.push(    WeaponFactory(307,"koc",<p>Made of heavy metal, this will be sure to hit it out the park!</p>,500,30,25,95,true))
-Weapons.push(    WeaponFactory(308,"Zaxon's Zappy Beeter",<p>Wow this thing sucks</p>,500,5,5,90,true))
+Weapons.push(    WeaponFactory(308,"Zaxon's Zappy Beeter",<p>Wow this thing sucks</p>,500,5,5,90,false,3,3));
 Weapons.push(plasmaP);
 Weapons.push(   WeaponFactory(310,"Maxine's Taser Shotgun",<p>Maxine Rubin's modified taser shotgun fires three electrical projectiles, dealing big damage on contact.</p>,5000,50,5,80,false,4,3))
 

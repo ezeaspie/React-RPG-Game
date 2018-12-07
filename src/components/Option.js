@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import companions from '../gameAssets/companionData';
 
 class Option extends Component {
 
@@ -70,22 +69,12 @@ calculateRobChance = () => {
             content = this.calculateRobChance();
         }
         //Move the companion stuff to interface instead. Render a special OPTION for talking to companion.
-        return(
-            <div>
-            {this.props.renderCompanionData&&this.props.playerData.companion !== null?
-            <div className="companion">
-            <img alt="companion gif" src={companions[this.props.playerData.companion].image}></img>
-                <li>Talk to {companions[this.props.playerData.companion].name}</li>
-            </div>
-            :
-            null}
+        return(            
             <li 
             className="option" 
             onClick={isRobbery?this.handleRobbery:this.runEffectandUpdate}>
             {content}
-            </li>
-            </div>
-            
+            </li>            
         )
     }
 }

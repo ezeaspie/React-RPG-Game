@@ -9,37 +9,50 @@ class Combat extends Component {
             canChump:true,
             dialogBox:false,
             dialogContent:null,
-            player: {
-                main:this.props.player,
-                attackPoints: 0,
-                maxAttackPoints:0,
-                weapons: [],
-            },
-            opponent: {
-                main:this.props.opponent,
-                attackPoints: 0,
-                maxAttackPoints:0,
-                weapons: [],
-            },
+            player: null,
+            opponent: null,
             enviornment: null,
             activePlayer: true,
             isQuest:false,
             log:[],
+            isOpponentDead:false,
         }
 
         this.handleFlee = this.handleFlee.bind(this);
     }
 
     componentWillMount(){
-        this.filterWeapons();
-        this.calculateAttackPoints();
-        this.setState({canChump:this.props.canChump});
+        let activePlayer = true;
+        let isQuest = false;
+        let playerObjects = this.filterWeapons();
+        if(this.props.player.stats[3].value < this.props.opponent.stats[3].value) {
+            activePlayer = false;
+        }
         if(this.props.bountyObject !== null){
-            this.setState({isQuest:true});
+            isQuest = true;
         }
-        if(this.state.player.main.stats[3].value < this.state.opponent.main.stats[3].value) {
-            this.setState({activePlayer:false});
+        
+        this.setState({
+            player : {
+                main: this.props.player,
+                attackPoints:0,
+                maxAttackPoints:0,
+                weapons:playerObjects[0],
+            },
+            opponent: {
+                main:this.props.opponent,
+                attackPoints: 0,
+                maxAttackPoints:0,
+                weapons: playerObjects[1],
+            },
+            canChump:this.props.canChump,
+            activePlayer,
+            isQuest,
+        },
+        ()=>{
+            this.calculateAttackPoints();
         }
+        )
     }
 
     updateLog = (message) => {
@@ -52,14 +65,15 @@ class Combat extends Component {
     }
 
     filterWeapons = () => {
-        let player = this.state.player;
-        let opponent = this.state.opponent;
+        let player = this.props.player;
+        let opponent = this.props.opponent;
         let punch = {
             name: 'Punch',
             description: 'Good old fashioned knuckle sandwich.',
+            isMelee:true,
             apCost: 5,
             damage: 3,
-            accuracy: 95,
+            accuracy: 9,
             effect: () => {
                 return {damage:3, apCost:5,accuracy:95}
               }
@@ -67,6 +81,7 @@ class Combat extends Component {
         let kick = {
             name: 'Kick',
             description: 'Kick him RIGBABY',
+            isMelee:true,
             apCost: 10,
             damage: 6,
             accuracy: 95,
@@ -78,30 +93,34 @@ class Combat extends Component {
         let playerWeapons = [];
         let opponentWeapons = [];
 
-        playerWeapons = player.main.activeWeapons;
-        console.log(playerWeapons);
+        playerWeapons = player.activeWeapons;
+        let currentWeapons = [];
 
         playerWeapons.forEach((weaponId,i)=>{
             let selectedWeapon = Weapons.filter((weapon)=>{
                 return weapon.id === weaponId;
             });
             let weaponObject = selectedWeapon[0];
-            console.log(selectedWeapon);
-            return playerWeapons[i] = weaponObject;
+            return currentWeapons.push(weaponObject);
         })
+        opponentWeapons = opponent.inventory.filter(item => item.isWeapon); 
 
-        opponentWeapons = opponent.main.inventory.filter(item => item.isWeapon); 
-
-        playerWeapons.unshift(punch,kick);
+        currentWeapons.unshift(punch,kick);
         opponentWeapons.unshift(punch,kick);
         
-        player.weapons = playerWeapons;
-        opponent.weapons = opponentWeapons;
-        
-        this.setState({player,opponent});
+        return [currentWeapons,opponentWeapons]
     }
 
-    calculateAttackDamage = (isPlayer,weapon,isCriticalHit) => {
+    handleRanged = (isPlayer,weapon,isCriticalHit) => {
+        let runAttack = weapon.effect();
+        let baseDamage = runAttack.damage;
+        if(isCriticalHit){
+            baseDamage *= 2;
+        }
+        return baseDamage;
+    }
+
+    calculateMeleeDamage = (isPlayer,weapon,isCriticalHit) => {
         let user = undefined;
         let runAttack = weapon.effect();
         let baseDamage = runAttack.damage;
@@ -119,7 +138,6 @@ class Combat extends Component {
             let strengthPercentage = strength * .01;
 
             let buff = buffCap * strengthPercentage;
-            console.log({buff,buffCap,strength});
             return Math.floor(buff);
         }
 
@@ -143,11 +161,10 @@ class Combat extends Component {
         });
 
         let killerMoves = possibleMoves.filter((weapon) => {
-            let damage = this.calculateAttackDamage(false,weapon,false);
+            let damage = this.calculateMeleeDamage(false,weapon,false);
             return damage >= player.main.health;
         });
         if(possibleMoves.length === 0){
-            console.log("no possible moves");
             this.handleEndOfAttack(true,false);
             return;
         }
@@ -224,11 +241,6 @@ class Combat extends Component {
             }
             return false;
         }
-
-        if(!calculateAccuracy){
-            this.updateLog(`${attacker.main.name}'s ${weapon.name} attack missed!`);
-            return;
-        }
         if(isPlayer){
             attacker = this.state.player;
             target = this.state.opponent;
@@ -240,23 +252,46 @@ class Combat extends Component {
         if(weapon.apCost > attacker.attackPoints){
             return;
         }
+        if(!weapon.isMelee){
+            let ammoType= attacker.main.ammo[weapon.ammoId];
+            let difference = ammoType.amount - weapon.ammoCost;
+            if(difference <= 0){
+                return; //display message (like SAVED)
+            }
+        }
 
         let isCrit = this.isCritical(isPlayer);
+        let didHit = calculateAccuracy();
+        
+        let attackDamage = 0;
+        let message = undefined;
+        
+        if(weapon.isMelee){
+            attackDamage = this.calculateMeleeDamage(isPlayer,weapon,isCrit);
+        }
+        else{
+            attackDamage = this.handleRanged(isPlayer,weapon,isCrit);
+        }
 
-        let attackDamage = this.calculateAttackDamage(isPlayer,weapon,isCrit);
-
+        if(!didHit){
+            message=`${attacker.main.name}'s ${weapon.name} attack missed!`;
+            attackDamage=0;
+        }
+        else{
+            message = `${isCrit?"CRITICAL":""}${attacker.main.name} uses ${weapon.name} on ${target.main.name} for ${attackDamage} DMG`;
+        }
         target.main.health -= attackDamage;
 
-        attacker.attackPoints -= weapon.apCost;
-
-        if(isCrit){
-            this.updateLog(console.log('CRITICAL HIT'));
+        if(!weapon.isMelee){
+            attacker.main.ammo[weapon.ammoId].amount -= weapon.ammoCost;
         }
-        this.updateLog(`${attacker.main.name} uses ${weapon.name} on ${target.main.name} for ${attackDamage} DMG`);
+
+        attacker.attackPoints -= weapon.apCost;
 
         if(isPlayer){
             this.setState({player:attacker,opponent:target},
                 ()=>{
+                    this.updateLog(message);
                     if(attacker.attackPoints <= 0){
                         this.handleEndOfAttack(true,true);
                     }
@@ -267,6 +302,7 @@ class Combat extends Component {
         }
         else{
             this.setState({player:target,opponent:attacker},()=>{
+                this.updateLog(message);
                 if(attacker.attackPoints <= 0){
                     this.handleEndOfAttack(true,false);
                 }
@@ -280,6 +316,16 @@ class Combat extends Component {
     handleEndOfAttack = (forceEndTurn,isPlayer=false) => {
         let player = this.state.player;
         let opponent = this.state.opponent;
+
+        if(player.main.health <= 0){
+            this.handleDeath(true);
+            return;
+        }
+        if(opponent.main.health <= 0){
+            this.handleDeath(false);
+            //Return to store.
+            return;
+        }
 
         if(forceEndTurn){
             if(isPlayer){
@@ -301,17 +347,6 @@ class Combat extends Component {
             });
         }
 
-        if(player.main.health <= 0){
-            console.log("PLAYER DIED");
-            this.handleDeath(true);
-            return;
-        }
-        if(opponent.main.health <= 0){
-            console.log("OPPONENT DIED");
-            this.handleDeath(false);
-            //Return to store.
-            return;
-        }
     }
 
     handleDeath(isPlayer){
@@ -323,13 +358,14 @@ class Combat extends Component {
         else{
             //Play Opponent Died message.
             //Give STR buff?
+            this.setState({isOpponentDead:true});
             player.main.money += opponent.main.money;
             player.main.streetCred += 5;
 
             let message = 
             <div className="message-box">
-                <p>You find {opponent.main.money} dollars in {opponent.main.name}'s' wallet.</p>
-                <p>The people heard how you beat down ${opponent.main.name} and you earned 5 street cred!</p>
+                <p>You find <span className="positive">{opponent.main.money} dollars</span> in {opponent.main.name}'s' wallet.</p>
+                <p>The people heard how you beat down {opponent.main.name} and you earned <span className="positive">5 street cred!</span></p>
                 <button className="main-button" onClick={()=>{
                     if(this.state.isQuest){
                         let bountyObject = this.props.bountyObject;
@@ -412,6 +448,7 @@ class Combat extends Component {
             }
             return Math.ceil(optimum);
         }
+
         return(
             <div className="combat">
                 {
@@ -420,8 +457,8 @@ class Combat extends Component {
                     null
                 }
                 <div className="combat-buttons">
-                    <button disabled={!this.state.activePlayer} className="main-button" onClick={()=>{this.handleEndOfAttack(true,true)}}>Pass</button>
-                    <button disabled={!this.state.activePlayer || !this.state.canChump} className="main-button" onClick={this.handleFlee}>Chump out</button>
+                    <button disabled={!this.state.activePlayer || this.state.isOpponentDead} className="main-button" onClick={()=>{this.handleEndOfAttack(true,true)}}>Pass</button>
+                    <button disabled={!this.state.activePlayer || !this.state.canChump || this.state.isOpponentDead} className="main-button" onClick={this.handleFlee}>Chump out</button>
                 </div>
                 
                 <div className="combat-player main">
@@ -441,11 +478,23 @@ class Combat extends Component {
                             <p className="combat-ap">{player.attackPoints}/{player.maxAttackPoints} AP</p>
                             <meter className="combat-ap-meter" value={player.attackPoints} min="0" max={player.maxAttackPoints}></meter>
                         </div>
+                        <ul className="ammo-section">
+                            {
+                                player.main.ammo.map((ammoType)=>{
+                                    return (
+                                    <li className="ammo" key={ammoType.name}>
+                                    <img src={`./images/ammo/${ammoType.id}.png`} alt={ammoType.name}/><span>x{ammoType.amount}</span>
+                                    </li>)
+                                })
+                            }
+                        </ul>
                        </div>
                        <div className="combat-options">
                                 {
                                     player.weapons.map((weapon,i)=>{
                                         return <CombatWeapon 
+                                            isOpponentDead={this.state.isOpponentDead}
+                                            player={this.state.player.main}
                                             key={"playerWeapon" + i}
                                             isPlayer={true}
                                             weapon={weapon}
@@ -506,6 +555,7 @@ class Combat extends Component {
                     opponent.weapons.map((weapon,i)=>{
                         return <CombatWeapon 
                             key={"opponentWeapon" + i}
+                            player={this.state.player.main}
                             isPlayer={false}
                             weapon={weapon}
                         />

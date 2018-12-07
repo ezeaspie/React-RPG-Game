@@ -19,8 +19,6 @@ checkPurchaseAndUpdate = () => {
           registerSound.play();  
           newPlayerObject.money -= product.price;
           newPlayerObject.inventory.push(product);
-          let logMessage = `Purchased ${product.name} for ${product.price}`;
-          this.props.updateLog(logMessage);
           this.props.updatePlayerState(newPlayerObject);
           this.props.forceRender();
         }
@@ -38,10 +36,6 @@ handleClick = () => {
             onClick={this.handleClick}
             >
                 <h3>{this.props.item.name}</h3>
-                <div className="product-description" 
-                style={this.state.isInfoVisible?{opacity:"1",transition:"ease .3s opacity",zIndex:99}:{opacity:"0",transition:"ease .3s opacity",zIndex:-99}}>
-                    {this.props.item.description}
-                </div>
             </li>
         )
     }

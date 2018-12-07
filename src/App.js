@@ -289,10 +289,11 @@ class App extends Component {
   }
 
   createPlayer = (name, stats) => {
-    let ammoFactory = (name,id) => {
+    let ammoFactory = (name,id,abbreviation) => {
       return{
         id,
         name,
+        abbreviation,
         amount:0,
       }
 
@@ -311,14 +312,14 @@ class App extends Component {
       companion:null,
       activeWeapons:[],
       ammo:[
-        ammoFactory("Light Bullets",0),
-        ammoFactory("Medium Bullets",1),
-        ammoFactory("Heavy Bullets",2),
-        ammoFactory('Batteries',3),
-        ammoFactory('Energy Cells', 4),
-        ammoFactory('Power Charges',5),
-        ammoFactory('Cherry Bombs', 6),
-        ammoFactory('Explosive Shells', 7),
+        ammoFactory("Light Bullets",0,"LB"),
+        ammoFactory("Medium Bullets",1,"MB"),
+        ammoFactory("Heavy Bullets",2,"HB"),
+        ammoFactory('Batteries',3,"BAT"),
+        ammoFactory('Energy Cells', 4,"CEL"),
+        ammoFactory('Power Charges',5,"PWR"),
+        ammoFactory('Cherry Bombs', 6,"BOM"),
+        ammoFactory('Explosive Shells', 7,"SHL"),
       ]
     }
     this.setState({playerObject : playerObject,playerPosition : [15,3], playerCurrentMap:0},()=>{
@@ -419,7 +420,6 @@ class App extends Component {
       let equippedWeapons = [];
       for(var i=0; i < weaponAmount; i++){
         let selectedWeaponIndex = valueFromRange(0,possibleWeapons.length-1);
-        console.log(possibleWeapons.length, Weapons);
         equippedWeapons.push(possibleWeapons[selectedWeaponIndex]);
         possibleWeapons.splice(selectedWeaponIndex, 1);
       }
@@ -650,7 +650,7 @@ class App extends Component {
           {
             name: "Get into a fight vs. Melweed",
             effect: ()=>{
-              let opponent = this.createOpponent("Melweed",[5,10],[5,10],[5,10],[100,200],Weapons,2);
+              let opponent = this.createOpponent("Melweed",[5,10],[5,10],[5,10],[100,200],[Weapons[0],Weapons[1]],2);
               if(this.checkTime(4)){
                 this.startCombat(opponent);
                 //this.setState({opponentObject:opponent},()=>this.updateGameState(4));
@@ -910,7 +910,8 @@ class App extends Component {
       this.state.consumableItems[7],
       staticItems[13],
       staticItems[6],
-      Weapons[9],
+      Weapons[8],
+      Weapons[7],
     ],
     options: [
     ]
@@ -2693,6 +2694,7 @@ class App extends Component {
 
     let jsxObject = 
     <Combat 
+      editAmmo={this.editAmmo}
       bonusReward={bonusReward}
       updateBountyList={this.updateBountyList}
       bountyObject = {found[0] !== undefined?found[0]:null}
@@ -2762,6 +2764,7 @@ class App extends Component {
       updateTime={this.updateTime}
       />,
       <Combat 
+      editAmmo={this.editAmmo}
       player={this.state.playerObject}
       opponent={this.state.opponentObject}
       updatePlayerState={this.updatePlayerState}

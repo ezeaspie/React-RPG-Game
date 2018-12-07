@@ -326,6 +326,12 @@ button:disabled,
       justify-content: center;
 }
 
+.message-box p {
+  color: #E7DFDD;
+}
+.message-box .positive {
+  color:green;
+}
 .chump-options {
   margin: 1em;
   display: -ms-flexbox;
@@ -717,4 +723,74 @@ border:solid 1px #E7DFDD;
 .combat-log-item {
   padding:.2em;
 }
+
+.ammo-section {
+  list-style-type: none;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.ammo,.inv-console-ammo-type {
+  display:-ms-flexbox;
+  display:flex;
+  -ms-flex-direction: column;
+      flex-direction: column;
+  -ms-flex-line-pack: center;
+      align-content: center;
+  -ms-flex-align: center;
+      align-items: center;
+}
+.ammo img {
+  width:60%;
+}
+
+.inv-console-ammo {
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  -ms-flex-pack:space-evenly;
+      justify-content:space-evenly;
+}
+
+.inv-console-ammo-type{
+  width:25%;
+}
+
+.inv-console-ammo-type div {
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-line-pack: center;
+      align-content: center;
+  -ms-flex-align: center;
+      align-items: center;
+}
+
+.inv-console-ammo-type p {
+  margin: 0;
+}
+.inv-console-ammo-type img {
+  width:50%;
+}
+
+.weapon-list {
+  list-style-type: none;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.equipped-weapon {
+  border:solid 2px #E7DFDD;
+  background: rgba(255,255,255,.2);
+  border-radius:5px;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  width:50%;
+  text-align: center;
+}
+.equipped-weapon p {
+  margin: .5em .4em;
+}
+
+
 

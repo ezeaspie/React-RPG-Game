@@ -39,9 +39,7 @@ class InventoryOverlay extends Component {
     }
 
     updateConsole = (itemObject) => {
-        this.setState({activeItem:itemObject},()=>{
-            console.log(this.state.activeItem.isWeapon);
-        });
+        this.setState({activeItem:itemObject});
     }
 
     removeItem = (index) => {
@@ -82,7 +80,7 @@ class InventoryOverlay extends Component {
                     {this.props.inventoryData.map((item,i)=>{
                         return(
                         <InventoryItem
-                            key={item.id + i}
+                            key={item.id + `${i}inv`}
                             item={item}
                             index={i}
                             updateConsole={this.updateConsole}
@@ -108,22 +106,25 @@ class InventoryOverlay extends Component {
                                 {
                                     this.props.playerData.ammo.map((ammoType)=>{
                                         return (
-                                        <li className="inv-console-ammo-type">
-                                            <p>{ammoType.name}</p>
+                                        <li className="inv-console-ammo-type" key={`ammoType-${ammoType.id}`}>
+                                            <div><img src={`./images/ammo/${ammoType.id}.png`} alt={ammoType.name}/><p>{ammoType.abbreviation}</p></div>
                                             <p>{ammoType.amount}</p>
                                         </li>
                                         )
                                     })
                                 }
                             </ul>
-                            <ul>
+                            <ul className="weapon-list">
                                 {
                                     this.state.weaponList.map((weaponId,i)=>{
                                         let selectedWeapon = Weapons.filter((weapon)=>{
                                             return weapon.id === weaponId;
                                         });
                                         let weaponObject = selectedWeapon[0];
-                                        return <li><p>{weaponObject.name}</p><button onClick={()=>{this.removeItem(i)}}>Remove</button></li>
+                                        if(weaponObject === undefined){
+                                            return false;
+                                        }
+                                        return <li className="equipped-weapon" key={weaponObject.id + "equipped"}><p>{weaponObject.name}</p><button className="main-button urgent" onClick={()=>{this.removeItem(i)}}>Remove</button></li>
                                     })
                                 }
                             </ul>
