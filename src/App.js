@@ -410,8 +410,17 @@ class App extends Component {
     this.setState({opponentObject});
   }
 
-  createOpponent = (name,strRange,lckRange,agiRange,moneyRange,possibleWeapons,weaponAmount,updateState=false,canChump=true) => {
+  createOpponent = (name,strRange,lckRange,agiRange,moneyRange,possibleWeapons,weaponAmount,ammoCount,updateState=false,canChump=true) => {
     //name='string',RANGE = [lowVal,highVal],possibleWeapons=Array of all wieldable, weaponAmount=how much weapons to give opponent
+      let ammoFactory = (name,id,abbreviation,amount) => {
+        return{
+          id,
+          name,
+          abbreviation,
+          amount,
+        }
+      }
+    
     let valueFromRange = (min,max) => {
         return Math.floor(Math.random()*(max-min+1)+min);
     }
@@ -454,6 +463,16 @@ class App extends Component {
       money: valueFromRange(moneyRange[0],moneyRange[1]),
       health: 100,
       maxHealth: 100,
+      ammo:[
+        ammoFactory("Light Bullets",0,"LB",ammoCount[0]),
+        ammoFactory("Medium Bullets",1,"MB",ammoCount[1]),
+        ammoFactory("Heavy Bullets",2,"HB",ammoCount[2]),
+        ammoFactory('Batteries',3,"BAT",ammoCount[3]),
+        ammoFactory('Energy Cells', 4,"CEL",ammoCount[4]),
+        ammoFactory('Power Charges',5,"PWR",ammoCount[5]),
+        ammoFactory('Cherry Bombs', 6,"BOM",ammoCount[6]),
+        ammoFactory('Explosive Shells', 7,"SHL",ammoCount[7]),
+      ]
     }
     if(!canChump){
       this.setState({canChump:false});
@@ -650,7 +669,7 @@ class App extends Component {
           {
             name: "Get into a fight vs. Melweed",
             effect: ()=>{
-              let opponent = this.createOpponent("Melweed",[5,10],[5,10],[5,10],[100,200],[Weapons[0],Weapons[1]],2);
+              let opponent = this.createOpponent("Melweed",[5,10],[5,10],[5,10],[100,200],[Weapons[0],Weapons[1]],2,[0,0,0,0,0,0,0,0]);
               if(this.checkTime(4)){
                 this.startCombat(opponent,'bigBossTheme');
                 //this.setState({opponentObject:opponent},()=>this.updateGameState(4));
@@ -915,6 +934,7 @@ class App extends Component {
       Weapons[10],
       Weapons[11],
       Weapons[7],
+      staticItems[14],
     ],
     options: [
     ]
@@ -2287,28 +2307,36 @@ class App extends Component {
               }
             },
             {
-              name:`[AGI+ Chance] Train with Phoebe`,
+              name:`[Luck+Relationship] Train with Phoebe`,
               check:()=>{
               let returnVal = filterNPCState(611);
               if(returnVal[0].state >= 3){
+                
                 return true;
               }
               return false;
               },
               effect:()=>{
-                let luck = stats[4].value;
-                let item = filterNPCState(611);
-                let relationship = item[0].relationship;
-                luck /= 2;
-                luck += relationship;
-                let randomNum = Math.floor(Math.random() * 100);
-                if(luck >= randomNum){
-                  stats[3] += 1;
-                  this.setState({playerObject:player});
-                  return 10;
+                let timeCheck = this.checkTime(4);
+                console.log(timeCheck);
+                console.log(this.state.gameTime);
+                if(timeCheck){
+                  this.updateTime(false,4);
+                  let luck = stats[4].value;
+                  let item = filterNPCState(611);
+                  let relationship = item[0].relationship;
+                  luck += relationship;
+                  let randomNum = Math.floor(Math.random() * 100);
+                  if(luck >= randomNum){
+                    stats[3].value += 1;
+                    updateNPCRelationship(611,1);
+                    this.setState({playerObject:player});
+                    return 10;
+                    }
+                  return 11;
+                  }
+                  return 16;
                 }
-                return 11;
-              }
             },
             {
               name:`[Charisma ${stats[0].value>=100?100:stats[0].value}%] Flirt with Phoebe`,
@@ -2327,10 +2355,10 @@ class App extends Component {
             },
             {
               name:`[Agility] I'd say you're more than ready to tackle the marathon.`,
-              check: ()=>{
+              check: ()=>{ //Add this in later. Right now it doesn't do anything since there is no quest.
                 let item = filterNPCState(611);
                 if(item[0].state >= 3 && stats[3].value >= 100){
-                  return true;
+                  return false; 
                 }
                 return false;
               },
@@ -2340,16 +2368,55 @@ class App extends Component {
               }
             },
             {
-              name:`[120 AGI,50 STR,Engagement Ring,15 Relationship, CHR ${stats[0].value-20}%] Propose to Phoebe`,
+              name:`[100 AGI,50 STR,Engagement Ring,15 Relationship, CHR ${stats[0].value-20}%] Propose to Phoebe`,
               check:()=>{
-                return checkNPCState(611,5);
+                let agilityCheck = false;
+                let strengthCheck = false;
+                let ringCheck = false;
+                let relationshipCheck = false;
+                let stateCheck = checkNPCState(611,3);
+
+                if(stats[3].value >= 100){
+                  agilityCheck = true;
+                }
+                if(stats[1].value >= 50){
+                  strengthCheck = true;
+                }
+                if(checkForItem(115)){
+                  ringCheck = true;
+                }
+                if(checkNPCRelationship(611,15)){
+                  relationshipCheck = true;
+                }
+                console.log({agilityCheck,strengthCheck,ringCheck,relationshipCheck,stateCheck});
+                if(agilityCheck && strengthCheck && ringCheck && relationshipCheck && stateCheck){
+                  return true;
+                }
               },
               effect:()=>{
                 let randomNum = Math.floor(Math.random() * 100);
                 if(stats[0].value-20 >= randomNum){
-                  return 15;
+                  return 14;
                 }
-                return 15; //THIS NEEDS TO BE FIXED. THIS SHOULD BE 16. THIS IS FOR TESTING
+                return 15;
+              }
+            },
+            {
+              name:`[Fight] Marathon, marathon, just shut up would you? Nobody cares!`,
+              check: ()=>{ //Add this in later. Right now it doesn't do anything since there is no quest.
+                let relationshipCheck = filterNPCState(611);
+                let value = relationshipCheck[0].relationship;
+                console.log(value);
+                if(value < 0 ){
+                  return true;
+                }
+                return false;
+              },
+              effect: ()=>{
+                updateNPCRelationship(611,-1);
+                let opponent = this.createOpponent("Phoebe",[35,40],[50,70],[40,50],[200,250],[Weapons[1],Weapons[12]],2,[10,1,0,10,0,0,0,0],false,false);
+                this.startCombat(opponent,'bigBossTheme');
+                return false;
               }
             },
             {
@@ -2506,7 +2573,7 @@ class App extends Component {
             ]
           },
           {
-            message:`"[+1 Agility] Wow that was an incredible workout! Laps around the whole city? I didn't even know I had it in me! You're really good at this.`,
+            message:`"[+1 Agility +1 Relationship] Wow that was an incredible workout! Laps around the whole city? I didn't even know I had it in me! You're really good at this.`,
             options:[
               {
                 name:"Glad I could help",
@@ -2561,6 +2628,30 @@ class App extends Component {
                 check: ()=>noCheck(),
                 effect: ()=>{
                   this.updatePlayerCompanion(0);
+                  return false;
+                }
+              }
+            ]
+          },
+          {
+            message:`I'm really sorry but I can't do this right now. It's not you - it's me. I just need some more time to really uh get used to you.`,
+            options:[
+              {
+                name:"Exit",
+                check: ()=>noCheck(),
+                effect: ()=>{
+                  return false;
+                }
+              }
+            ]
+          },
+          {
+            message:`I'd rather not run around this late. Let's try again tomorrow.`,
+            options:[
+              {
+                name:"Exit.",
+                check: ()=>noCheck(),
+                effect: ()=>{
                   return false;
                 }
               }
@@ -2698,6 +2789,7 @@ class App extends Component {
 
     let jsxObject = 
     <Combat 
+      shopId={this.state.activeStore}
       theme={themeFile}
       editAmmo={this.editAmmo}
       bonusReward={bonusReward}

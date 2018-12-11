@@ -55,6 +55,9 @@ class Combat extends Component {
         },
         ()=>{
             this.calculateAttackPoints();
+            if(!this.state.activePlayer){
+                this.aiAttackLogic();
+            }
             this.state.theme.play();
         }
         )
@@ -161,25 +164,44 @@ class Combat extends Component {
         let player = this.state.player;
         let opponent = this.state.opponent;
 
-        let possibleMoves = opponent.weapons.filter((weapon)=>{
+        let unfilteredMoves = opponent.weapons.filter((weapon)=>{
             return opponent.attackPoints >= weapon.apCost;
         });
+
+        let rangedWeapons = unfilteredMoves.filter((weapon)=>{
+            return !weapon.isMelee;
+        });
+
+        let ammoFilteredWeapons = rangedWeapons.filter((weapon)=>{
+            return opponent.main.ammo[weapon.ammoId].amount >= weapon.ammoCost;
+        });
+
+        let meleeAttacks = unfilteredMoves.filter((weapon)=>{
+            return weapon.isMelee;
+        });
+
+        let possibleMoves = ammoFilteredWeapons.concat(meleeAttacks);
 
         let killerMoves = possibleMoves.filter((weapon) => {
             let damage = this.calculateMeleeDamage(false,weapon,false);
             return damage >= player.main.health;
         });
-        if(possibleMoves.length === 0){
-            this.handleEndOfAttack(true,false);
-            return;
-        }
-        if(killerMoves[0] !== undefined){
-            this.handleAttack(false,killerMoves[0]);
-        }
-        else{
-            let randomMove = possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
-            this.handleAttack(false,randomMove);
-        }
+
+        setTimeout(()=>{
+            if(possibleMoves.length === 0){
+                //CHECK IN THIS ARE FOR THE BUG
+                this.handleEndOfAttack(true,false);
+                return;
+            }
+            if(killerMoves[0] !== undefined){
+                this.handleAttack(false,killerMoves[0]);
+            }
+            else{
+                let randomMove = possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
+                this.handleAttack(false,randomMove);
+            }
+        },1000);
+        
     }
 
     calculateAttackPoints = () => {
@@ -261,6 +283,10 @@ class Combat extends Component {
             let ammoType= attacker.main.ammo[weapon.ammoId];
             let difference = ammoType.amount - weapon.ammoCost;
             if(difference <= 0){
+                if(!isPlayer){
+                    this.aiAttackLogic();
+                    return;
+                }
                 return; //display message (like SAVED)
             }
         }
@@ -333,23 +359,35 @@ class Combat extends Component {
         }
 
         if(forceEndTurn){
+            let activePlayer = undefined;
             if(isPlayer){
+                activePlayer=false;
                 player.attackPoints += Math.ceil(player.maxAttackPoints*.75);
-                if(player.attackPoints >= player.maxAttackPoints || player.attackPoints < 5){
+                if(player.attackPoints >= player.maxAttackPoints || player.maxAttackPoints <= 5){
                     player.attackPoints = player.maxAttackPoints;
                 }
             }
             else{
+                activePlayer = true;
                 opponent.attackPoints += Math.ceil(opponent.maxAttackPoints*.75);
-                if(opponent.attackPoints >= opponent.maxAttackPoints || opponent.attackPoints < 5){
+                if(opponent.attackPoints >= opponent.maxAttackPoints || opponent.maxAttackPoints <= 5){
                     opponent.attackPoints = opponent.maxAttackPoints;
                 }
             }
             this.setState({
                 player,
                 opponent,
-                activePlayer:!this.state.activePlayer,
+                activePlayer,
+            },()=>{
+                if(!this.state.activePlayer){
+                    this.aiAttackLogic();
+                }
             });
+        }
+        else{
+            if(!isPlayer){
+                this.aiAttackLogic();
+            }
         }
 
     }
@@ -381,7 +419,12 @@ class Combat extends Component {
                     this.state.theme.pause();
                     this.props.updatePlayerState(player.main);
                     this.props.updateTime(false,4);
-                    this.props.updateGameState(3);
+                    if(this.props.shopId === undefined){
+                        this.props.updateGameState(2);
+                    }
+                    else{
+                        this.props.updateGameState(3);
+                    }
                 }}>Ok</button>
             </div>
             this.setState({dialogBox:true,dialogContent:message});
@@ -514,19 +557,6 @@ class Combat extends Component {
                                     })
                                 }
                             </div>
-                        {
-                            this.state.activePlayer?
-                            null
-                            : 
-                            <div style={{display:'none'}}>
-                            {
-                                opponent.attackPoints === 0?
-                                null:
-                                setTimeout(this.aiAttackLogic,1500)
-                            }
-                            </div>
-                        }
-                        
                 </div>
 
                 <div className="combat-visuals">
@@ -558,6 +588,16 @@ class Combat extends Component {
                     min="0" max={opponent.main.maxHealth}></meter>
                     <p className="combat-ap">{opponent.attackPoints}/{opponent.maxAttackPoints} AP</p>
                     <meter className="combat-ap-meter" value={opponent.attackPoints} min="0" max={opponent.maxAttackPoints}></meter>
+                    <ul className="ammo-section">
+                            {
+                                opponent.main.ammo.map((ammoType)=>{
+                                    return (
+                                    <li className="ammo" key={ammoType.name}>
+                                    <img src={`./images/ammo/${ammoType.id}.png`} alt={ammoType.name}/><span>x{ammoType.amount}</span>
+                                    </li>)
+                                })
+                            }
+                        </ul>
                 </div>
                 <div className="combat-options">
                 {
