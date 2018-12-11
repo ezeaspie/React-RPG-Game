@@ -652,7 +652,7 @@ class App extends Component {
             effect: ()=>{
               let opponent = this.createOpponent("Melweed",[5,10],[5,10],[5,10],[100,200],[Weapons[0],Weapons[1]],2);
               if(this.checkTime(4)){
-                this.startCombat(opponent);
+                this.startCombat(opponent,'bigBossTheme');
                 //this.setState({opponentObject:opponent},()=>this.updateGameState(4));
               }
               else{
@@ -911,6 +911,9 @@ class App extends Component {
       staticItems[13],
       staticItems[6],
       Weapons[8],
+      Weapons[9],
+      Weapons[10],
+      Weapons[11],
       Weapons[7],
     ],
     options: [
@@ -2686,14 +2689,16 @@ class App extends Component {
     return npc;
   }
 
-  startCombat = (opponent,bonusReward=null,isDouble=false) => {
+  startCombat = (opponent,theme,bonusReward=null, isDouble=false,) => {
     let bountyList = this.state.bountyList;
+    let themeFile = `./audio/themes/${theme}.mp3`;
     let found = bountyList.filter((item)=>{
       return item.name === opponent.name;
     });
 
     let jsxObject = 
     <Combat 
+      theme={themeFile}
       editAmmo={this.editAmmo}
       bonusReward={bonusReward}
       updateBountyList={this.updateBountyList}

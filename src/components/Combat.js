@@ -16,12 +16,15 @@ class Combat extends Component {
             isQuest:false,
             log:[],
             isOpponentDead:false,
+            theme:null,
         }
 
         this.handleFlee = this.handleFlee.bind(this);
     }
 
     componentWillMount(){
+        let audio = new Audio(this.props.theme);
+        audio.loop = true;
         let activePlayer = true;
         let isQuest = false;
         let playerObjects = this.filterWeapons();
@@ -48,9 +51,11 @@ class Combat extends Component {
             canChump:this.props.canChump,
             activePlayer,
             isQuest,
+            theme:audio,
         },
         ()=>{
             this.calculateAttackPoints();
+            this.state.theme.play();
         }
         )
     }
@@ -73,7 +78,7 @@ class Combat extends Component {
             isMelee:true,
             apCost: 5,
             damage: 3,
-            accuracy: 9,
+            accuracy: 95,
             effect: () => {
                 return {damage:3, apCost:5,accuracy:95}
               }
@@ -353,6 +358,7 @@ class Combat extends Component {
         let player = this.state.player;
         let opponent = this.state.opponent;
         if(isPlayer){
+            this.state.theme.pause();
             this.props.updateGameState(6);
         }
         else{
@@ -372,6 +378,7 @@ class Combat extends Component {
                         bountyObject.complete = true;
                         this.props.updateBountyList(bountyObject);
                     }
+                    this.state.theme.pause();
                     this.props.updatePlayerState(player.main);
                     this.props.updateTime(false,4);
                     this.props.updateGameState(3);
@@ -404,6 +411,7 @@ class Combat extends Component {
             disabled={isButtonDisabled}
             onClick={()=>{
                 player.main.money -= lowMoneyLost;
+                this.state.theme.pause();
                 player.main.streetCred -= highCredLost;
                 this.props.updatePlayerState(player.main);
                 this.props.updateTime(false,4);
@@ -411,6 +419,7 @@ class Combat extends Component {
             }}>Give {opponent.main.name} ${lowMoneyLost} and lose {highCredLost} street cred.</button>
             <button className="main-button" onClick={()=>{
                 player.main.money -= highMoneyLost;
+                this.state.theme.pause();
                 player.main.streetCred -= lowCredLost;
                 this.props.updatePlayerState(player.main);
                 this.props.updateTime(false,4);
