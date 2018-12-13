@@ -63,9 +63,11 @@ class Combat extends Component {
         )
     }
 
-    updateLog = (message) => {
+    updateLog = (message,isPlayer) => {
         let log = this.state.log;
-        log.unshift(message);
+        let item = 
+        <li className = {`combat-log-item ${isPlayer?"alt-item":null}`} key={this.state.log.length}>{message}</li>
+        log.unshift(item);
         if(log.length > 10){
             log.pop();
         }
@@ -309,7 +311,7 @@ class Combat extends Component {
             attackDamage=0;
         }
         else{
-            message = `${isCrit?"CRITICAL":""}${attacker.main.name} uses ${weapon.name} on ${target.main.name} for ${attackDamage} DMG`;
+            message = `${isCrit?"CRITICAL ":""}${attacker.main.name} uses ${weapon.name} on ${target.main.name} for ${attackDamage} DMG`;
         }
         target.main.health -= attackDamage;
 
@@ -322,7 +324,7 @@ class Combat extends Component {
         if(isPlayer){
             this.setState({player:attacker,opponent:target},
                 ()=>{
-                    this.updateLog(message);
+                    this.updateLog(message,true);
                     if(attacker.attackPoints <= 0){
                         this.handleEndOfAttack(true,true);
                     }
@@ -333,7 +335,7 @@ class Combat extends Component {
         }
         else{
             this.setState({player:target,opponent:attacker},()=>{
-                this.updateLog(message);
+                this.updateLog(message,false);
                 if(attacker.attackPoints <= 0){
                     this.handleEndOfAttack(true,false);
                 }
@@ -458,7 +460,12 @@ class Combat extends Component {
                 player.main.streetCred -= highCredLost;
                 this.props.updatePlayerState(player.main);
                 this.props.updateTime(false,4);
-                this.props.updateGameState(3);
+                if(this.props.shopId === undefined){
+                    this.props.updateGameState(2);
+                }
+                else{
+                    this.props.updateGameState(3);
+                }
             }}>Give {opponent.main.name} ${lowMoneyLost} and lose {highCredLost} street cred.</button>
             <button className="main-button" onClick={()=>{
                 player.main.money -= highMoneyLost;
@@ -466,7 +473,12 @@ class Combat extends Component {
                 player.main.streetCred -= lowCredLost;
                 this.props.updatePlayerState(player.main);
                 this.props.updateTime(false,4);
-                this.props.updateGameState(3);
+                if(this.props.shopId === undefined){
+                    this.props.updateGameState(2);
+                }
+                else{
+                    this.props.updateGameState(3);
+                }
             }}>Give {opponent.main.name} ${highMoneyLost} and lose {lowCredLost} street cred.</button>
             </div>
            
@@ -560,15 +572,19 @@ class Combat extends Component {
                 </div>
 
                 <div className="combat-visuals">
-                    <div>
-                        <div>COMBAT ICON</div>
-                        <div>COMBAT ICON II</div>
+                    <div className="combat-arena">
+                        <div className="combat-icon player"
+                        style={{backgroundImage:`url(./images/other/you${player.main.skin}.png)`}}
+                         ></div>
+                        <div className="combat-icon opponent" 
+                        style={{backgroundImage:`url(./images/other/${opponent.main.skin})`}}
+                        ></div>
                     </div>
                     <div>
                         <ul className="combat-log">
                             {
                                 this.state.log.map((logItem,i)=>{
-                                    return <li className = "combat-log-item" key={"log"+i}>{logItem}</li>
+                                    return logItem
                                 })
                             }
                         </ul>

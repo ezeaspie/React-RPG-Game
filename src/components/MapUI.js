@@ -113,6 +113,7 @@ class MapUI extends Component {
     createCellRow = (cellArray,rowId) => {
 
         let cells = [];
+        let skin = this.props.character.skin;
         cellArray.map((cell,cellId) => {
             let end = '.png';
             if(cell > 601){
@@ -120,6 +121,9 @@ class MapUI extends Component {
             }
             let cellStyle={
                 backgroundImage: `url(./images/mapTiles/${cell}${end})`,
+            }
+            let subCellStyle = {
+                backgroundImage: `url(./images/other/you${skin}.png)`,
             }
             let tempRow = rowId;
             let tempCell = cellId;
@@ -135,14 +139,14 @@ class MapUI extends Component {
             id={tempRow.toString() + tempCell.toString()}
             key={tempRow.toString() + tempCell.toString()}
             className="cell" 
-             style={cellStyle}></div>
+             style={cellStyle}><div className="sub-cell" style={subCellStyle} key={`sub${tempRow}${tempCell}`}></div></div>
             if(rowId === this.props.playerPosition[0] && cellId === this.props.playerPosition[1]){
                 newCell = <div
                 id={tempRow.toString() + tempCell.toString()}
                 key={tempRow.toString() + tempCell.toString()} 
                 className="cell playerPosition" 
                 style={cellStyle}
-                ></div>
+                ><div className="sub-cell" style={subCellStyle} key={`sub${tempRow}${tempCell}`}></div></div>
             }
             cells.push(newCell)
             return true;

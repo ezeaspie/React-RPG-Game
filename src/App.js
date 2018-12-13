@@ -288,7 +288,7 @@ class App extends Component {
     return false;
   }
 
-  createPlayer = (name, stats) => {
+  createPlayer = (name, stats, skin) => {
     let ammoFactory = (name,id,abbreviation) => {
       return{
         id,
@@ -311,6 +311,9 @@ class App extends Component {
       npcStates:[],
       companion:null,
       activeWeapons:[],
+      skin,
+      skinCollection:[skin],
+      armor:[],
       ammo:[
         ammoFactory("Light Bullets",0,"LB"),
         ammoFactory("Medium Bullets",1,"MB"),
@@ -410,7 +413,7 @@ class App extends Component {
     this.setState({opponentObject});
   }
 
-  createOpponent = (name,strRange,lckRange,agiRange,moneyRange,possibleWeapons,weaponAmount,ammoCount,updateState=false,canChump=true) => {
+  createOpponent = (name,strRange,lckRange,agiRange,moneyRange,possibleWeapons,weaponAmount,ammoCount,skin,canChump=true,maxHealth=100,extraReward=false) => {
     //name='string',RANGE = [lowVal,highVal],possibleWeapons=Array of all wieldable, weaponAmount=how much weapons to give opponent
       let ammoFactory = (name,id,abbreviation,amount) => {
         return{
@@ -437,6 +440,7 @@ class App extends Component {
     
     let opponent = {
       name,
+      skin,
       stats : [
         {
             name: "Charisma",
@@ -461,8 +465,8 @@ class App extends Component {
     ],
       inventory: chooseWeapons(),
       money: valueFromRange(moneyRange[0],moneyRange[1]),
-      health: 100,
-      maxHealth: 100,
+      health: maxHealth,
+      maxHealth: maxHealth,
       ammo:[
         ammoFactory("Light Bullets",0,"LB",ammoCount[0]),
         ammoFactory("Medium Bullets",1,"MB",ammoCount[1]),
@@ -479,10 +483,6 @@ class App extends Component {
     }
     else{
       this.setState({canChump:true});
-    }
-    if(updateState){
-      this.setState({opponentObject:opponent},()=>this.updateGameState(4));
-      return;
     }
     return opponent;
   }
@@ -2414,7 +2414,7 @@ class App extends Component {
               },
               effect: ()=>{
                 updateNPCRelationship(611,-1);
-                let opponent = this.createOpponent("Phoebe",[35,40],[50,70],[40,50],[200,250],[Weapons[1],Weapons[12]],2,[10,1,0,10,0,0,0,0],false,false);
+                let opponent = this.createOpponent("Phoebe",[35,40],[50,70],[40,50],[200,250],[Weapons[1],Weapons[12]],2,[10,1,0,10,0,0,0,0],'phoebe.gif',true,100);
                 this.startCombat(opponent,'bigBossTheme');
                 return false;
               }
