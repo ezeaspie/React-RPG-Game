@@ -48,17 +48,17 @@ let plasmaP = {
   },
 }
 
-Weapons.push(  WeaponFactory(301,"Wooden Baseball Bat",<p>Strong and heavy, perfect for head busting</p>,/*150*/20,15,15,95,true))
-Weapons.push(    WeaponFactory(302,"Brass Knuckles",<p>For when your punches need that extra... punch</p>,100,3,6,95,true))
-Weapons.push(    WeaponFactory(303,"Spiked Knuckles",<p>Skewer your opponents using only your knuckles!</p>,250,5,7,95,true))
-Weapons.push(    WeaponFactory(304,"Plastic Baseball Bat",<p>Plastic is pretty tough but it's still a toy</p>,70,5,10,95,true))
-Weapons.push(    WeaponFactory(306,"Ssd",<p>Made of heavy metal, this will be sure to hit it out the park!</p>,500,30,25,95,true))
+Weapons.push(  WeaponFactory(301,"Wooden Baseball Bat",<p>Strong and heavy, perfect for head busting</p>,150,10,10,90,true))
+Weapons.push(    WeaponFactory(302,"Brass Knuckles",<p>For when your punches need that extra... punch</p>,100,4,5,95,true))
+Weapons.push(    WeaponFactory(303,"Spiked Knuckles",<p>Skewer your opponents using only your knuckles!</p>,250,6,6,95,true))
+Weapons.push(    WeaponFactory(304,"Plastic Baseball Bat",<p>Plastic is pretty tough but it's still a toy</p>,70,4,5,90,true))
+Weapons.push(    WeaponFactory(306,"Steel Baseball Bat",<p>Just like the ones in the big leagues, hit it out of the park with this powerful bat!</p>,500,15,14,90,true));
 Weapons.push(    WeaponFactory(307,"koc",<p>Made of heavy metal, this will be sure to hit it out the park!</p>,500,30,25,95,true))
 //id 5 ^
-Weapons.push(    WeaponFactory(308,"Zaxon's Zappy Beeter",<p>Wow this thing sucks</p>,500,5,5,90,false,3,3));
+Weapons.push(    WeaponFactory(308,"Zaxon's Zappy Beeter",<p>Wow this thing sucks</p>,500,5,5,80,false,3,2));
 Weapons.push(plasmaP);
 Weapons.push(   WeaponFactory(310,"Maxine's Taser Shotgun",<p>Maxine Rubin's modified taser shotgun fires three electrical projectiles, dealing big damage on contact.</p>,5000,50,5,80,false,4,3))
-Weapons.push(   WeaponFactory(311,"Standard Pistol",<p>Small sidearm used by low level police and personal safety.</p>,250,3,3,90,false,0,1));
+Weapons.push(   WeaponFactory(311,"Standard Pistol",<p>Small sidearm used by low level police and personal safety.</p>,250,3,3,80,false,0,1));
 Weapons.push(WeaponFactory(312,"Short Rifle",<p>A medium sized rifle that is used by farmers to ward off predators and tresspassers.</p>,500,10,8,85,false,1,2));
 //10^
 Weapons.push(WeaponFactory(313,"Single Shotgun",<p>Close range weapon that deals big damage... if it hits.</p>,750,20,10,65,false,2,1));

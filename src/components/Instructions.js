@@ -60,7 +60,9 @@ class Instructions extends Component {
                     <p>Combat is turn based. Whoever has the higher agility stat will attack first.</p>
                     <p>Every weapon in your and your opponent's inventory will appear on your respective sides. Each weapon will show the damage it will do with your strength and other buffs taken into account, as well as the attack point cost to use that weapon.</p>
                     <p>If you have enough attack points to use a chosen weapon, you will attack. Sometimes a critical hit will double your damage - but it all comes down to luck as to whether you land a critical or not.</p>
-                    <p>Once you have 0 attack points or can't use any weapons - you can choose to pass or the opponent will automatically take their turn.</p>
+                    <p>There are two types of weapons - melee and ranged. The more strength you have, the more your melee weapons will do. Ranged weapons do not get a buff.</p>
+                    <p>Ranged weapons cost ammo and AP. Ranged weapons usually cost less AP while meelee will be the opposite.</p>
+                    <p>Once you have 0 attack points or run out of ammo - you can choose to pass or the opponent will automatically take their turn.</p>
                     <p>If you find some situations, you will be able to <b>Chump Out</b> which will let you escape from the battle at the cost of some money and StreetCred. This option is disabled in some situations so make sure you know what you're getting into!</p>
                     <p>The battle ends when you flee or when someone's health reaches 0. If you win, you get money and StreetCred! If you lose... just start from your last save and pretend you never died!</p>
                 </div>

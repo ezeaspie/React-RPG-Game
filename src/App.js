@@ -669,7 +669,7 @@ class App extends Component {
           {
             name: "Get into a fight vs. Melweed",
             effect: ()=>{
-              let opponent = this.createOpponent("Melweed",[5,10],[5,10],[5,10],[100,200],[Weapons[0],Weapons[1]],2,[0,0,0,0,0,0,0,0]);
+              let opponent = this.createOpponent("Melweed",[45,55],[45,55],[30,50],[400,500],[Weapons[10],Weapons[4]],2,[0,10,5,0,0,0,0,0]);
               if(this.checkTime(4)){
                 this.startCombat(opponent,'bigBossTheme');
                 //this.setState({opponentObject:opponent},()=>this.updateGameState(4));
@@ -689,10 +689,9 @@ class App extends Component {
         {
           name: "Get into a fight",
           effect: ()=>{
-            let weapons = [Weapons[0],Weapons[1],Weapons[2],Weapons[3]];
-            let opponent = this.createOpponent("High School Kid",[5,10],[5,10],[5,10],[100,200],weapons,2);
+            let opponent = this.createOpponent("High School Kid",[10,20],[10,20],[10,20],[50,100],[Weapons[1],Weapons[3]],1,0,'NONE',true);
             if(this.checkTime(2)){
-              this.setState({opponentObject:opponent},()=>this.updateGameState(4));
+              this.startCombat(opponent,'none');
             }
             else{
               return [player, <p>It's too late!</p>];
@@ -796,9 +795,9 @@ class App extends Component {
       {
         name: "Get into a fight vs. Henry the Strong Guy",
         effect: ()=>{
-          let opponent = this.createOpponent("Henry the Strong Guy",[20,30],[10,20],[20,25],[150,300],Weapons,1,false,true);
+          let opponent = this.createOpponent("Henry the Strong Guy",[90,100],[70,80],[55,65],[600,700],[Weapons[1]],1,0,null,true,120);
           if(this.checkTime(4)){
-            this.setState({opponentObject:opponent},()=>this.updateGameState(4));
+            this.startCombat(opponent,null);
           }
           else{
             return false;
@@ -868,9 +867,9 @@ class App extends Component {
       {
         name: "Get into a fight vs. a Car Salesman",
         effect: ()=>{
-          let opponent = this.createOpponent("Jim the Salesman",[5,10],[5,10],[5,10],[50,70],Weapons,0,false,true);
+          let opponent = this.createOpponent("Jim the Salesman",[20,30],[20,30],[20,30],[150,180],[Weapons[1],Weapons[0]],1,0,"none",true,100);
           if(this.checkTime(4)){
-            this.setState({opponentObject:opponent},()=>this.updateGameState(4));
+            this.startCombat(opponent,"none");
           }
           else{
             return false;
@@ -964,8 +963,12 @@ class App extends Component {
         return [filteredObjectArray[0],isNew];
     }
 
-    let checkNPCState = (id,stateToCheck) => {
+    let checkNPCState = (id,stateToCheck,checkforGreaterThan=false) => {
       let item = filterNPCState(id);
+
+      if(item[0].state >= stateToCheck && checkforGreaterThan){
+        return true;
+      }
       if(item[0].state === stateToCheck){
         return true;
       }
@@ -1166,6 +1169,17 @@ class App extends Component {
                   player.inventory.splice(foundArray[0],1);
                   this.setState({playerObject : player});
                   return 3; 
+              }
+            },
+            {
+              name:`[Fight] Stop begging or else I'm going to have to teach you a lesson right here right now.`,
+              check: ()=>{ 
+                return true;
+              },
+              effect: ()=>{
+                let opponent = this.createOpponent("Charlie",[5,10],[5,10],[5,10],[10,50],[],0,0,"charlie.gif",true);
+                this.startCombat(opponent,'bigBossTheme');
+                return false;
               }
             },
             {
@@ -1540,7 +1554,18 @@ class App extends Component {
                 effect:()=> {
                   return 1; 
               }
-            }
+            },
+            {
+              name:`[Fight] You're not smart. You're selfish. You endangered J.G's career.`,
+              check: ()=>{ 
+                return true;
+              },
+              effect: ()=>{
+                let opponent = this.createOpponent("Zaxon",[30,40],[30,40],[30,40],[180,250],[Weapons[6]],1,[0,0,0,12,0,0,0,0],'zaxon.gif',true);
+                this.startCombat(opponent,'actor');
+                return false;
+              }
+            },
             ]
           },
           {
@@ -2414,7 +2439,7 @@ class App extends Component {
               },
               effect: ()=>{
                 updateNPCRelationship(611,-1);
-                let opponent = this.createOpponent("Phoebe",[35,40],[50,70],[40,50],[200,250],[Weapons[1],Weapons[12]],2,[10,1,0,10,0,0,0,0],'phoebe.gif',true,100);
+                let opponent = this.createOpponent("Phoebe",[30,40],[50,70],[30,45],[250,350],[Weapons[2],Weapons[12],Weapons[9]],2,[10,1,0,10,0,0,0,0],'phoebe.gif',true,100);
                 this.startCombat(opponent,'bigBossTheme');
                 return false;
               }
@@ -2664,7 +2689,7 @@ class App extends Component {
         name: "Sgt. Forge",
         dialouge: [
           {
-            message: `${checkNPCState(611,0)?"[He appears to be injured and unconcious]":"For the record, I didn't need your help. I was just sleeping."}`,
+            message: `${checkNPCState(611,1,true)?"[He appears to be injured and unconcious]":"For the record, I didn't need your help. I was just sleeping."}`,
             options: [
             {
               name:`[Intelligence] Use Medical Knowledge to heal him`,
@@ -2721,7 +2746,7 @@ class App extends Component {
             ]
           },
           {
-            message: "If you can dish out some pain to that strong guy at the local gym... this plasma gun is yours.",
+            message: "If you can dish out some pain to that strong guy at the local gym... this plasma gun is yours. Be warned though. That guy is strong. And fast. He'll pummel you in a flash if you're not ready.",
             options:[
               {
                 name:`Okay, I'll do it.`,

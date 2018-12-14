@@ -620,7 +620,7 @@ class Combat extends Component {
                     opponent.weapons.map((weapon,i)=>{
                         return <CombatWeapon 
                             key={"opponentWeapon" + i}
-                            player={this.state.player.main}
+                            player={this.state.opponent.main}
                             isPlayer={false}
                             weapon={weapon}
                         />

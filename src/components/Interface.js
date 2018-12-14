@@ -3,6 +3,7 @@ import Product from './Product';
 import Option from './Option';
 import JobOptions from './JobOptions';
 import Companion from './Companion';
+import SkinInterface from './SkinInterface';
 
 class Interface extends Component {
 
@@ -53,9 +54,15 @@ class Interface extends Component {
                 <h2 className="store-cash">Cash:{this.props.playerData.money}</h2>
                 {
                     renderCompanionData?
+                    <div>
                     <Companion 
                     playerData={this.props.playerData}
                     />
+                    <SkinInterface 
+                    playerData={this.props.playerData}
+                    updatePlayerState={this.props.updatePlayerState}
+                    />
+                    </div>
                     :
                     null
                 }

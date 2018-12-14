@@ -7,6 +7,30 @@ class CombatWeapon extends Component {
 
         }
     }
+
+    calculateMeleeDamage = (weapon) => {
+        let user = this.props.player;
+        let baseDamage = weapon.damage;
+        if(weapon.isMelee){
+            let damageBuff = 0; //Used to add to perks and stuff probably in the future
+            let meeleeBuffCalculation = () => {
+                let strength = user.stats[1].value;
+                let buffCap = baseDamage/2;
+                let strengthPercentage = strength * .01;
+    
+                let buff = buffCap * strengthPercentage;
+                return Math.floor(buff);
+            }
+    
+            damageBuff = meeleeBuffCalculation();
+    
+            damageBuff += baseDamage;
+    
+            return damageBuff;
+        }
+        return baseDamage;
+        
+    }
     
     render(){
         let isDisabled = false;
@@ -41,7 +65,7 @@ class CombatWeapon extends Component {
                 :()=>{return false}
                 }>
                 <p className="weapon-name">{this.props.weapon.name}</p>
-                <p className="weapon-data">{this.props.weapon.damage} DMG | {this.props.weapon.apCost} AP</p>
+                <p className="weapon-data">{this.calculateMeleeDamage(this.props.weapon)} DMG | {this.props.weapon.apCost} AP</p>
                 <p className="weapon-acc">{this.props.weapon.accuracy} ACC{this.props.weapon.isMelee?null:` | ${this.props.weapon.ammoCost} ${this.props.player.ammo[this.props.weapon.ammoId].abbreviation}`}</p>
             </button>
         )

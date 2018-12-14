@@ -75,6 +75,7 @@ class MapUI extends Component {
             //Create NPC dialouge.
             let npc = this.props.handleNPCInteractions(npcId);
             console.log(npc);
+            this.props.updatePlayerPosition(this.state.currentPosition);
             this.setState({npc, showDialougeBox:true});
             return;
             //Show dialouge box.
