@@ -51,7 +51,10 @@ class Interface extends Component {
                 null
             }
                 <h1>{this.props.storeData.name}</h1>
+                <div className="store-player-info">
                 <h2 className="store-cash">Cash:{this.props.playerData.money}</h2>
+                <h2 className="store-time">Time:{this.props.time}:00</h2>
+                </div>
                 {
                     renderCompanionData?
                     <div>
@@ -77,6 +80,7 @@ class Interface extends Component {
                 <ul className="store-list options">
                     {this.props.storeData.options.map((option,i)=>{
                         return <Option 
+                        fightRank={option.id===1?option.rank:false}
                         playerData={this.props.playerData}
                         goToJail = {this.props.goToJail}
                         updateGameState={this.props.updateGameState}
@@ -100,7 +104,11 @@ class Interface extends Component {
                 updatePlayerState={this.props.updatePlayerState}
                 setDialougeBox = {this.setDialougeBox}
                 />
-                <button className="main-button" onClick={()=>{this.props.updateGameState(2)}}>Back</button>
+                <button className="main-button" 
+                onClick={()=>{
+                    this.props.resetActiveStore();
+                    this.props.updateGameState(2);
+                    }}>Back</button>
             </div>
             
         )

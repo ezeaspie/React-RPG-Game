@@ -68,6 +68,12 @@ calculateRobChance = () => {
             isRobbery = true;
             content = this.calculateRobChance();
         }
+        if(this.props.fightRank !== false){
+            content = <div>
+            <p>{this.props.option.name}</p>
+            <p>Difficulty: {this.props.fightRank}</p>
+            </div>
+        }
         //Move the companion stuff to interface instead. Render a special OPTION for talking to companion.
         return(            
             <li 

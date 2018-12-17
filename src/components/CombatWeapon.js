@@ -55,8 +55,10 @@ class CombatWeapon extends Component {
             opacity:'.5',
         }
 
+        let rarityTiers=['common','uncommon','rare','ultra-rare','legendary']
+
         return(
-            <button className="combat-weapon"
+            <button className={`combat-weapon ${rarityTiers[this.props.weapon.rarity]}`}
             disabled={isDisabled} 
             style={this.props.attackPoints < this.props.weapon.apCost?invalidStyle:null}
             onClick={

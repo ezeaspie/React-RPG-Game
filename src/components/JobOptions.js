@@ -42,7 +42,13 @@ class JobOptions extends Component {
             this.props.forceRender();  
             return; 
         }
-            console.log("Too late in the day."); 
+        let content = 
+            <div className="message-box" style={{background:"rgba(0,0,0,.75)", color: "#E7DFDD"}}>
+                <p>It's too late to work!</p>
+                <button className="sub-button" onClick ={()=>{this.props.setDialougeBox(false,null)}}>Ok</button>
+            </div>
+            this.props.setDialougeBox(true,content);
+            return;
     }
 
     buildWorkContent () {
@@ -54,7 +60,7 @@ class JobOptions extends Component {
         <li className="option" onClick={()=>{this.handleWorkShift(promotionLevel)}}>
             <p>Work</p>
             <p>{jobData.promotion[promotionLevel].name}</p>
-            <p>{jobData.promotion[promotionLevel].pay}</p>
+            <p>${jobData.promotion[promotionLevel].pay}/hr ({jobData.shiftTime} hour shift)</p>
         </li>
 
         if(jobData.promotion[promotionLevel+1] !== undefined){

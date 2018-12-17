@@ -121,10 +121,21 @@ class MapUI extends Component {
                 end = '.gif';
             }
             let cellStyle={
-                backgroundImage: `url(./images/mapTiles/${cell}${end})`,
+                backgroundImage: `url(./images/mapTiles/${cell}${cell===612?'.gif':'.png'})`,
+                position:'relative',
             }
             let subCellStyle = {
                 backgroundImage: `url(./images/other/you${skin}.png)`,
+            }
+
+            let npcCellStyle = {
+                backgroundImage:`url(./images/other/${cell}${end})`,
+                opacity:1,
+                width:'100%',
+                height:'100%',
+                top:0,
+                left:0,
+                backgroundSize: 'cover',
             }
             let tempRow = rowId;
             let tempCell = cellId;
@@ -140,15 +151,24 @@ class MapUI extends Component {
             id={tempRow.toString() + tempCell.toString()}
             key={tempRow.toString() + tempCell.toString()}
             className="cell" 
-             style={cellStyle}><div className="sub-cell" style={subCellStyle} key={`sub${tempRow}${tempCell}`}></div></div>
+             style={cellStyle}>
+             <div className="sub-cell" style={cell>601?npcCellStyle:subCellStyle} key={`sub${tempRow}${tempCell}`}>
+             </div>
+             </div>
+            
             if(rowId === this.props.playerPosition[0] && cellId === this.props.playerPosition[1]){
-                newCell = <div
-                id={tempRow.toString() + tempCell.toString()}
-                key={tempRow.toString() + tempCell.toString()} 
-                className="cell playerPosition" 
-                style={cellStyle}
-                ><div className="sub-cell" style={subCellStyle} key={`sub${tempRow}${tempCell}`}></div></div>
+            newCell = 
+
+            <div
+            id={tempRow.toString() + tempCell.toString()}
+            key={tempRow.toString() + tempCell.toString()} 
+            className="cell playerPosition" 
+            style={cellStyle}
+            >
+            <div className="sub-cell" style={subCellStyle} key={`sub${tempRow}${tempCell}`}></div></div>
+            
             }
+
             cells.push(newCell)
             return true;
         })

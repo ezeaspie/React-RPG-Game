@@ -107,6 +107,10 @@ class App extends Component {
     });
   }
 
+  resetActiveStore = () => {
+    this.setState({activeJob:undefined,activeStore:undefined});
+  }
+
   saveToLocal = (position = null) => {
     let getAndSetData = () => {
       const playerData = this.state.playerObject;
@@ -248,13 +252,33 @@ class App extends Component {
         {
           name:"SuperFruit",
           id:11,
-          price:50,
+          price:80,
           description: <div><p>+100 Health</p><p>Hi welcome to superfruit today's my birthday so the whole episode's going to be about me! That's not true. It is. It's not happening. I wish you could just stay calm instead of flying off the handle all the time! I hope you're happy. I hope you're happy. I hope you're happy when you grovel in submission to feed your own ambition. And now i can't imagine how. I hope you're happy. RIGHT NOWWWWWWW.</p></div>,
           isConsumable:true,
           effect: () => {
             return this.updatePlayerHealth(100,false);
           },
         },
+        {
+          name:"Medical Journal of Psychology",
+          id:12,
+          price:100,
+          description:<div><p>+3 Charisma</p><p>An entire issue of peer-reviewed articles with the latest on psychological discoveries.</p></div>,
+          isConsumable:true,
+          effect: () => {
+            return this.updatePlayerStat(3,0,0,0,0,0);
+          }
+        },
+        {
+          name:"Horseshoe Charm",
+          id:13,
+          price: 100,
+          description:<div><p>+1 Luck</p><p>Get lucky with this charm - guaranteed to make you 1% luckier today!</p></div>,
+          isConsumable:true,
+          effect: ()=>{
+            return this.updatePlayerStat(0,0,0,0,1,0);
+          }
+        }
     ]
 
     this.setState({consumableItems});
@@ -656,7 +680,7 @@ class App extends Component {
         name:"9:30 Bar",
         inventory: [
           this.state.consumableItems[2],
-          Weapons[0],
+          Weapons[2],
           this.state.consumableItems[3],
           this.state.consumableItems[4],
         ],
@@ -668,6 +692,8 @@ class App extends Component {
           },
           {
             name: "Get into a fight vs. Melweed",
+            id:1,
+            rank: 45,
             effect: ()=>{
               let opponent = this.createOpponent("Melweed",[45,55],[45,55],[30,50],[400,500],[Weapons[10],Weapons[4]],2,[0,10,5,0,0,0,0,0]);
               if(this.checkTime(4)){
@@ -687,7 +713,9 @@ class App extends Component {
       name:"Wilmox High School",
       options: [
         {
-          name: "Get into a fight",
+          name: "Get into a fight vs High School Kid",
+          id:1,
+          rank:10,
           effect: ()=>{
             let opponent = this.createOpponent("High School Kid",[10,20],[10,20],[10,20],[50,100],[Weapons[1],Weapons[3]],1,0,'NONE',true);
             if(this.checkTime(2)){
@@ -710,10 +738,10 @@ class App extends Component {
         {
           name: "Go to Class for $25",
           effect: ()=>{
-            if(this.checkTime(8)){
+            if(this.checkTime(6)){
               if(this.state.playerObject.money >= 25){
-                this.updateTime(false,8);
-                return updateStat(0,0,3,0,0,-25,0);
+                this.updateTime(false,6);
+                return updateStat(0,0,2,0,0,-25,0);
               }
              return [player, <p>You don't have enough money</p>] 
             }
@@ -726,7 +754,7 @@ class App extends Component {
             if(this.checkTime(4)){
               if(this.state.playerObject.money >= 25){
                 this.updateTime(false,4);
-                return updateStat(0,1,3,0,0,-25,0);
+                return updateStat(0,1,0,0,0,-25,0);
               }
              return [player, <p>You don't have enough money</p>] 
             }
@@ -758,6 +786,23 @@ class App extends Component {
       staticItems[2],
     ],
     options: [
+      {
+        name: "[AGI++, AGI+++ Chance] Take Courier Agility Course for $65",
+        effect: ()=>{
+          if(this.checkTime(8)){
+            if(this.state.playerObject.money >= 65){
+              this.updateTime(false,8);
+              let randomNum = Math.floor(Math.random() * 100);
+              if(randomNum + this.state.playerObject.stats[4].value >= randomNum){
+                return updateStat(0,0,0,3,0,-65,0);
+              }
+              return updateStat(0,0,0,2,0,-65,0);
+            }
+           return [player, <p>You don't have enough money</p>] 
+          }
+          else{return [player, <p>It's too late!</p>]}
+        }
+      },
       {
         name: "Rob the Place",
         effect: ()=>{return(robThePlace(40))},
@@ -793,14 +838,42 @@ class App extends Component {
         getData: ()=>{return(getRobThePlaceData(30))}
       },
       {
+        name: "Work Out for $45",
+        effect: ()=>{
+          if(this.checkTime(8)){
+            if(this.state.playerObject.money >= 45){
+              this.updateTime(false,8);
+              return updateStat(0,2,0,0,0,-45,0);
+            }
+           return [player, <p>You don't have enough money</p>] 
+          }
+          else{return [player, <p>It's too late!</p>]}
+        }
+      },
+      {
+        name: "Take Henry's Personal Training for $70",
+        effect: ()=>{
+          if(this.checkTime(8)){
+            if(this.state.playerObject.money >= 70){
+              this.updateTime(false,8);
+              return updateStat(0,3,0,0,0,-70,0);
+            }
+           return [player, <p>You don't have enough money</p>] 
+          }
+          else{return [player, <p>It's too late!</p>]}
+        }
+      },
+      {
         name: "Get into a fight vs. Henry the Strong Guy",
+        id:1,
+        rank:65,
         effect: ()=>{
           let opponent = this.createOpponent("Henry the Strong Guy",[90,100],[70,80],[55,65],[600,700],[Weapons[1]],1,0,null,true,120);
           if(this.checkTime(4)){
             this.startCombat(opponent,null);
           }
           else{
-            return false;
+            return [this.state.playerObject,<p>It's too late!</p>];
           }
         }
       },
@@ -813,6 +886,8 @@ class App extends Component {
     inventory: [
       this.state.consumableItems[7],
       this.state.consumableItems[1],
+      Weapons[11],
+      staticItems[8],
     ],
     options: [
       {
@@ -821,14 +896,16 @@ class App extends Component {
         getData: ()=>{return(getRobThePlaceData(50))}
       },
       {
-        name: "Get into a fight vs. Mel",
+        name: "Get into a fight vs. Fat Guy",
+        id:1,
+        rank:55,
         effect: ()=>{
-          let opponent = this.createOpponent("Mel",[50,60],[20,30],[30,55],[500,550],Weapons,3,false,true);
+          let opponent = this.createOpponent("Fat Guy",[55,60],[55,60],[30,55],[480,550],Weapons,3,false,true);
           if(this.checkTime(4)){
             this.setState({opponentObject:opponent},()=>this.updateGameState(4));
           }
           else{
-            return false;
+            return [this.state.playerObject,<p>It's too late!</p>];
           }
         }
       },
@@ -843,6 +920,19 @@ class App extends Component {
       this.state.consumableItems[1],
     ],
     options: [
+      {
+        name: "Take Mattress Sales Course for $65",
+        effect: ()=>{
+          if(this.checkTime(8)){
+            if(this.state.playerObject.money >= 65){
+              this.updateTime(false,8);
+              return updateStat(2,0,0,0,0,-65,0);
+            }
+           return [player, <p>You don't have enough money</p>] 
+          }
+          else{return [player, <p>It's too late!</p>]}
+        }
+      },
       {
         name: "Rob the Place",
         effect: ()=>{return(robThePlace(20))},
@@ -860,19 +950,47 @@ class App extends Component {
     ],
     options: [
       {
+        name: "Take Car Agility Course for $65",
+        effect: ()=>{
+          if(this.checkTime(8)){
+            if(this.state.playerObject.money >= 65){
+              this.updateTime(false,8);
+              return updateStat(0,0,0,2,0,-65,0);
+            }
+           return [player, <p>You don't have enough money</p>] 
+          }
+          else{return [player, <p>It's too late!</p>]}
+        }
+      },
+      {
+        name: "Take Car Salesman Course for $25",
+        effect: ()=>{
+          if(this.checkTime(8)){
+            if(this.state.playerObject.money >= 25){
+              this.updateTime(false,8);
+              return updateStat(1,0,0,0,0,-25,0);
+            }
+           return [player, <p>You don't have enough money</p>] 
+          }
+          else{return [player, <p>It's too late!</p>]}
+        }
+      },
+      {
         name: "Rob the Place",
         effect: ()=>{return(robThePlace(35))},
         getData: ()=>{return(getRobThePlaceData(35))}
       },
       {
-        name: "Get into a fight vs. a Car Salesman",
+        name: "Get into a fight vs. Jim the Salesman",
+        id:1,
+        rank:20,
         effect: ()=>{
           let opponent = this.createOpponent("Jim the Salesman",[20,30],[20,30],[20,30],[150,180],[Weapons[1],Weapons[0]],1,0,"none",true,100);
           if(this.checkTime(4)){
             this.startCombat(opponent,"none");
           }
           else{
-            return false;
+            return [this.state.playerObject,<p>It's too late!</p>];
           }
         }
       },
@@ -901,6 +1019,11 @@ class App extends Component {
     name:"Homeowner's Depot",
     inventory: [
       staticItems[3],
+      staticItems[7],
+      this.state.consumableItems[12],
+      staticItems[14],
+      Weapons[10],
+      Weapons[0],
     ],
     options: [
       {
@@ -912,11 +1035,34 @@ class App extends Component {
   },
   {
     id:414,
-    isShop: false,
+    isShop: true,
     name:"NorthWest Police Station",
     inventory: [
+      staticItems[6],
+      staticItems[9],
+      Weapons[1],
+      Weapons[12],
+      Weapons[9],
     ],
     options: [
+      {
+        name: "[AGI+ Chance]Try Police Training for $35",
+        effect: ()=>{
+          if(this.checkTime(8)){
+            if(this.state.playerObject.money >= 35){
+              this.updateTime(false,8);
+              let randomNum = Math.floor(Math.random() * 100);
+              if(randomNum + this.state.playerObject.stats[4].value >= randomNum){
+                return updateStat(0,0,0,1,0,-45,0);
+              }
+              let message = <p>You ran the course but failed to reach the par time. Better luck next time!</p>;
+              return [player,message];
+            }
+           return [player, <p>You don't have enough money</p>] 
+          }
+          else{return [player, <p>It's too late!</p>]}
+        }
+      },
     ]
   },
   {
@@ -926,14 +1072,9 @@ class App extends Component {
     inventory: [
       staticItems[4],
       this.state.consumableItems[7],
-      staticItems[13],
+      this.state.consumableItems[13],
       staticItems[6],
-      Weapons[8],
-      Weapons[9],
-      Weapons[10],
-      Weapons[11],
-      Weapons[7],
-      staticItems[14],
+      Weapons[3],
     ],
     options: [
     ]
@@ -1172,12 +1313,12 @@ class App extends Component {
               }
             },
             {
-              name:`[Fight] Stop begging or else I'm going to have to teach you a lesson right here right now.`,
+              name:`[Fight Difficulty: 5] Stop begging or else I'm going to have to teach you a lesson right here right now.`,
               check: ()=>{ 
-                return true;
+                return this.checkTime(4);
               },
               effect: ()=>{
-                let opponent = this.createOpponent("Charlie",[5,10],[5,10],[5,10],[10,50],[],0,0,"charlie.gif",true);
+                let opponent = this.createOpponent("Charlie",[5,10],[5,10],[5,10],[10,50],[],0,0,"602.gif",true);
                 this.startCombat(opponent,'bigBossTheme');
                 return false;
               }
@@ -1556,9 +1697,9 @@ class App extends Component {
               }
             },
             {
-              name:`[Fight] You're not smart. You're selfish. You endangered J.G's career.`,
+              name:`[Fight Difficulty: 30] You're not smart. You're selfish. You endangered J.G's career.`,
               check: ()=>{ 
-                return true;
+                return this.checkTime(4);
               },
               effect: ()=>{
                 let opponent = this.createOpponent("Zaxon",[30,40],[30,40],[30,40],[180,250],[Weapons[6]],1,[0,0,0,12,0,0,0,0],'zaxon.gif',true);
@@ -1629,6 +1770,18 @@ class App extends Component {
               },
               effect: ()=>{
                 return 1;
+              }
+            },
+            {
+              name:`[Low Intelligence][Fight Difficulty: 90] Who you calling loser im out of your league, don't talk about my mom at least she actually cares for me!`,
+              check: ()=>{
+                if(stats[2].value <= 20){
+                  return true;
+                }
+              },
+              effect: ()=>{
+                let opponent = this.createOpponent('The Emperor',[90,95],[60,70],[70,80],[1000,1500],[Weapons[11],Weapons[5],Weapons[18]],3,[100,10,15,10,10,10,10,1],'606.gif',true,150);
+                this.startCombat(opponent,'bigBossTheme');
               }
             },
             {
@@ -2427,19 +2580,13 @@ class App extends Component {
               }
             },
             {
-              name:`[Fight] Marathon, marathon, just shut up would you? Nobody cares!`,
+              name:`[Fight Difficulty: 40 -Relationship] Marathon, marathon, just shut up would you? Nobody cares!`,
               check: ()=>{ //Add this in later. Right now it doesn't do anything since there is no quest.
-                let relationshipCheck = filterNPCState(611);
-                let value = relationshipCheck[0].relationship;
-                console.log(value);
-                if(value < 0 ){
-                  return true;
-                }
-                return false;
+                return this.checkTime(4);
               },
               effect: ()=>{
                 updateNPCRelationship(611,-1);
-                let opponent = this.createOpponent("Phoebe",[30,40],[50,70],[30,45],[250,350],[Weapons[2],Weapons[12],Weapons[9]],2,[10,1,0,10,0,0,0,0],'phoebe.gif',true,100);
+                let opponent = this.createOpponent("Phoebe",[30,40],[50,70],[30,45],[250,350],[Weapons[2],Weapons[12],Weapons[9]],2,[10,1,0,10,0,0,0,0],'611.gif',true,100);
                 this.startCombat(opponent,'bigBossTheme');
                 return false;
               }
@@ -2689,12 +2836,12 @@ class App extends Component {
         name: "Sgt. Forge",
         dialouge: [
           {
-            message: `${checkNPCState(611,1,true)?"[He appears to be injured and unconcious]":"For the record, I didn't need your help. I was just sleeping."}`,
+            message: `${checkNPCState(612,1,true)?"For the record, I didn't need your help. I was just sleeping.":"[He appears to be injured and unconcious]"}`,
             options: [
             {
               name:`[Intelligence] Use Medical Knowledge to heal him`,
               check: ()=>{
-                if(stats[2].value >= 60){
+                if(stats[2].value >= 50 && checkNPCState(612,0)){
                   return true;
                 }
                 return false;
@@ -2707,10 +2854,22 @@ class App extends Component {
               }
             },
             {
-              name:"Exit",
-              check: ()=>noCheck(),
-              effect: ()=>{
+              name:`[AGI+++, STR+] Ask Forge to train you for $115`,
+              check:()=>{
+                if(checkNPCState(612,1,true) && this.checkTime(6)){
+                  return true;
+                }
                 return false;
+              },
+              effect:()=>{
+                this.updateTime(false,6);
+                if(player.money >= 115){
+                  this.updatePlayerStat(0,1,0,3,0,0);
+                  player.money-=115;
+                  this.setState({playerObject:player});
+                  return 5;
+                }
+                return 6;
               }
             },
             {
@@ -2721,6 +2880,13 @@ class App extends Component {
                   return 3;
                 }
                 return 4;
+              }
+            },
+            {
+              name:"Exit",
+              check: ()=>noCheck(),
+              effect: ()=>{
+                return false;
               }
             },
             ]
@@ -2792,7 +2958,31 @@ class App extends Component {
                 }
               },
             ]
-          }
+          },
+          {
+            message: "[+1 Strength, +3 Agility] Well there you go. Now leave me alone.",
+            options: [
+              {
+                name:"Exit",
+                check: ()=>noCheck(),
+                effect: ()=>{
+                  return false;
+                }
+              }
+            ]
+          },
+          {
+            message: "No. Not until you get enough money to make it worth my time.",
+            options: [
+              {
+                name:"Exit",
+                check: ()=>noCheck(),
+                effect: ()=>{
+                  return false;
+                }
+              }
+            ]
+          },
         ],
       },
     ]
@@ -2873,6 +3063,7 @@ class App extends Component {
       />,
       ],
       <Interface 
+      resetActiveStore={this.resetActiveStore}
       editAmmo={this.editAmmo}
       goToJail={this.goToJail}
       time={this.state.gameTime}

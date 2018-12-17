@@ -8,7 +8,7 @@ class CharacterCreation extends Component {
             nameError: false,
             nameValue : '',
             avaliblePoints: 0,
-            totalPoints: 25,
+            totalPoints: 35,
             selectedSkin:0,
             stats : [
                 {
