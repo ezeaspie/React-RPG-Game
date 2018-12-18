@@ -355,6 +355,12 @@ class App extends Component {
       });
   }
 
+  addSkin = (id) => {
+    let player = this.state.playerObject;
+    player.skinCollection.push(id);
+    this.setState({playerObject:player});
+  }
+
   editAmmo = (ammoId,amount) => {
     let player = this.state.playerObject;
     player.ammo[ammoId].amount += amount;
@@ -437,7 +443,7 @@ class App extends Component {
     this.setState({opponentObject});
   }
 
-  createOpponent = (name,strRange,lckRange,agiRange,moneyRange,possibleWeapons,weaponAmount,ammoCount,skin,canChump=true,maxHealth=100,extraReward=false) => {
+  createOpponent = (name,strRange,lckRange,agiRange,moneyRange,possibleWeapons,weaponAmount,ammoCount,skin,canChump=true,maxHealth=100) => {
     //name='string',RANGE = [lowVal,highVal],possibleWeapons=Array of all wieldable, weaponAmount=how much weapons to give opponent
       let ammoFactory = (name,id,abbreviation,amount) => {
         return{
@@ -509,6 +515,42 @@ class App extends Component {
       this.setState({canChump:true});
     }
     return opponent;
+  }
+
+  addInventoryItem = (item) => {
+    let player = this.state.playerObject;
+    player.inventory.push(item);
+    this.setState({playerObject : player});
+  }
+
+  checkForItem = (itemId) => {
+    let player = this.state.playerObject;
+    let foundArray = [];
+    for (let i=0 ; i < player.inventory.length; i++){
+      if (player.inventory[i].id === itemId){
+        foundArray.push(i);
+      }
+    }
+    if(foundArray[0] === undefined){
+      return false;
+    }
+    console.log(true);
+    return true;
+  }
+
+  checkForSkin = (skinId) => {
+    let player = this.state.playerObject;
+    let foundArray = [];
+    for (let i=0 ; i < player.skinCollection.length; i++){
+      if (player.skinCollection[i] === skinId){
+        foundArray.push(i);
+      }
+    }
+    if(foundArray[0] === undefined){
+      return false;
+    }
+    console.log(true);
+    return true;
   }
 
   removeInventoryItem = (itemId) => {
@@ -1089,7 +1131,6 @@ class App extends Component {
     let player = this.state.playerObject;
     let stats = this.state.playerObject.stats;
 
-
     //Returns NPC State Object && Creates a new object if not found. 
     let filterNPCState = (id) => {
       let isNew = false;
@@ -1319,7 +1360,7 @@ class App extends Component {
               },
               effect: ()=>{
                 let opponent = this.createOpponent("Charlie",[5,10],[5,10],[5,10],[10,50],[],0,0,"602.gif",true);
-                this.startCombat(opponent,'bigBossTheme');
+                this.startCombat(opponent,'bigBossTheme',5,500);
                 return false;
               }
             },
@@ -2995,7 +3036,7 @@ class App extends Component {
     return npc;
   }
 
-  startCombat = (opponent,theme,bonusReward=null, isDouble=false,) => {
+  startCombat = (opponent,theme,bonusReward=null, chance=1000,) => {
     let bountyList = this.state.bountyList;
     let themeFile = `./audio/themes/${theme}.mp3`;
     let found = bountyList.filter((item)=>{
@@ -3004,6 +3045,11 @@ class App extends Component {
 
     let jsxObject = 
     <Combat 
+    checkForSkin={this.checkForSkin}
+    addSkin = {this.addSkin}
+    checkForItem = {this.checkForItem}
+      addInventoryItem={this.addInventoryItem}
+      bonusRewardChance={chance}
       shopId={this.state.activeStore}
       theme={themeFile}
       editAmmo={this.editAmmo}

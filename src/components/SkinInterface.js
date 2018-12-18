@@ -18,7 +18,7 @@ class SkinInterface extends Component {
         this.setState({selectedSkin:skinID},()=>{
             let player = this.props.playerData;
             player.skin = this.state.selectedSkin;
-            this.updatePlayerState(player);
+            this.props.updatePlayerState(player);
         });
     }
 

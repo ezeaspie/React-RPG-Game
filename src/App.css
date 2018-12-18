@@ -963,3 +963,9 @@ border:solid 1px #E7DFDD;
   background: -o-linear-gradient(bottom, rgb(152,144,227,.5) 0%, rgb(177,244,207,.5) 100%);
   background: linear-gradient(to top, rgb(152,144,227,.5) 0%, rgb(177,244,207,.5) 100%);
 }
+
+.store .skin-choice {
+  list-style-type: none;
+  display: flex;
+  flex-direction: row;
+}

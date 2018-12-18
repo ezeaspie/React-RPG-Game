@@ -64,9 +64,10 @@ class Combat extends Component {
     }
 
     updateLog = (message,isPlayer) => {
+        let randomNum = Math.floor(Math.random() * 10000); 
         let log = this.state.log;
         let item = 
-        <li className = {`combat-log-item ${isPlayer?"alt-item":null}`} key={this.state.log.length}>{message}</li>
+        <li className = {`combat-log-item ${isPlayer?"alt-item":null}`} key={message + randomNum}>{message}</li>
         log.unshift(item);
         if(log.length > 10){
             log.pop();
@@ -402,9 +403,44 @@ class Combat extends Component {
             this.props.updateGameState(6);
         }
         else{
-            //Play Opponent Died message.
-            //Give STR buff?
             this.setState({isOpponentDead:true});
+            let bonusMessage = null;
+
+            if(this.props.bonusReward !== null){
+                let randomNum = Math.floor(Math.random() * 1000); 
+                let chance = this.props.bonusRewardChance;
+                if(chance+player.main.stats[4].value >= randomNum){
+
+                    if(!isNaN(this.props.bonusReward)){
+                        console.log('is skin');
+                        if(this.props.checkForSkin(this.props.bonusReward)){
+                            console.log('you already have this skin')
+                        }
+                        else{
+                            this.props.addSkin(this.props.bonusReward);
+                            bonusMessage = <div style={{display:'flex',flexDirection:'column',alignContent:'center',alignItems:'center'}}><div style={{background: `url(./images/other/you${this.props.bonusReward}.png)`, width:'2em',height:'2em',backgroundSize:'cover', borderRadius:'5px'}}></div><p>You've earned a new skin!</p></div>
+                        }
+                    }
+                    
+                    else{
+                        if(this.props.bonusReward.isConsumable){
+                            bonusMessage = <p>You also found <span className="positive">{this.props.bonusReward.name}</span> on {opponent.main.name}'s body.</p>
+                            this.props.addInventoryItem(this.props.bonusReward);
+                            console.log('consumbale');
+                        }
+                        if(this.props.bonusReward.isWeapon){
+                            bonusMessage = <p>You also found <span className="positive">{this.props.bonusReward.name}</span> on {opponent.main.name}'s body.</p>
+                            if(!this.props.checkForItem(this.props.bonusReward.id)){
+                                this.props.addInventoryItem(this.props.bonusReward);
+                            }
+                            else{
+                                console.log('no');
+                            }
+                        }      
+                    }
+                }
+            }
+
             player.main.money += opponent.main.money;
             player.main.streetCred += 5;
 
@@ -412,6 +448,7 @@ class Combat extends Component {
             <div className="message-box">
                 <p>You find <span className="positive">{opponent.main.money} dollars</span> in {opponent.main.name}'s' wallet.</p>
                 <p>The people heard how you beat down {opponent.main.name} and you earned <span className="positive">5 street cred!</span></p>
+                {bonusMessage}
                 <button className="main-button" onClick={()=>{
                     if(this.state.isQuest){
                         let bountyObject = this.props.bountyObject;
