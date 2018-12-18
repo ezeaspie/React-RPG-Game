@@ -22,8 +22,10 @@ class JobOptions extends Component {
             let player = this.props.playerData;
             let storeId = this.props.storeId;
             let promotionLevel = player.jobs.filter((job)=>{return storeId === job.id});
+
             promotionLevel = promotionLevel[0];
             promotionLevel.promotion++;
+            
             this.props.updatePlayerState(player);
             this.forceUpdate();
         }

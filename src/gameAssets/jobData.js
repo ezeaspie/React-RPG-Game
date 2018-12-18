@@ -3,8 +3,8 @@ const Jobs = [
         id: 402,
         name: "Gas Station Employee",
         requirements: [
-            {name:"Charisma", value:10},
-            {name:"Strength", value:10},
+            {name:"Charisma", value:0},
+            {name:"Strength", value:0},
             {name:"Intelligence", value:0},
             {name:"Agility",value:0},
             {name:"Luck", value:0},
@@ -13,11 +13,16 @@ const Jobs = [
         ],//chr,str,int,lck,sC,mon
         increment:10,
         shiftTime:6,
+        reward:null,
         promotion: [
             {
                 name:"Store Clerk",
                 pay: 3,
             },
+            {
+                name:"KING",
+                pay:100000000,
+            }
         ],
     },
     {

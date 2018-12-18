@@ -14,14 +14,10 @@ class MapUI extends Component {
         }
         this.handleMovement = this.handleMovement.bind(this);
     }
-
-    //Possible performance update (re-render only when showDialougeBox is true. Need a controlled input to work properly)
-    //REmove player Console from this section, add it in App, but put Save function in here.
-    //shouldComponentUpdate(nextProps, nextState) {
-    //    return this.state.showDialougeBox;
-    //  }
-
+    
     handleMovement = (event) => {
+        let bumpSound = new Audio('./audio/effects/bump.mp3');
+
         let positionY = this.state.currentPosition[0];
         let positionX = this.state.currentPosition[1];
 
@@ -42,23 +38,40 @@ class MapUI extends Component {
         if (key === 'ArrowUp' || key=== 'w') {
             if(positionY - 1 > -1){
                 positionY--;
+            }else{
+                bumpSound.play();
+                return;
             }
         }
         if (key === 'ArrowDown' || key=== 's') {
             if(positionY + 1 < 20){
                 positionY++;
+            }else{
+                bumpSound.play();
+                return;
             }
         }
         if (key === 'ArrowLeft' || key=== "a") {
             if (positionX - 1 > -1) {
                 positionX--;
+            }else{
+                bumpSound.play();
+                return;
             }
         }
         if (key === 'ArrowRight'|| key === 'd') {
             if (positionX + 1 < 20) {
                 positionX++;
             }
+            else{
+                bumpSound.play();
+                return;
+            }
         }
+        if(key !== 'ArrowRight' && key !== 'd' && key !== 'ArrowLeft' && key !== "a" && key !== 'ArrowDown' && key !== 's'&& key !== 'ArrowUp' && key !== 'w'){
+            return;
+        }
+
         let xID = "" + positionX;
         let yID = "" + positionY;
         if(positionX < 10) {
@@ -89,7 +102,6 @@ class MapUI extends Component {
             return;
         }
         else if(mapData[this.props.mapId].layout[positionY][positionX] > 200 ){
-            let bumpSound = new Audio('./audio/effects/bump.mp3');
             bumpSound.play();
             return;
     }

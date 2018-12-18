@@ -739,7 +739,7 @@ class App extends Component {
             effect: ()=>{
               let opponent = this.createOpponent("Melweed",[45,55],[45,55],[30,50],[400,500],[Weapons[10],Weapons[4]],2,[0,10,5,0,0,0,0,0]);
               if(this.checkTime(4)){
-                this.startCombat(opponent,'bigBossTheme');
+                this.startCombat(opponent,'',this.state.consumableItems[7]);
                 //this.setState({opponentObject:opponent},()=>this.updateGameState(4));
               }
               else{
@@ -761,7 +761,7 @@ class App extends Component {
           effect: ()=>{
             let opponent = this.createOpponent("High School Kid",[10,20],[10,20],[10,20],[50,100],[Weapons[1],Weapons[3]],1,0,'NONE',true);
             if(this.checkTime(2)){
-              this.startCombat(opponent,'none');
+              this.startCombat(opponent,'none',this.state.consumableItems[9],500);
             }
             else{
               return [player, <p>It's too late!</p>];
@@ -912,7 +912,7 @@ class App extends Component {
         effect: ()=>{
           let opponent = this.createOpponent("Henry the Strong Guy",[90,100],[70,80],[55,65],[600,700],[Weapons[1]],1,0,null,true,120);
           if(this.checkTime(4)){
-            this.startCombat(opponent,null);
+            this.startCombat(opponent,null,this.state.consumableItems[6]);
           }
           else{
             return [this.state.playerObject,<p>It's too late!</p>];
@@ -1029,7 +1029,7 @@ class App extends Component {
         effect: ()=>{
           let opponent = this.createOpponent("Jim the Salesman",[20,30],[20,30],[20,30],[150,180],[Weapons[1],Weapons[0]],1,0,"none",true,100);
           if(this.checkTime(4)){
-            this.startCombat(opponent,"none");
+            this.startCombat(opponent,"none",this.state.consumableItems[13],50);
           }
           else{
             return [this.state.playerObject,<p>It's too late!</p>];
@@ -1360,7 +1360,7 @@ class App extends Component {
               },
               effect: ()=>{
                 let opponent = this.createOpponent("Charlie",[5,10],[5,10],[5,10],[10,50],[],0,0,"602.gif",true);
-                this.startCombat(opponent,'bigBossTheme',5,500);
+                this.startCombat(opponent,'bigBossTheme',this.state.consumableItems[1],500);
                 return false;
               }
             },
@@ -1744,7 +1744,7 @@ class App extends Component {
               },
               effect: ()=>{
                 let opponent = this.createOpponent("Zaxon",[30,40],[30,40],[30,40],[180,250],[Weapons[6]],1,[0,0,0,12,0,0,0,0],'zaxon.gif',true);
-                this.startCombat(opponent,'actor');
+                this.startCombat(opponent,'actor',Weapons[6],200);
                 return false;
               }
             },
@@ -1821,8 +1821,8 @@ class App extends Component {
                 }
               },
               effect: ()=>{
-                let opponent = this.createOpponent('The Emperor',[90,95],[60,70],[70,80],[1000,1500],[Weapons[11],Weapons[5],Weapons[18]],3,[100,10,15,10,10,10,10,1],'606.gif',true,150);
-                this.startCombat(opponent,'bigBossTheme');
+                let opponent = this.createOpponent('The Emperor',[90,95],[60,70],[70,80],[1000,1500],[Weapons[11],Weapons[5],Weapons[20]],3,[100,10,15,10,10,10,10,1],'606.gif',true,150);
+                this.startCombat(opponent,'bigBossTheme',Weapons[20],50);
               }
             },
             {
@@ -2628,7 +2628,7 @@ class App extends Component {
               effect: ()=>{
                 updateNPCRelationship(611,-1);
                 let opponent = this.createOpponent("Phoebe",[30,40],[50,70],[30,45],[250,350],[Weapons[2],Weapons[12],Weapons[9]],2,[10,1,0,10,0,0,0,0],'611.gif',true,100);
-                this.startCombat(opponent,'bigBossTheme');
+                this.startCombat(opponent,'bigBossTheme',this.state.consumableItems[11],400);
                 return false;
               }
             },

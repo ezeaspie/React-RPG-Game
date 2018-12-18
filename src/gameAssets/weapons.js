@@ -74,8 +74,8 @@ Weapons.push(WeaponFactory(318,"Portable Mortar",<p>How this works is beyond our
 Weapons.push(WeaponFactory(319,"Light Machine Gun",<p>Large Magazine that deals lots of damage and eats lot of ammo very quickly.</p>,1000,3,1,85,false,2,0,1));
 Weapons.push(WeaponFactory(320,"Assault Rifle",<p>A fast firing rifle used in war and combat settings.</p>,2500,11,6,85,false,2,1,1));
 Weapons.push(WeaponFactory(307,"Alex Sandro's Sledge",<p>Crafted especailly to maul and power it's way through even the thickest of armor, Alex Sandro's sledge is a terrifying presence on the battlefield.</p>,5000,50,40,90,true,4));
-
-//
+Weapons.push(WeaponFactory(308,"Emperor's Rifle",<p>A gun worthy of a mob boss - equipped with explosive rounds and plated with gold, dispatch your rivals in style!</p>,5000,15,8,90,false,4,1,2))
+//20^
 
 
 
