@@ -400,7 +400,7 @@ class Combat extends Component {
         let opponent = this.state.opponent;
         if(isPlayer){
             this.state.theme.pause();
-            this.props.updateGameState(6);
+            this.props.handleDeath(opponent.main.skin);
         }
         else{
             this.setState({isOpponentDead:true});

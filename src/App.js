@@ -3045,6 +3045,7 @@ class App extends Component {
 
     let jsxObject = 
     <Combat 
+    handleDeath={this.handleDeath}
     checkForSkin={this.checkForSkin}
     addSkin = {this.addSkin}
     checkForItem = {this.checkForItem}
@@ -3065,6 +3066,17 @@ class App extends Component {
     />
 
     this.setState({gameScreen:jsxObject});
+  }
+
+  handleDeath = (killer=false) =>{
+    let death = <Death 
+      days={this.state.currentDay}
+      playerData={this.state.playerObject}
+      updateGameState={this.updateGameState}
+      retrieveSave={this.retrieveSave}
+      killer={killer}
+      />
+    this.setState({gameScreen:death});
   }
 
   updateBountyList = (bountyObject) => {
@@ -3132,12 +3144,6 @@ class App extends Component {
       canChump={this.state.canChump}
       />,
       <Jail />,
-      <Death 
-      days={this.state.currentDay}
-      playerData={this.state.playerObject}
-      updateGameState={this.updateGameState}
-      retrieveSave={this.retrieveSave}
-      />,
       <Credits />,
     ]
     this.setState({gameState : newStateId,gameScreen : screenStateCollection[newStateId]});

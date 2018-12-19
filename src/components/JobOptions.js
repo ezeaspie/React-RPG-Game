@@ -17,6 +17,7 @@ class JobOptions extends Component {
         this.buildContent();
     }
 
+
     handleAskForPromotion = () => {
         if(this.checkRequirements(true)){
             let player = this.props.playerData;

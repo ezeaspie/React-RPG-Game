@@ -966,6 +966,143 @@ border:solid 1px #E7DFDD;
 
 .store .skin-choice {
   list-style-type: none;
+  display: -ms-flexbox;
   display: flex;
-  flex-direction: row;
+  -ms-flex-direction: row;
+      flex-direction: row;
+}
+
+.death-killer, .death-player {
+  background-size: cover;
+  border-radius: 5px;
+  width:4em;
+  height:4em;
+}
+
+
+.death-animation {
+  display: -ms-flexbox;
+  display: flex;
+  padding: 2em;
+  position: relative;
+  -ms-flex-pack: center;
+      justify-content: center;
+  -ms-flex-direction: row-reverse;
+      flex-direction: row-reverse;
+}
+
+.death-killer{
+  -webkit-animation: killer 3s ease-in 1s 1;
+          animation: killer 3s ease-in 1s 1;
+}
+
+.death-player{
+  -webkit-animation: deadplayer 2.5s ease-in 2.5s 1;
+          animation: deadplayer 2.5s ease-in 2.5s 1;
+}
+
+@-webkit-keyframes killer {
+  40%{
+    -webkit-transform: translate(-100%);
+            transform: translate(-100%);
+  }
+  50%{
+    -webkit-transform: translate(200%);
+            transform: translate(200%);
+  }
+  100%{
+    -webkit-transform: translate(0%);
+            transform: translate(0%);
+  }
+}
+
+@keyframes killer {
+  40%{
+    -webkit-transform: translate(-100%);
+            transform: translate(-100%);
+  }
+  50%{
+    -webkit-transform: translate(200%);
+            transform: translate(200%);
+  }
+  100%{
+    -webkit-transform: translate(0%);
+            transform: translate(0%);
+  }
+}
+
+@-webkit-keyframes deadplayer {
+  20%{
+    -webkit-transform: translate(100%,-20%) rotate(80deg);
+            transform: translate(100%,-20%) rotate(80deg);
+  }
+  40%{
+    -webkit-transform: translate(200%,50%) rotate(90deg);
+            transform: translate(200%,50%) rotate(90deg);
+  }
+  50%{
+        -webkit-transform: translate(200%,50%) rotate(95deg);
+                transform: translate(200%,50%) rotate(95deg);
+  }
+  100%{
+        -webkit-transform: translate(200%,50%) rotate(95deg);
+                transform: translate(200%,50%) rotate(95deg);
+  }
+}
+
+@keyframes deadplayer {
+  20%{
+    -webkit-transform: translate(100%,-20%) rotate(80deg);
+            transform: translate(100%,-20%) rotate(80deg);
+  }
+  40%{
+    -webkit-transform: translate(200%,50%) rotate(90deg);
+            transform: translate(200%,50%) rotate(90deg);
+  }
+  50%{
+        -webkit-transform: translate(200%,50%) rotate(95deg);
+                transform: translate(200%,50%) rotate(95deg);
+  }
+  100%{
+        -webkit-transform: translate(200%,50%) rotate(95deg);
+                transform: translate(200%,50%) rotate(95deg);
+  }
+}
+
+.paused{
+  -webkit-animation-play-state:paused; 
+  animation-play-state:paused;
+}
+
+.fade-in-death {
+  -webkit-animation: fade-long 3s ease-in .5s 1;
+          animation: fade-long 3s ease-in .5s 1;
+  position: absolute;
+  font-size:2.5em;
+  top:0;
+  opacity: 0;
+}
+
+@-webkit-keyframes fade-long {
+  0%{
+    opacity: 0;
+  }
+  50%{
+    opacity: 1;
+  }
+  100%{
+    opacity: 0;
+  }
+}
+
+@keyframes fade-long {
+  0%{
+    opacity: 0;
+  }
+  50%{
+    opacity: 1;
+  }
+  100%{
+    opacity: 0;
+  }
 }
