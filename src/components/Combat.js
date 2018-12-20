@@ -78,11 +78,14 @@ class Combat extends Component {
     filterWeapons = () => {
         let player = this.props.player;
         let opponent = this.props.opponent;
+        let lightMelee = new Audio('./audio/effects/punch.mp3');
+        let heavyMelee = new Audio('./audio/effects/kick.mp3');
         let punch = {
             name: 'Punch',
             description: 'Good old fashioned knuckle sandwich.',
             isMelee:true,
             apCost: 5,
+            audio:lightMelee,
             damage: 3,
             accuracy: 95,
             effect: () => {
@@ -94,6 +97,7 @@ class Combat extends Component {
             description: 'Kick him RIGBABY',
             isMelee:true,
             apCost: 10,
+            audio:heavyMelee,
             damage: 6,
             accuracy: 95,
             effect: () => {
@@ -282,10 +286,11 @@ class Combat extends Component {
         if(weapon.apCost > attacker.attackPoints){
             return;
         }
-        if(!weapon.isMelee){
+        if(!weapon.isMelee){//ranged weapon ammo handling
             let ammoType= attacker.main.ammo[weapon.ammoId];
             let difference = ammoType.amount - weapon.ammoCost;
-            if(difference <= 0){
+            console.log(difference);
+            if(!ammoType.amount >= weapon.ammoCost){
                 if(!isPlayer){
                     this.aiAttackLogic();
                     return;
@@ -313,6 +318,7 @@ class Combat extends Component {
         }
         else{
             message = `${isCrit?"CRITICAL ":""}${attacker.main.name} uses ${weapon.name} on ${target.main.name} for ${attackDamage} DMG`;
+            weapon.audio.play();
         }
         target.main.health -= attackDamage;
 
@@ -330,7 +336,7 @@ class Combat extends Component {
                         this.handleEndOfAttack(true,true);
                     }
                     else{
-                        this.handleEndOfAttack(false);
+                        this.handleEndOfAttack(false,true);
                     }
                 });
         }
@@ -348,6 +354,7 @@ class Combat extends Component {
     }
 
     handleEndOfAttack = (forceEndTurn,isPlayer=false) => {
+        console.log({forceEndTurn,isPlayer});
         let player = this.state.player;
         let opponent = this.state.opponent;
 
@@ -405,6 +412,11 @@ class Combat extends Component {
         else{
             this.setState({isOpponentDead:true});
             let bonusMessage = null;
+            let deathSound = new Audio('./audio/effects/bart.mp3');
+            deathSound.play();
+            setTimeout(()=>{
+                document.querySelector('.opponent').classList.add("paused");
+            },2300);
 
             if(this.props.bonusReward !== null){
                 let randomNum = Math.floor(Math.random() * 1000); 
@@ -613,7 +625,7 @@ class Combat extends Component {
                         <div className="combat-icon player"
                         style={{backgroundImage:`url(./images/other/you${player.main.skin}.png)`}}
                          ></div>
-                        <div className="combat-icon opponent" 
+                        <div className={this.state.isOpponentDead?"combat-icon opponent death-opponent":"combat-icon opponent"} 
                         style={{backgroundImage:`url(./images/other/${opponent.main.skin})`}}
                         ></div>
                     </div>

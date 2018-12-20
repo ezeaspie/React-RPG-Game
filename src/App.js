@@ -1360,7 +1360,7 @@ class App extends Component {
               },
               effect: ()=>{
                 let opponent = this.createOpponent("Charlie",[5,10],[5,10],[5,10],[10,50],[],0,0,"602.gif",true);
-                this.startCombat(opponent,'bigBossTheme',this.state.consumableItems[1],500);
+                this.startCombat(opponent,'',this.state.consumableItems[1],500);
                 return false;
               }
             },

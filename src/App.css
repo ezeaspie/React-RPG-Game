@@ -1001,6 +1001,10 @@ border:solid 1px #E7DFDD;
           animation: deadplayer 2.5s ease-in 2.5s 1;
 }
 
+.death-opponent{
+  animation: deadplayer 2.5s ease-in 0s 1;
+}
+
 @-webkit-keyframes killer {
   40%{
     -webkit-transform: translate(-100%);
