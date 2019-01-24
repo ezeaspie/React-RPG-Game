@@ -135,6 +135,7 @@ class PlayerConsole extends Component {
                     updatePlayerState={this.props.updatePlayerState}
                     style={this.state.isStatOverlay ? overlayStyle : hiddenStyle} 
                     stats={playerData.stats}
+                    player={this.props.playerData}
                     />:
                     null
                 }

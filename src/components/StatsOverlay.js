@@ -10,6 +10,7 @@ class StatsOverlay extends Component {
                     <p>{stat.value}</p>
                     </li>
                 })}
+                <li key={"streetCred"}><p>StreetCred</p><p>{this.props.player.streetCred}</p></li>
             </ul>
         )
     }

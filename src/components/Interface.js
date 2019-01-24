@@ -12,6 +12,7 @@ class Interface extends Component {
         this.state = {
             dialogBox:false,
             dialogContent:null,
+            time:this.props.time,
         }
     }
 
@@ -21,6 +22,14 @@ class Interface extends Component {
 
     forceRender = () => {
         this.forceUpdate();
+    }
+    addToTime = (amount,setTime=false) => {
+        if(setTime){
+            this.setState({time:amount});
+        }
+        else{
+            this.setState({time:this.state.time + amount});
+        }
     }
 
     render(){
@@ -53,7 +62,7 @@ class Interface extends Component {
                 <h1>{this.props.storeData.name}</h1>
                 <div className="store-player-info">
                 <h2 className="store-cash">Cash:{this.props.playerData.money}</h2>
-                <h2 className="store-time">Time:{this.props.time}:00</h2>
+                <h2 className="store-time">Time:{this.state.time}:00</h2>
                 </div>
                 {
                     renderCompanionData?
@@ -80,6 +89,7 @@ class Interface extends Component {
                 <ul className="store-list options">
                     {this.props.storeData.options.map((option,i)=>{
                         return <Option 
+                        addToTime={this.addToTime}
                         fightRank={option.id===1?option.rank:false}
                         playerData={this.props.playerData}
                         goToJail = {this.props.goToJail}
@@ -96,6 +106,7 @@ class Interface extends Component {
                 </ul>
                 <JobOptions 
                 updateTime={this.props.updateTime}
+                addToTime={this.addToTime}
                 checkTime={this.props.checkTime}
                 forceRender={this.forceRender}
                 storeId={this.props.storeData.id}

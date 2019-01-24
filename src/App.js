@@ -900,7 +900,7 @@ class App extends Component {
               this.updateTime(false,8);
               return updateStat(0,3,0,0,0,-70,0);
             }
-           return [player, <p>You don't have enough money</p>] 
+           return [player, <p>You don't have enough money</p>, this.state.time] 
           }
           else{return [player, <p>It's too late!</p>]}
         }
@@ -970,7 +970,7 @@ class App extends Component {
               this.updateTime(false,8);
               return updateStat(2,0,0,0,0,-65,0);
             }
-           return [player, <p>You don't have enough money</p>] 
+           return [player, <p>You don't have enough money</p>,this.state.time] 
           }
           else{return [player, <p>It's too late!</p>]}
         }
@@ -1359,7 +1359,7 @@ class App extends Component {
                 return this.checkTime(4);
               },
               effect: ()=>{
-                let opponent = this.createOpponent("Charlie",[5,10],[5,10],[5,10],[10,50],[],0,0,"602.gif",true);
+                let opponent = this.createOpponent("Charlie",[5,10],[5,10],[5,10],[10,50],[],0,0,"602.gif",true,50);
                 this.startCombat(opponent,'',this.state.consumableItems[1],500);
                 return false;
               }

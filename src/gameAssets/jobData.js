@@ -9,20 +9,15 @@ const Jobs = [
             {name:"Agility",value:0},
             {name:"Luck", value:0},
             {name:"Street Cred", value:0},
-            {name:"Money", value:0},
         ],//chr,str,int,lck,sC,mon
         increment:10,
-        shiftTime:6,
+        shiftTime:5,
         reward:null,
         promotion: [
             {
                 name:"Store Clerk",
                 pay: 3,
             },
-            {
-                name:"KING",
-                pay:100000000,
-            }
         ],
     },
     {
@@ -35,10 +30,9 @@ const Jobs = [
             {name:"Agility",value:0},
             {name:"Luck", value:0},
             {name:"Street Cred", value:0},
-            {name:"Money", value:0},
         ],
         increment:20,
-        shiftTime:8,
+        shiftTime:5,
         promotion: [
             {
                 name:"Subsitute Teacher",
@@ -76,10 +70,9 @@ const Jobs = [
             {name:"Agility",value:0},
             {name:"Luck", value:0},
             {name:"Street Cred", value:0},
-            {name:"Money", value:0},
         ],
         increment:20,
-        shiftTime:8,
+        shiftTime:5,
         promotion: [
             {
                 name:"Drive Thru Teller",
@@ -109,10 +102,9 @@ const Jobs = [
             {name:"Agility",value:0},
             {name:"Luck", value:0},
             {name:"Street Cred", value:0},
-            {name:"Money", value:0},
         ],
         increment:15,
-        shiftTime:8,
+        shiftTime:5,
         promotion: [
             {
                 name:"Locker Room Cleaner",
@@ -146,10 +138,9 @@ const Jobs = [
             {name:"Agility",value:20},
             {name:"Luck", value:0},
             {name:"Street Cred", value:0},
-            {name:"Money", value:0},
         ],
         increment:20,
-        shiftTime:8,
+        shiftTime:5,
         promotion: [
             {
                 name:"Large and Heavy Parcel Carrier",
@@ -183,10 +174,9 @@ const Jobs = [
             {name:"Agility",value:0},
             {name:"Luck", value:0},
             {name:"Street Cred", value:0},
-            {name:"Money", value:0},
         ],
         increment:25,
-        shiftTime:10,
+        shiftTime:6,
         promotion: [
             {
                 name:"Site Grunt",
@@ -216,10 +206,9 @@ const Jobs = [
             {name:"Agility",value:0},
             {name:"Luck", value:0},
             {name:"Street Cred", value:30},
-            {name:"Money", value:0},
         ],
         increment:25,
-        shiftTime:10,
+        shiftTime:6,
         promotion: [
             {
                 name:"Cigarette Carrier",
@@ -253,10 +242,9 @@ const Jobs = [
             {name:"Agility",value:0},
             {name:"Luck", value:0},
             {name:"Street Cred", value:0},
-            {name:"Money", value:0},
         ],
         increment:15,
-        shiftTime:9,
+        shiftTime:5,
         promotion: [
             {
                 name:"Car Salesman",

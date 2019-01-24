@@ -26,7 +26,10 @@ class JobOptions extends Component {
 
             promotionLevel = promotionLevel[0];
             promotionLevel.promotion++;
-            
+            if(player.stats.length >= 6){
+                player.stats.splice(5);
+                console.log(player.stats);
+            }
             this.props.updatePlayerState(player);
             this.forceUpdate();
         }
@@ -43,6 +46,7 @@ class JobOptions extends Component {
             this.props.updatePlayerState(player);
             this.props.updateTime(false,shiftTime);
             this.props.forceRender();  
+            this.props.addToTime(this.props.jobData.shiftTime);
             return; 
         }
         let content = 
@@ -135,8 +139,7 @@ class JobOptions extends Component {
         }
         let playerStats = this.props.playerData.stats;
         playerStats.push({name:"Street Cred", value:this.props.playerData.streetCred});
-        playerStats.push({name:"Money", value: this.props.playerData.money});
-
+        console.log({clone:playerStats,actual:this.props.playerData.stats});
         let isEqual = () => {
             let checkArray = jobRequirements.map((requirement,i)=>{
                 return playerStats[i].value >= requirement.value;
@@ -148,13 +151,17 @@ class JobOptions extends Component {
 
     handleGetJob(){
         let player= this.props.playerData;
-        if(this.checkRequirements()){
+        if(this.checkRequirements()){//this is probably the source of the problem
             let newJob = {
                 id: this.props.jobData.id,
                 promotion: 0,
             }
             if(player.jobs.every(job => {return job.id !== newJob.id})){
                 player.jobs.push(newJob);
+                if(player.stats.length >= 6){
+                    player.stats.splice(5);
+                    console.log(player.stats);
+                }
                 this.props.updatePlayerState(player);
                 let jobOb = player.jobs.filter(job => {return job.id === newJob.id});
                 this.setState({playerJobData: jobOb[0], hasJob:true});
